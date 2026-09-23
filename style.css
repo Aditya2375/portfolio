@@ -1,0 +1,1178 @@
+/* ═══════════════════════════════════════════════════════════════
+   TABLE OF CONTENTS
+    1.  Reset & Box Model
+    2.  CSS Custom Properties (Design Tokens)
+    3.  prefers-reduced-motion
+    4.  Base & Typography
+    5.  Utilities: .section-label, .container, .section-title,
+                   .section__header, .chamfer
+    6.  Screen Frame
+    7.  Buttons (chamfered 18px, flat — no shadows)
+    8.  Navbar (white bar, hairline border)
+    9.  Hero (keyframe animations, stagger, crosshair HUD)
+   10.  Shared Section Styles (hairline tops, generous spacing)
+   11.  About (two-column with vertical hairline divider)
+   12.  Skills (lavender full-bleed, row list layout)
+   13.  Projects (chamfered thumbnails, hairline cards)
+   14.  Education (hairline rows)
+   15.  Contact (large email link)
+   16.  Footer (black, giant wordmark, nav columns)
+   17.  Media Queries (700px and 1024px breakpoints)
+═══════════════════════════════════════════════════════════════ */
+
+
+/* ─── 1. RESET & BOX MODEL ──────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  /* border-box: padding and border are INSIDE the declared width/height.
+     Without this, adding padding would unexpectedly increase element size. */
+  margin:  0;
+  padding: 0;
+}
+
+
+/* ─── 2. CSS CUSTOM PROPERTIES (DESIGN TOKENS) ──────────────── */
+/* All color, font, and spacing decisions live here.
+   Change a value once → it updates everywhere. */
+
+:root {
+
+  /* ── Colour palette ── */
+  --clr-bg:      #FFFFFF;   /* page background — pure white */
+  --clr-text:    #1B1B1B;   /* primary text — near-black (softer than #000) */
+  --clr-muted:   #6B6B6B;   /* secondary text, labels, descriptions */
+  --clr-accent:  #968ADF;   /* lavender — ONLY used for: skills section bg
+                                + section-label squares. Nowhere else. */
+  --clr-line:    #E5E5E5;   /* hairlines: 1px section borders, cell dividers */
+  --clr-footer:  #000000;   /* footer background — solid black */
+
+  /* ── Typography ── */
+  --font-display: 'Archivo Black', sans-serif;
+  /* Archivo Black: a single-weight (inherently bold) display font.
+     Used for ALL section headlines and the hero title.
+     No font-weight variants — the font is always heavy. */
+
+  --font-body: 'Inter', system-ui, sans-serif;
+  /* Inter: a humanist sans-serif designed for screen readability.
+     system-ui is the OS fallback if Inter hasn't loaded yet. */
+
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  /* IBM Plex Mono: used for labels, buttons, nav links, micro-copy.
+     'Courier New' is a universal monospace fallback. */
+
+  /* ── Spacing ── */
+  --space-xs: 0.5rem;   /*  8px */
+  --space-sm: 1rem;     /* 16px */
+  --space-md: 2rem;     /* 32px */
+  --space-lg: 4rem;     /* 64px */
+  --space-xl: 6rem;     /* 96px */
+
+  /* ── Layout ── */
+  --max-width:  1200px; /* container cap so text doesn't span the full monitor */
+  --nav-height: 56px;   /* fixed navbar height — used for padding-top on hero */
+
+  /* ── Animation ── */
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --easing:   cubic-bezier(0.16, 1, 0.3, 1);
+  /* cubic-bezier(0.16, 1, 0.3, 1) = custom easing curve.
+     The four numbers define two control points for a Bézier curve.
+     Result: a fast start that decelerates into a smooth stop ("spring" feel). */
+}
+
+
+/* ─── 3. PREFERS-REDUCED-MOTION ────────────────────────────── */
+/* Respects the OS accessibility setting "reduce motion".
+   People with vestibular disorders or epilepsy may have this on. */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    /* 0.01ms ≈ instant. We don't use 0ms because some browsers
+       skip the final keyframe at exactly 0, causing a visual glitch. */
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+    /* scroll-behavior:auto removes smooth scrolling — can cause nausea. */
+  }
+}
+
+
+/* ─── 4. BASE & TYPOGRAPHY ──────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+  /* Smooth scrolling for anchor links (<a href="#section">).
+     Overridden to "auto" for users with reduced-motion preference. */
+}
+
+body {
+  font-family:      var(--font-body);
+  background-color: var(--clr-bg);     /* white */
+  color:            var(--clr-text);   /* #1B1B1B */
+  line-height:      1.6;
+  font-size:        0.9375rem;         /* 15px — Inter reads cleanly at this size */
+  min-height:       100vh;
+  overflow-x:       hidden;
+  /* overflow-x:hidden prevents horizontal scrollbars from appearing
+     when animations temporarily shift elements outside the viewport. */
+}
+
+/* Remove default underlines; we'll style links per context */
+a {
+  color:           inherit;
+  text-decoration: none;
+}
+
+/* Remove browser default bullets/numbers from all lists */
+ul, ol {
+  list-style: none;
+}
+
+/* Images: fill their container, never overflow, no baseline gap */
+img {
+  max-width: 100%;
+  display:   block;
+  /* display:block removes the 4px gap browsers add under inline images
+     (caused by the text "baseline" — images are inline by default). */
+}
+
+
+/* ─── 5. UTILITIES ──────────────────────────────────────────── */
+
+/* .section-label — tiny mono label used above every section heading,
+   inside skill rows, on facts, on project card numbers, etc.
+   The lavender 6×6px square is painted as a ::before pseudo-element
+   so it appears automatically wherever this class is used. */
+
+.section-label {
+  font-family:    var(--font-mono);
+  font-size:      0.6875rem;    /* 11px */
+  font-weight:    500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color:          var(--clr-muted);
+  /* display:inline-flex lets ::before and label text sit on one line
+     and vertically centers the square with the text. */
+  display:        inline-flex;
+  align-items:    center;
+  gap:            8px;          /* space between square and text */
+}
+
+/* The 6×6 filled square before every label.
+   ::before is a CSS-generated element — no HTML needed. */
+.section-label::before {
+  content:    '';           /* empty string — the element exists but has no text */
+  display:    inline-block;
+  width:      6px;
+  height:     6px;
+  flex-shrink: 0;           /* never let the square shrink when space is tight */
+  background-color: var(--clr-accent); /* lavender #968ADF on white sections */
+}
+
+/* .container — centers content horizontally and limits width */
+.container {
+  width:     100%;
+  max-width: var(--max-width);
+  margin:    0 auto;
+  /* clamp(min, preferred, max): sets horizontal padding that scales with viewport.
+     On 390px mobile: clamp gives ~1rem. On 1400px desktop: clamp gives ~96px but
+     the max cap stops it from becoming ridiculous. */
+  padding:   0 clamp(1rem, 5vw, 5rem);
+}
+
+/* .section-title — the giant Archivo Black heading for each section */
+.section-title {
+  font-family:    var(--font-display);  /* Archivo Black */
+  font-size:      clamp(2.5rem, 7vw, 5.5rem);
+  /* clamp(min, preferred, max):
+     min       = 2.5rem (40px) — won't go smaller on any device
+     preferred = 7vw — scales with viewport width (7% of window)
+     max       = 5.5rem (88px) — won't grow beyond this             */
+  font-weight:    900;       /* Archivo Black is inherently bold; this is decorative */
+  text-transform: uppercase;
+  letter-spacing: -0.03em;  /* tighten tracking — editorial/display convention */
+  line-height:    0.95;      /* slightly less than 1 so lines sit very close */
+  color:          var(--clr-text);
+}
+
+/* .section__header — the label + heading block that tops every section */
+.section__header {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-xs);
+  margin-bottom:  var(--space-md);
+  /* The label sits directly above the big heading with minimal gap. */
+}
+
+/* .chamfer — the signature chamfered (diagonally cut) corner shape.
+   clip-path:polygon() defines a custom clipping region.
+   Points are listed clockwise starting top-left:
+     0 0                        = top-left corner (no cut)
+     100% 0                     = top-right corner (no cut)
+     100% calc(100% - 18px)     = 18px up from bottom-right → start of the cut
+     calc(100% - 18px) 100%     = 18px left from bottom-right → end of the cut
+     0 100%                     = bottom-left corner (no cut)
+   Everything outside this polygon is invisible. */
+.chamfer {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    0 100%
+  );
+}
+
+
+/* ─── 6. SCREEN FRAME ───────────────────────────────────────── */
+/* A 1px decorative border that floats fixed over the entire screen.
+   On a white background, a very subtle dark line is used. */
+
+.screen-frame {
+  position:       fixed;    /* stays in place even while scrolling */
+  inset:          14px;
+  /* inset is shorthand for top:14px; right:14px; bottom:14px; left:14px */
+  border:         1px solid rgba(0, 0, 0, 0.1);
+  /* rgba(0,0,0,0.1) = black at 10% opacity — barely visible on white */
+  border-radius:  4px;
+  pointer-events: none;     /* mouse/touch passes through to elements below */
+  z-index:        900;      /* above all page content but below any modals */
+}
+
+
+/* ─── 7. BUTTONS ────────────────────────────────────────────── */
+/* ALL buttons get the chamfered clip-path (18px diagonal cut on bottom-right).
+   Zero box-shadows. Zero border-radius. Flat and precise. */
+
+.btn {
+  /* Layout */
+  display:     inline-flex;
+  align-items: center;
+  gap:         0.5em;
+
+  /* Typography — all buttons use IBM Plex Mono */
+  font-family:    var(--font-mono);
+  font-size:      0.75rem;    /* 12px */
+  font-weight:    500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  /* Spacing */
+  padding: 0.9em 1.8em;
+
+  /* Chamfered bottom-right corner — same polygon as .chamfer above */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    0 100%
+  );
+
+  /* Smooth color swap on hover. No shadow transitions. */
+  transition:
+    background-color var(--dur-fast) var(--easing),
+    color            var(--dur-fast) var(--easing);
+
+  cursor: pointer;
+  white-space: nowrap; /* prevent button text from wrapping to a second line */
+}
+
+/* Primary button: dark fill, white text.
+   "Primary" = the most important action on a given view. */
+.btn--primary {
+  background-color: var(--clr-text);  /* #1B1B1B */
+  color:            #FFFFFF;
+}
+
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  /* :hover       = mouse over
+     :focus-visible = keyboard Tab focus — only appears for keyboard users,
+                      not after a mouse click (modern accessible behavior) */
+  background-color: #333333; /* slightly lighter dark — still reads as black */
+  color:            #FFFFFF;
+}
+
+/* Outline button: white fill, dark 1px border, dark text.
+   Hover → black fill, white text (swaps completely). */
+.btn--outline {
+  background-color: var(--clr-bg);    /* white */
+  color:            var(--clr-text);  /* #1B1B1B */
+  /* outline = 1px inset border.
+     We use outline (not border) so it doesn't affect layout dimensions. */
+  outline:          1px solid var(--clr-text);
+  outline-offset:   -1px;
+  /* outline-offset:-1px draws the outline INSIDE the button edge.
+     A positive offset would draw it outside. */
+}
+
+.btn--outline:hover,
+.btn--outline:focus-visible {
+  background-color: var(--clr-text);  /* #1B1B1B — full swap */
+  color:            #FFFFFF;
+}
+
+/* Small variant — used inside project card footers */
+.btn--sm {
+  font-size: 0.65rem;
+  padding:   0.65em 1.2em;
+  clip-path: polygon(
+    0 0, 100% 0,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    0 100%
+  );
+  /* Smaller buttons get a proportionally smaller cut (12px instead of 18px). */
+}
+
+/* Visible focus ring for keyboard users — shown by the browser for :focus-visible. */
+.btn:focus-visible {
+  outline:        2px solid var(--clr-accent);
+  outline-offset: 3px;
+}
+
+
+/* ─── 8. NAVBAR ─────────────────────────────────────────────── */
+/* White bar, 1px #E5E5E5 bottom border. No blur, no dark background.
+   position:fixed keeps it visible at the top while scrolling. */
+
+.navbar {
+  position:         fixed;
+  top:              0;
+  left:             0;
+  right:            0;
+  z-index:          800;       /* above page content, below screen-frame */
+  background-color: var(--clr-bg);   /* white — flat, no frosted glass */
+  border-bottom:    1px solid var(--clr-line);
+}
+
+/* Inner flex row: logo | [hamburger or links] | CTA button */
+.navbar__inner {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 clamp(1rem, 4vw, 3rem);
+  height:          var(--nav-height);  /* 56px */
+  max-width:       var(--max-width);
+  margin:          0 auto;
+}
+
+/* Logo / wordmark — Archivo Black, near-black text */
+.navbar__logo {
+  font-family:    var(--font-display);
+  font-size:      1.1rem;
+  font-weight:    900;
+  letter-spacing: -0.02em;
+  color:          var(--clr-text);
+  text-transform: uppercase;
+}
+
+/* Hamburger button — mobile only; hidden on desktop via media query */
+.navbar__toggle {
+  background: none;
+  border:     none;
+  cursor:     pointer;
+  color:      inherit;
+  display:    flex;
+  flex-direction: column;
+  justify-content: center;
+  gap:        5px;
+  padding:    4px;
+  width:      36px;
+  height:     36px;
+}
+
+/* Each of the 3 horizontal bars in the hamburger icon */
+.navbar__toggle-bar {
+  display:          block;
+  width:            100%;
+  height:           1px;   /* thin 1px bars — editorial, not chunky */
+  background-color: var(--clr-text);
+  transition:       background-color var(--dur-fast) var(--easing);
+}
+
+/* Navigation links list — hidden on mobile, shown on desktop */
+.navbar__links {
+  display: none; /* switched to flex in the media query below */
+}
+
+/* Each nav link: IBM Plex Mono 11px uppercase, near-black */
+.navbar__link {
+  font-family:    var(--font-mono);
+  font-size:      0.6875rem;   /* 11px */
+  font-weight:    500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color:          var(--clr-muted);
+  padding:        0.3em 0.5em;
+  transition:     color var(--dur-fast) var(--easing);
+}
+
+.navbar__link:hover,
+.navbar__link:focus-visible {
+  color:   var(--clr-text);  /* darken from muted to full black on hover */
+  outline: none;
+}
+
+/* The chamfered CONTACT button on the right of the navbar.
+   Hidden on mobile (display:none), shown on desktop. */
+.navbar__cta {
+  display: none; /* shown in media query */
+}
+
+
+/* ─── 9. HERO SECTION ───────────────────────────────────────── */
+
+/* ★ KEYFRAME: fadeSlideUp
+   Defines an animation from "below + invisible" to "in place + visible".
+   @keyframes names an animation; CSS calculates all frames between 0% and 100%. */
+@keyframes fadeSlideUp {
+  0% {
+    opacity:   0;
+    transform: translateY(24px);
+    /* translateY(24px) = start 24px below normal position */
+  }
+  100% {
+    opacity:   1;
+    transform: translateY(0);  /* land at the normal position */
+  }
+}
+
+/* The hero is at least as tall as the screen.
+   svh = "small viewport height" — on mobile, excludes the browser chrome (address bar).
+   Falls back to vh for browsers that don't support svh. */
+.hero {
+  min-height:      100svh;
+  min-height:      100vh;       /* fallback */
+  padding-top:     var(--nav-height);   /* offset for the fixed navbar */
+  display:         flex;
+  flex-direction:  column;
+  justify-content: center;      /* center content block vertically */
+  position:        relative;    /* required for absolute children (grid lines, crosshair) */
+  background-color: var(--clr-bg);
+}
+
+/* Decorative vertical grid lines — drawn with repeating-linear-gradient.
+   repeating-linear-gradient repeats the same color stops across the element.
+   Here: 119px transparent gap, then 1px #E5E5E5 line, repeat every 120px. */
+.hero__grid-lines {
+  position: absolute;
+  inset:    0;
+  background: repeating-linear-gradient(
+    90deg,                    /* direction: left → right */
+    transparent    0px,
+    transparent    119px,
+    var(--clr-line) 119px,
+    var(--clr-line) 120px     /* 1px wide hairline */
+  );
+  pointer-events: none;       /* click-through */
+}
+
+/* Crosshair / HUD mark: a + formed by two 1px lines.
+   ::before = horizontal bar. ::after = vertical bar. */
+.hero__crosshair {
+  position: absolute;
+  left:     4vw;          /* sits in the left margin */
+  top:      50%;
+  width:    40px;
+  height:   40px;
+  transform: translateY(-50%); /* vertically center on the midpoint */
+  pointer-events: none;
+}
+
+/* Horizontal bar of the crosshair */
+.hero__crosshair::before {
+  content:    '';
+  position:   absolute;
+  top:        50%;
+  left:       0;
+  width:      100%;
+  height:     1px;           /* 1px thin line */
+  background: var(--clr-text);
+  transform:  translateY(-50%);
+}
+
+/* Vertical bar of the crosshair */
+.hero__crosshair::after {
+  content:    '';
+  position:   absolute;
+  left:       50%;
+  top:        0;
+  width:      1px;
+  height:     100%;
+  background: var(--clr-text);
+  transform:  translateX(-50%);
+}
+
+/* Main content block — sits above grid lines (z-index:1) */
+.hero__content {
+  position:        relative;
+  z-index:         1;
+  padding:         var(--space-xl) clamp(1rem, 8vw, 6rem);
+  display:         flex;
+  flex-direction:  column;
+  gap:             var(--space-sm);
+  /* The gap property in a flex column adds equal spacing between each child. */
+}
+
+/* Staggered entrance animations for hero children.
+   Each element starts the same fadeSlideUp animation but with a larger delay.
+   Result: label → name → sub → buttons appear one after another ("cascade").
+   fill-mode:both = element holds the 0% state BEFORE the animation starts
+   (prevents a flash of the visible, non-animated state at page load). */
+.hero__content > .section-label {
+  animation: fadeSlideUp 0.7s var(--easing) 0.1s both;
+}
+.hero__content .hero__name {
+  animation: fadeSlideUp 0.7s var(--easing) 0.25s both;
+}
+.hero__content .hero__sub {
+  animation: fadeSlideUp 0.7s var(--easing) 0.4s both;
+}
+.hero__content .hero__ctas {
+  animation: fadeSlideUp 0.7s var(--easing) 0.52s both;
+}
+
+/* The giant staggered headline */
+.hero__name {
+  font-family:    var(--font-display);    /* Archivo Black */
+  font-size:      clamp(4rem, 14vw, 10rem);
+  /* 14vw on a 1200px screen = 168px. Capped at 160px. On mobile (390px): ~55px. */
+  font-weight:    900;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height:    0.92;
+  color:          var(--clr-text);
+
+  /* Flex column so each .hero__line stacks vertically */
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;  /* left-align each line (default, but explicit) */
+}
+
+/* Each line of the hero name can have its own left indent.
+   .hero__line itself has no indent — the first line is flush left.
+   The nth-child selectors create the stagger: */
+.hero__line {
+  display: block;   /* block makes the full line width "own" its row */
+}
+
+.hero__line:nth-child(2) {
+  margin-left: 8vw;
+  /* nth-child(2) = second line.
+     8vw = 8% of viewport width. On 1200px: 96px indent. On 390px: 31px.
+     This creates the editorial stagger where line 2 is indented. */
+}
+
+/* Intro copy: Inter 14px, max-width 42ch for comfortable reading.
+   ch = width of the "0" character in the current font.
+   42ch ≈ 42 average characters per line — the typographic "ideal" for body text. */
+.hero__sub {
+  font-family: var(--font-body);
+  font-size:   0.875rem;    /* 14px */
+  color:       var(--clr-muted);
+  max-width:   42ch;
+  line-height: 1.65;
+}
+
+/* CTA button row — wraps to a second line on narrow screens */
+.hero__ctas {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+/* Scroll hint — absolute, bottom-left, fades in on hover */
+.hero__scroll-hint {
+  position:   absolute;
+  bottom:     var(--space-md);
+  left:       clamp(1rem, 8vw, 6rem);  /* aligns with hero content padding */
+  opacity:    0.45;
+  transition: opacity var(--dur-base) var(--easing);
+  /* This is one of the CSS transitions — opacity changes smoothly on hover. */
+}
+
+.hero__scroll-hint:hover {
+  opacity: 1;
+}
+
+
+/* ─── 10. SHARED SECTION STYLES ─────────────────────────────── */
+
+/* All sections get generous vertical padding and a 1px top hairline.
+   The hairline creates the "grid lines between sections" effect.
+   White background is the default — lavender and black are overrides. */
+.section {
+  padding:    clamp(4rem, 12vh, 8rem) 0;
+  /* clamp(4rem, 12vh, 8rem):
+     min       = 4rem (64px) — enough space on small screens
+     preferred = 12vh (12% of window height) — scales with screen height
+     max       = 8rem (128px) — generous but not wasteful              */
+  border-top: 1px solid var(--clr-line);
+  background-color: var(--clr-bg);   /* white — explicit default */
+}
+
+
+/* ─── 11. ABOUT SECTION ─────────────────────────────────────── */
+
+/* Two columns on desktop: text left, facts right.
+   A vertical hairline (border-right on the text column) separates them.
+   On mobile: single column, no hairline. */
+.about__grid {
+  display:        flex;
+  flex-direction: column;   /* stacked on mobile */
+  gap:            var(--space-lg);
+}
+
+/* Text / bio column */
+.about__text {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+  font-family:    var(--font-body);
+  font-size:      0.875rem;   /* 14px — small body copy is intentional */
+  line-height:    1.75;
+  color:          var(--clr-muted);
+  max-width:      52ch;
+}
+
+.about__text strong {
+  color:       var(--clr-text);  /* name in paragraph = full black */
+  font-weight: 500;
+}
+
+/* Decorative HUD readout lines */
+.about__readout {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  margin-top:     var(--space-sm);
+  padding-top:    var(--space-sm);
+  border-top:     1px solid var(--clr-line);
+}
+
+/* Facts column */
+.about__facts {
+  display:        flex;
+  flex-direction: column;
+  gap:            0;            /* no gap — hairlines between items handle spacing */
+}
+
+/* Individual fact: stacked label + value, with hairline below */
+.about__fact {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  padding:        var(--space-sm) 0;
+  border-bottom:  1px solid var(--clr-line);
+}
+
+.about__fact:last-child {
+  border-bottom: none;   /* no hairline under the last item */
+}
+
+.about__fact-value {
+  font-size:   0.875rem;
+  color:       var(--clr-text);
+  font-family: var(--font-body);
+}
+
+.about__fact-value a {
+  color:       var(--clr-text);
+  /* underline drawn via text-decoration so it uses the text color */
+  text-decoration: underline;
+  text-decoration-color: var(--clr-line);   /* subtle underline, not accent color */
+  text-underline-offset: 3px;               /* space between text baseline and line */
+  transition: text-decoration-color var(--dur-fast) var(--easing);
+}
+
+.about__fact-value a:hover {
+  text-decoration-color: var(--clr-text);  /* underline darkens on hover */
+}
+
+
+/* ─── 12. SKILLS SECTION ────────────────────────────────────── */
+/* This is the ONE lavender section. Full-bleed background: #968ADF.
+   Skills are full-width rows, not grid cards. */
+
+.skills {
+  background-color: var(--clr-accent);   /* #968ADF lavender */
+  border-top-color: rgba(0, 0, 0, 0.12); /* slightly darker hairline on lavender */
+}
+
+/* On the lavender background, section-label text and squares need to be dark. */
+.skills .section-label {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* Override the lavender ::before square with a darker one (for contrast) */
+.skills .section-label::before {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* The section-title stays near-black on lavender (good contrast) */
+.skills .section-title {
+  color: var(--clr-text);  /* #1B1B1B */
+}
+
+/* The list of skill rows — no visual list chrome, just stacked rows */
+.skills__list {
+  display:        flex;
+  flex-direction: column;
+  /* No gap — hairlines (border-bottom on each row) handle spacing */
+}
+
+/* A single skill row:
+   [01]  [Languages]  [HTML, CSS, JS, ...]  [+]
+   Flexbox distributes these across the full row width. */
+.skill-row {
+  display:     flex;
+  align-items: baseline;
+  /* align-items:baseline aligns text of different sizes on their text baselines
+     (the invisible line that most letters "sit" on), which looks more intentional
+     than centering them by their element boxes. */
+  gap:         var(--space-md);
+  padding:     1.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);  /* hairline between rows */
+  flex-wrap:   wrap;   /* rows wrap on very narrow screens */
+}
+
+.skill-row:last-child {
+  border-bottom: none;
+}
+
+/* The "01", "02" mono index at the far left */
+.skill-row__index {
+  flex-shrink: 0;   /* never compress this column */
+  min-width:   2.5rem;
+}
+
+/* Category name — uppercase, Archivo Black, prominent */
+.skill-row__name {
+  font-family:    var(--font-display);
+  font-size:      1.1rem;
+  font-weight:    900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color:          var(--clr-text);
+  flex-shrink:    0;
+  min-width:      10rem;
+}
+
+/* Comma-separated skill items — smaller Inter, fills available space */
+.skill-row__items {
+  font-family: var(--font-body);
+  font-size:   0.875rem;
+  color:       rgba(0, 0, 0, 0.65);
+  flex-grow:   1;
+  /* flex-grow:1 makes this column take all remaining space,
+     naturally pushing the + marker to the far right. */
+}
+
+/* The + marker at the right end — decorative filter-list style */
+.skill-row__plus {
+  font-family:    var(--font-mono);
+  font-size:      1.1rem;
+  font-weight:    400;
+  color:          rgba(0, 0, 0, 0.35);
+  flex-shrink:    0;
+  margin-left:    auto;  /* pushes to the rightmost edge */
+}
+
+
+/* ─── 13. PROJECTS SECTION ──────────────────────────────────── */
+
+.projects__grid {
+  display:               grid;
+  grid-template-columns: 1fr;   /* single column on mobile */
+  gap:                   var(--space-sm);
+}
+
+/* Project card: flex column so footer always sticks to the bottom */
+.project-card {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-sm);
+  padding-bottom: var(--space-md);
+  border-top:     2px solid var(--clr-text);   /* thick top hairline for entry emphasis */
+  /* Note: border-top (not border) — the card has no surrounding box. Structure
+     comes purely from the hairline and spacing, not a floating card. */
+
+  transition: border-top-color var(--dur-base) var(--easing);
+}
+
+.project-card:hover {
+  border-top-color: var(--clr-accent);   /* top border turns lavender on hover */
+}
+
+/* Placeholder thumbnail with chamfered bottom-right corner.
+   Uses the same polygon as .chamfer but applied inline here
+   so we don't need an extra class on the HTML element. */
+.project-card__thumb {
+  height:           140px;
+  background-color: var(--clr-line);   /* #E5E5E5 neutral placeholder */
+  /* The chamfered clip-path — 18px diagonal cut on bottom-right */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    0 100%
+  );
+}
+
+.project-card__header {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+}
+
+.project-card__title {
+  font-family:    var(--font-display);
+  font-size:      1.3rem;
+  font-weight:    900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    1;
+  color:          var(--clr-text);
+}
+
+/* Description: Inter 13px, limited width for readability */
+.project-card__desc {
+  font-family: var(--font-body);
+  font-size:   0.8125rem;   /* 13px */
+  color:       var(--clr-muted);
+  line-height: 1.65;
+  flex-grow:   1;
+  /* flex-grow:1 makes this stretch to fill available space in the card,
+     pushing the tags + footer to the bottom regardless of text length. */
+  max-width:   42ch;
+}
+
+/* Tech tags: no pill-shape, no background — just thin outlined text badges */
+.project-card__tags {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       0.35rem;
+}
+
+.tag {
+  font-family:    var(--font-mono);
+  font-size:      0.625rem;   /* 10px */
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding:        0.3em 0.6em;
+  color:          var(--clr-muted);
+  outline:        1px solid var(--clr-line);
+}
+
+.project-card__footer {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        0.5rem;
+  margin-top: auto;  /* pushes footer to the bottom of the flex column */
+}
+
+
+/* ─── 14. EDUCATION SECTION ─────────────────────────────────── */
+
+.education__timeline {
+  display:        flex;
+  flex-direction: column;
+}
+
+/* Each education entry: year column left, content right.
+   Separated from next entry by a 1px hairline. */
+.edu-item {
+  display:       flex;
+  flex-direction: column;  /* stacked on mobile */
+  gap:           var(--space-sm);
+  padding:       var(--space-md) 0;
+  border-bottom: 1px solid var(--clr-line);
+}
+
+.edu-item:last-child {
+  border-bottom: none;
+}
+
+.edu-item__year {
+  display: block;
+}
+
+/* Degree title: Archivo Black uppercase */
+.edu-item__degree {
+  font-family:    var(--font-display);
+  font-size:      1.2rem;
+  font-weight:    900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height:    1.1;
+  color:          var(--clr-text);
+  margin-bottom:  0.35rem;
+}
+
+/* Institution name: Inter, muted */
+.edu-item__school {
+  font-family: var(--font-body);
+  font-size:   0.875rem;
+  color:       var(--clr-muted);
+}
+
+/* CGPA / score: IBM Plex Mono, accented */
+.edu-item__detail {
+  font-family: var(--font-mono);
+  font-size:   0.6875rem;   /* 11px */
+  color:       var(--clr-accent);  /* lavender — the only colored text in the section */
+  margin-top:  0.35rem;
+}
+
+
+/* ─── 15. CONTACT SECTION ───────────────────────────────────── */
+
+.contact__body {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+  max-width:      700px;
+}
+
+.contact__desc {
+  font-family: var(--font-body);
+  font-size:   0.875rem;
+  color:       var(--clr-muted);
+  max-width:   42ch;
+  line-height: 1.75;
+}
+
+/* Large mono email link — the dominant visual in the contact section.
+   The address itself acts as the primary CTA element. */
+.contact__email {
+  font-family:    var(--font-mono);
+  font-size:      clamp(1rem, 3vw, 1.75rem);
+  /* clamp: scales between 16px (mobile) and 28px (desktop) */
+  font-weight:    500;
+  letter-spacing: -0.01em;
+  color:          var(--clr-text);
+  text-decoration:       underline;
+  text-decoration-color: var(--clr-line);
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--dur-fast) var(--easing);
+  /* CSS transition: underline color changes smoothly on hover */
+}
+
+.contact__email:hover {
+  text-decoration-color: var(--clr-text);
+}
+
+.contact__links {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--space-xs);
+}
+
+
+/* ─── 16. FOOTER ────────────────────────────────────────────── */
+/* Solid #000 background. White text. Giant Archivo Black wordmark. */
+
+.footer {
+  background-color: var(--clr-footer);  /* #000000 */
+  color:            #FFFFFF;
+  padding-top:      var(--space-lg);
+  /* No border-top: the black footer visually terminates the page. */
+}
+
+/* Giant wordmark: the dominant visual of the footer.
+   font-size uses clamp so it scales with the viewport but never goes tiny. */
+.footer__wordmark {
+  font-family:    var(--font-display);
+  font-size:      clamp(3rem, 15vw, 10rem);
+  /* 15vw on a 1200px screen = 180px. Cap at 160px = 10rem. */
+  font-weight:    900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height:    0.9;
+  color:          #FFFFFF;
+  padding:        0 clamp(1rem, 5vw, 5rem);
+  /* Padding matches the container padding so it aligns with the columns below. */
+  padding-bottom: var(--space-md);
+  border-bottom:  1px solid rgba(255, 255, 255, 0.12);
+  /* On a black background, hairlines are white at low opacity. */
+}
+
+/* Bottom block: nav columns + legal line */
+.footer__bottom {
+  padding-top:    var(--space-md);
+  padding-bottom: var(--space-lg);
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+}
+
+/* Two-column nav block */
+.footer__cols {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--space-lg);
+}
+
+/* Individual nav column */
+.footer__col {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-sm);
+  min-width:      130px;
+}
+
+.footer__col ul {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.75rem;
+}
+
+/* Column heading label: white square + white muted text on black bg */
+.footer .section-label {
+  color: rgba(255, 255, 255, 0.45);
+  /* Override the default muted dark color for use on the black footer. */
+}
+
+/* The ::before square on black footer = white instead of lavender */
+.footer .section-label::before {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Footer nav links: white, small mono */
+.footer__link {
+  font-family:    var(--font-mono);
+  font-size:      0.75rem;   /* 12px */
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color:          rgba(255, 255, 255, 0.7);
+  transition:     color var(--dur-fast) var(--easing);
+}
+
+.footer__link:hover {
+  color: #FFFFFF;
+}
+
+/* Legal / copyright line — the smallest text on the entire page */
+.footer__legal {
+  color:      #545454;
+  /* #545454 = dark grey on black — readable but clearly secondary. */
+  margin-top: var(--space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: var(--space-sm);
+}
+
+/* The ::before square in the legal line should be even more muted */
+.footer__legal::before {
+  background-color: #545454;
+}
+
+
+/* ─── 17. MEDIA QUERIES ─────────────────────────────────────── */
+/* MOBILE FIRST: the CSS above is the mobile baseline.
+   @media (min-width: N) adds overrides that kick in when the
+   viewport is AT LEAST N pixels wide. */
+
+@media (min-width: 700px) {
+
+  /* Show desktop nav links — switch from hidden to flex */
+  .navbar__links {
+    display:     flex;
+    align-items: center;
+    gap:         var(--space-sm);
+    list-style:  none;
+  }
+
+  /* Hide the hamburger button — not needed on desktop */
+  .navbar__toggle {
+    display: none;
+  }
+
+  /* Show the chamfered CONTACT button at the right of the navbar */
+  .navbar__cta {
+    display: inline-flex;
+  }
+
+  /* About: side-by-side columns separated by a 1px vertical hairline */
+  .about__grid {
+    flex-direction: row;  /* switch from column stack to horizontal */
+  }
+
+  .about__text {
+    flex:           3;         /* text column is wider */
+    padding-right:  4vw;
+    border-right:   1px solid var(--clr-line);
+    /* border-right on the left column = the vertical hairline divider */
+    max-width:      none;      /* allow full flex width */
+  }
+
+  .about__facts {
+    flex:         2;
+    padding-left: 4vw;
+  }
+
+  /* Education: year column left, content right */
+  .edu-item {
+    flex-direction: row;
+    gap:            var(--space-lg);
+  }
+
+  .edu-item__meta {
+    flex-shrink: 0;
+    width:       150px;     /* fixed-width year column */
+    padding-top: 0.2rem;    /* optical alignment with degree heading */
+  }
+
+  .edu-item__body {
+    flex: 1;
+  }
+
+  /* Projects: 2 columns on medium screens */
+  .projects__grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    /* auto-fill: create as many columns as fit.
+       minmax(300px, 1fr): each column is at least 300px wide,
+       and columns share remaining space equally (1fr each).
+       On 700px: 2 columns of ~340px. On 1100px: 3 columns. */
+  }
+
+  /* Footer columns side by side */
+  .footer__cols {
+    flex-direction: row;
+    flex-wrap:      nowrap;
+  }
+
+  .footer__bottom {
+    flex-direction: row;
+    align-items:    flex-start;
+    flex-wrap:      wrap;
+  }
+
+  .footer__cols {
+    flex: 1;
+  }
+
+  .footer__legal {
+    width:      100%;
+    margin-top: var(--space-md);
+  }
+}
+
+
+@media (min-width: 1024px) {
+
+  /* Projects: exactly 3 columns on large screens */
+  .projects__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Larger hero padding on big screens */
+  .hero__content {
+    padding: var(--space-xl) clamp(1rem, 8vw, 8rem);
+  }
+}

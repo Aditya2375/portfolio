@@ -1,11 +1,536 @@
 <!DOCTYPE html>
+<!-- HTML5 declaration -->
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Your Name | Portfolio</title>
+  <!-- REPLACE "Your Name" -->
+
+  <!-- Three Google Fonts loaded in one request (faster than three separate requests):
+       Archivo Black — display headlines: a single-weight slab, always bold, editorial look
+       IBM Plex Mono — labels, nav links, buttons, micro-copy: monospace precision
+       Inter          — body copy: humanist sans-serif, very readable at small sizes
+       display=swap   — shows fallback text immediately; swaps to the real font once loaded -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <h1>Portfolio</h1>
+
+  <!-- ══════════════════════════════════════════════════
+       SCREEN FRAME
+       Fixed 1px decorative border around the viewport.
+       pointer-events:none = won't intercept clicks.
+       aria-hidden = decorative, ignored by screen readers.
+  ══════════════════════════════════════════════════ -->
+  <div class="screen-frame" aria-hidden="true"></div>
+
+
+  <!-- ══════════════════════════════════════════════════
+       NAVBAR
+       <header> = top-level page banner landmark.
+       <nav>    = primary navigation landmark.
+       Semantic elements let screen readers and keyboard
+       users jump directly to these regions.
+  ══════════════════════════════════════════════════ -->
+  <header class="navbar" id="navbar">
+    <nav class="navbar__inner" aria-label="Primary navigation">
+
+      <!-- Wordmark / logo — left side of the bar -->
+      <a href="#hero" class="navbar__logo">
+        YN<!-- REPLACE with your initials or a short wordmark -->
+      </a>
+
+      <!-- Hamburger button — visible on mobile only.
+           aria-expanded will be toggled by JS in a later step. -->
+      <button class="navbar__toggle" aria-label="Open navigation menu" aria-expanded="false">
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+      </button>
+
+      <!-- Nav links — hidden on mobile, shown on desktop via media query -->
+      <ul class="navbar__links" role="list">
+        <!-- role="list" restores list semantics that some CSS resets strip -->
+        <li><a href="#about"     class="navbar__link">About</a></li>
+        <li><a href="#skills"    class="navbar__link">Skills</a></li>
+        <li><a href="#projects"  class="navbar__link">Projects</a></li>
+        <li><a href="#education" class="navbar__link">Education</a></li>
+        <li><a href="#contact"   class="navbar__link">Contact</a></li>
+      </ul>
+
+      <!-- Chamfered CTA at the right end of the navbar — desktop only.
+           Uses the same .btn class as other buttons so it shares all button styles. -->
+      <a href="#contact" class="btn btn--outline navbar__cta">Contact</a>
+
+    </nav>
+  </header>
+
+
+  <!-- ══════════════════════════════════════════════════
+       MAIN — wraps all primary page content.
+       There must be exactly one <main> per page.
+  ══════════════════════════════════════════════════ -->
+  <main>
+
+    <!-- ── HERO ──────────────────────────────────────── -->
+    <section class="hero" id="hero" aria-labelledby="hero-heading">
+
+      <!-- Decorative vertical grid lines drawn with CSS repeating-linear-gradient.
+           No content — aria-hidden keeps it out of the accessibility tree. -->
+      <div class="hero__grid-lines" aria-hidden="true"></div>
+
+      <!-- Crosshair / HUD mark: two 1px lines (horizontal + vertical) forming a +.
+           Drawn entirely in CSS using ::before and ::after pseudo-elements. -->
+      <div class="hero__crosshair" aria-hidden="true"></div>
+
+      <div class="hero__content">
+
+        <!-- Tiny mono index label above the headline. "000 HELLO" format. -->
+        <p class="section-label">000 HELLO</p>
+
+        <!-- Giant staggered headline.
+             Each line is wrapped in a <span class="hero__line"> so CSS can
+             give each a different margin-left indent — the editorial stagger effect.
+             Periods at the end of each line are part of the kprverse aesthetic. -->
+        <h1 class="hero__name" id="hero-heading">
+          <span class="hero__line">Your.</span>
+          <!-- REPLACE "Your" with your first name -->
+          <span class="hero__line">Name.</span>
+          <!-- REPLACE "Name" with your last name -->
+        </h1>
+
+        <!-- Intro copy: role + one sentence. Small Inter body text.
+             The tagline ("Web Developer & Designer") is merged here
+             instead of being a separate styled element. -->
+        <p class="hero__sub">
+          Web Developer &amp; Designer —
+          Building clean, fast, accessible interfaces.
+          <!-- REPLACE with your role and one-line description.
+               &amp; is the HTML entity for & — ampersands must be escaped. -->
+        </p>
+
+        <!-- CTA buttons -->
+        <div class="hero__ctas">
+          <a href="#projects" class="btn btn--primary">View Projects</a>
+          <a href="#contact"  class="btn btn--outline">Get In Touch</a>
+        </div>
+
+      </div>
+
+      <!-- Scroll hint — absolutely positioned bottom-left -->
+      <div class="hero__scroll-hint" aria-hidden="true">
+        <span class="section-label">SCROLL ↓</span>
+      </div>
+
+    </section>
+
+
+    <!-- ── ABOUT ──────────────────────────────────────── -->
+    <!--    aria-labelledby="about-heading" links this section to its <h2>.
+            Screen readers announce "Who I Am section" when navigating here. -->
+    <section class="section about" id="about" aria-labelledby="about-heading">
+      <div class="container">
+
+        <div class="section__header">
+          <p class="section-label">001 ABOUT</p>
+          <h2 class="section-title" id="about-heading">Who I Am</h2>
+        </div>
+
+        <!-- Two-column layout: text on left, facts on right.
+             A vertical hairline (CSS border-right) separates the two columns.
+             On mobile they stack vertically (no hairline). -->
+        <div class="about__grid">
+
+          <div class="about__text">
+            <p>
+              Hi, I'm <strong>Your Name</strong>, a [Year] Computer Science
+              student at [Your College]. I'm passionate about building
+              things for the web — from small experiments to full products.
+              <!-- REPLACE -->
+            </p>
+            <p>
+              When I'm not coding, you'll find me [hobby 1], [hobby 2],
+              or [hobby 3]. I believe great software should be both
+              functional and delightful.
+              <!-- REPLACE -->
+            </p>
+
+            <!-- Decorative HUD readout lines — purely visual, hidden from screen readers.
+                 Think of these as a data panel overlay in the "aerospace art-book" style. -->
+            <div class="about__readout" aria-hidden="true">
+              <p class="section-label">FILE_01 / NAME — YOUR NAME</p>
+              <!-- REPLACE "YOUR NAME" -->
+              <p class="section-label">FILE_02 / LOC  — CITY, INDIA</p>
+              <!-- REPLACE "CITY, INDIA" -->
+              <p class="section-label">FILE_03 / ROLE — CS STUDENT</p>
+              <!-- REPLACE "CS STUDENT" -->
+            </div>
+          </div>
+
+          <!-- Quick facts: a list of key–value pairs.
+               <ul> with role="list" is semantically correct for an unordered set of facts. -->
+          <ul class="about__facts" role="list">
+            <li class="about__fact">
+              <span class="about__fact-label section-label">Based In</span>
+              <span class="about__fact-value">Your City, India</span>
+              <!-- REPLACE -->
+            </li>
+            <li class="about__fact">
+              <span class="about__fact-label section-label">Studying</span>
+              <span class="about__fact-value">B.Tech CSE, 20XX–20XX</span>
+              <!-- REPLACE -->
+            </li>
+            <li class="about__fact">
+              <span class="about__fact-label section-label">Email</span>
+              <span class="about__fact-value">
+                <a href="mailto:you@example.com">you@example.com</a>
+                <!-- REPLACE -->
+              </span>
+            </li>
+            <li class="about__fact">
+              <span class="about__fact-label section-label">GitHub</span>
+              <span class="about__fact-value">
+                <!-- target="_blank" opens in a new tab.
+                     rel="noopener noreferrer" is a security best practice for external links:
+                     prevents the new tab from accessing window.opener. -->
+                <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer">
+                  github.com/yourusername
+                  <!-- REPLACE -->
+                </a>
+              </span>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── SKILLS — the ONE lavender section ──────────── -->
+    <section class="section skills" id="skills" aria-labelledby="skills-heading">
+      <div class="container">
+
+        <div class="section__header">
+          <p class="section-label">002 SKILLS</p>
+          <h2 class="section-title" id="skills-heading">What I Know</h2>
+        </div>
+
+        <!-- Skills rendered as full-width rows, not cards.
+             Each row: index | category name | comma-separated items | + marker.
+             Rows are separated by 1px hairlines (CSS border-bottom).
+             The + marker at the right is purely decorative (like a filter list). -->
+        <ul class="skills__list" role="list">
+
+          <li class="skill-row">
+            <!-- Mono index number — left anchor -->
+            <span class="skill-row__index section-label">01</span>
+            <!-- Category name — uppercase, prominent -->
+            <span class="skill-row__name">Languages</span>
+            <!-- Comma-separated skill items — smaller, inline -->
+            <span class="skill-row__items">HTML, CSS, JavaScript, Python, C / C++</span>
+            <!-- REPLACE with your languages -->
+            <!-- Decorative + mark at the right end -->
+            <span class="skill-row__plus" aria-hidden="true">+</span>
+          </li>
+
+          <li class="skill-row">
+            <span class="skill-row__index section-label">02</span>
+            <span class="skill-row__name">Tools &amp; Platforms</span>
+            <span class="skill-row__items">Git &amp; GitHub, VS Code, Linux, Figma</span>
+            <!-- REPLACE -->
+            <span class="skill-row__plus" aria-hidden="true">+</span>
+          </li>
+
+          <li class="skill-row">
+            <span class="skill-row__index section-label">03</span>
+            <span class="skill-row__name">Concepts</span>
+            <span class="skill-row__items">Data Structures, OOP, REST APIs, Responsive Design</span>
+            <!-- REPLACE -->
+            <span class="skill-row__plus" aria-hidden="true">+</span>
+          </li>
+
+          <li class="skill-row">
+            <span class="skill-row__index section-label">04</span>
+            <span class="skill-row__name">Soft Skills</span>
+            <span class="skill-row__items">Team Collaboration, Problem Solving, Communication, Time Management</span>
+            <!-- REPLACE -->
+            <span class="skill-row__plus" aria-hidden="true">+</span>
+          </li>
+
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- ── PROJECTS ────────────────────────────────────── -->
+    <section class="section projects" id="projects" aria-labelledby="projects-heading">
+      <div class="container">
+
+        <div class="section__header">
+          <p class="section-label">003 PROJECTS</p>
+          <h2 class="section-title" id="projects-heading">Things I've Built</h2>
+        </div>
+
+        <div class="projects__grid">
+
+          <!-- PROJECT 1
+               <article> = self-contained content that can stand alone.
+               Each card is an article: it has its own heading, description, and links. -->
+          <article class="project-card">
+
+            <!-- Placeholder thumbnail with chamfered bottom-right corner.
+                 Replace this <div> with an <img> when you have a real screenshot.
+                 The chamfered shape is applied with clip-path in CSS. -->
+            <div class="project-card__thumb" aria-hidden="true"></div>
+
+            <header class="project-card__header">
+              <span class="project-card__number section-label">PROJECT #01</span>
+              <h3 class="project-card__title">Project Alpha</h3>
+              <!-- REPLACE -->
+            </header>
+
+            <p class="project-card__desc">
+              A web application that does [something cool]. Built to solve
+              [a problem]. Features include [feature 1], [feature 2],
+              and [feature 3].
+              <!-- REPLACE -->
+            </p>
+
+            <!-- Tech tags: aria-label on the list tells screen readers what these are -->
+            <ul class="project-card__tags" role="list" aria-label="Technologies used">
+              <li class="tag">HTML</li>
+              <li class="tag">CSS</li>
+              <li class="tag">JavaScript</li>
+              <!-- REPLACE -->
+            </ul>
+
+            <footer class="project-card__footer">
+              <a href="https://github.com/yourusername/project-alpha"
+                 class="btn btn--outline btn--sm"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+              <!-- REPLACE link -->
+              <a href="https://your-live-demo.com"
+                 class="btn btn--primary btn--sm"
+                 target="_blank" rel="noopener noreferrer">Live Demo</a>
+              <!-- REPLACE link or remove if no demo -->
+            </footer>
+          </article>
+
+
+          <!-- PROJECT 2 -->
+          <article class="project-card">
+            <div class="project-card__thumb" aria-hidden="true"></div>
+            <header class="project-card__header">
+              <span class="project-card__number section-label">PROJECT #02</span>
+              <h3 class="project-card__title">Project Beta</h3>
+              <!-- REPLACE -->
+            </header>
+            <p class="project-card__desc">
+              A tool / script / site that [does something]. The main
+              challenge was [challenge]. Learned [what you learned].
+              <!-- REPLACE -->
+            </p>
+            <ul class="project-card__tags" role="list" aria-label="Technologies used">
+              <li class="tag">Python</li>
+              <li class="tag">API</li>
+              <!-- REPLACE -->
+            </ul>
+            <footer class="project-card__footer">
+              <a href="https://github.com/yourusername/project-beta"
+                 class="btn btn--outline btn--sm"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+            </footer>
+          </article>
+
+
+          <!-- PROJECT 3 -->
+          <article class="project-card">
+            <div class="project-card__thumb" aria-hidden="true"></div>
+            <header class="project-card__header">
+              <span class="project-card__number section-label">PROJECT #03</span>
+              <h3 class="project-card__title">Project Gamma</h3>
+              <!-- REPLACE -->
+            </header>
+            <p class="project-card__desc">
+              A [type] project focused on [topic]. Highlights:
+              [highlight 1] and [highlight 2].
+              <!-- REPLACE -->
+            </p>
+            <ul class="project-card__tags" role="list" aria-label="Technologies used">
+              <li class="tag">C++</li>
+              <li class="tag">Algorithms</li>
+              <!-- REPLACE -->
+            </ul>
+            <footer class="project-card__footer">
+              <a href="https://github.com/yourusername/project-gamma"
+                 class="btn btn--outline btn--sm"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+            </footer>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── EDUCATION ──────────────────────────────────── -->
+    <section class="section education" id="education" aria-labelledby="education-heading">
+      <div class="container">
+
+        <div class="section__header">
+          <p class="section-label">004 EDUCATION</p>
+          <h2 class="section-title" id="education-heading">Where I Studied</h2>
+        </div>
+
+        <!-- <ol> = ordered list — education entries are in chronological order.
+             Each entry: left column = year/index, right column = degree + school. -->
+        <ol class="education__timeline" role="list">
+
+          <li class="edu-item">
+            <div class="edu-item__meta">
+              <span class="section-label edu-item__year">20XX – Present</span>
+              <!-- REPLACE -->
+            </div>
+            <div class="edu-item__body">
+              <h3 class="edu-item__degree">
+                B.Tech in Computer Science &amp; Engineering
+                <!-- REPLACE -->
+              </h3>
+              <p class="edu-item__school">Your College Name, City</p>
+              <!-- REPLACE -->
+              <p class="edu-item__detail">CGPA: X.XX / 10.00</p>
+              <!-- REPLACE or remove -->
+            </div>
+          </li>
+
+          <li class="edu-item">
+            <div class="edu-item__meta">
+              <span class="section-label edu-item__year">20XX – 20XX</span>
+              <!-- REPLACE -->
+            </div>
+            <div class="edu-item__body">
+              <h3 class="edu-item__degree">Class XII (CBSE / State Board)</h3>
+              <!-- REPLACE -->
+              <p class="edu-item__school">Your School Name, City</p>
+              <p class="edu-item__detail">Score: XX%</p>
+            </div>
+          </li>
+
+        </ol>
+      </div>
+    </section>
+
+
+    <!-- ── CONTACT ────────────────────────────────────── -->
+    <section class="section contact" id="contact" aria-labelledby="contact-heading">
+      <div class="container">
+
+        <div class="section__header">
+          <p class="section-label">005 CONTACT</p>
+          <h2 class="section-title" id="contact-heading">Let's Talk</h2>
+        </div>
+
+        <div class="contact__body">
+          <p class="contact__desc">
+            Open to internships, freelance projects, and collaborations.
+            Drop me a line — I reply within 24 hours.
+            <!-- REPLACE -->
+          </p>
+
+          <!-- Large mono email link — the editorial "contact treatment":
+               the address itself is the primary visual element. -->
+          <a href="mailto:you@example.com" class="contact__email">
+            you@example.com
+            <!-- REPLACE -->
+          </a>
+
+          <div class="contact__links">
+            <a href="mailto:you@example.com" class="btn btn--primary">Send Email</a>
+            <!-- REPLACE -->
+            <a href="https://github.com/yourusername"
+               class="btn btn--outline"
+               target="_blank" rel="noopener noreferrer">GitHub</a>
+            <!-- REPLACE -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ══════════════════════════════════════════════════
+       FOOTER — solid black, editorial style.
+       <footer> = page-level footer landmark.
+  ══════════════════════════════════════════════════ -->
+  <footer class="footer">
+
+    <!-- Giant wordmark spanning the full footer width.
+         This is the dominant visual in the footer.
+         aria-hidden: the name also appears in the legal line below,
+         so we hide this decorative version from screen readers. -->
+    <div class="footer__wordmark" aria-hidden="true">Your Name</div>
+    <!-- REPLACE "Your Name" with your full name or initials -->
+
+    <div class="container footer__bottom">
+
+      <!-- Two-column nav block -->
+      <div class="footer__cols">
+
+        <!-- Nav column: mirrors the main navigation -->
+        <nav class="footer__col" aria-label="Footer site navigation">
+          <p class="footer__col-label section-label">Navigation</p>
+          <ul role="list">
+            <li><a href="#about"     class="footer__link">About</a></li>
+            <li><a href="#skills"    class="footer__link">Skills</a></li>
+            <li><a href="#projects"  class="footer__link">Projects</a></li>
+            <li><a href="#education" class="footer__link">Education</a></li>
+            <li><a href="#contact"   class="footer__link">Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- Social/connect column -->
+        <nav class="footer__col" aria-label="Social links">
+          <p class="footer__col-label section-label">Connect</p>
+          <ul role="list">
+            <li>
+              <a href="https://github.com/yourusername"
+                 class="footer__link"
+                 target="_blank" rel="noopener noreferrer">GitHub</a>
+              <!-- REPLACE -->
+            </li>
+            <li>
+              <a href="mailto:you@example.com" class="footer__link">Email</a>
+              <!-- REPLACE -->
+            </li>
+          </ul>
+        </nav>
+
+      </div><!-- /footer__cols -->
+
+      <!-- Copyright / legal line — the smallest text on the page -->
+      <p class="footer__legal section-label">
+        <!-- &copy; = © symbol. &mdash; = — em dash. -->
+        &copy; <span id="footer-year">2025</span> Your Name
+        &mdash; Made with HTML, CSS &amp; JS
+        <!-- REPLACE "Your Name". JS will update the year automatically in a later step. -->
+      </p>
+
+    </div><!-- /footer__bottom -->
+  </footer>
+
+
+  <script src="script.js"></script>
+  <!-- Script at end of body: HTML is fully parsed before JS runs,
+       preventing "element not found" errors. -->
+
 </body>
 </html>
