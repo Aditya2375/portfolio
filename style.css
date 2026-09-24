@@ -302,7 +302,9 @@ a:focus-visible .roll-stack {
   align-items:     center;
   justify-content: space-between;
   padding:         0 clamp(1rem, 4vw, 3rem);
-  height:          var(--nav-height);
+  /* min-height (not fixed height): long link lists (Projects) wrap to two
+     lines on tablets without overflowing the bar */
+  min-height:      var(--nav-height);
   max-width:       var(--max-width);
   margin:          0 auto;
 }
@@ -314,17 +316,6 @@ a:focus-visible .roll-stack {
   letter-spacing: -0.02em;
   color:          var(--clr-text);
   text-transform: uppercase;
-}
-
-.navbar__toggle {
-  background: none; border: none; cursor: pointer; color: inherit;
-  display: flex; flex-direction: column; justify-content: center;
-  gap: 5px; padding: 4px; width: 36px; height: 36px;
-}
-.navbar__toggle-bar {
-  display: block; width: 100%; height: 1px;
-  background-color: var(--clr-text);
-  transition: background-color var(--dur-fast) var(--easing);
 }
 
 .navbar__links { display: none; }
@@ -425,15 +416,12 @@ a:focus-visible .roll-stack {
 
 /* ─── 11. ABOUT SECTION ─────────────────────────────────────── */
 
-/* The section itself needs no extra height property — height comes from
-   .about__grid below being taller than the viewport. */
+/* Normal-height two-column grid: bio left, mono readout right (9D rebuild).
+   The portrait sequence moved to the hero; About no longer needs extra height. */
 .about__grid {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-  /* ~220vh gives enough scroll distance to complete the 5-frame sequence
-     while the bio text reads normally. Reduced to 120vh on mobile below. */
-  min-height: 220vh;
 }
 
 .about__text {
@@ -457,8 +445,8 @@ a:focus-visible .roll-stack {
   border-top:   1px solid var(--clr-line);
 }
 
-/* Right column: sticks in view as the left column scrolls. */
-.about__photo {
+/* Right column: the mono readout block that replaced the photo (9D). */
+.about__readout-col {
   display: flex;
   flex-direction: column;
 }
@@ -718,7 +706,6 @@ a:focus-visible .roll-stack {
 
 @media (min-width: 700px) {
   .navbar__links { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; justify-content: center; }
-  .navbar__toggle { display: none; }
   .navbar__cta { display: inline-flex; }
 
   /* Two-column layout: bio text left, sticky portrait right */
@@ -729,7 +716,7 @@ a:focus-visible .roll-stack {
     border-right: 1px solid var(--clr-line);
     max-width: none;
   }
-  .about__photo { flex: 2; padding-left: 4vw; }
+  .about__readout-col { flex: 2; padding-left: 4vw; }
 
   .fact-row { flex-direction: row; gap: var(--space-lg); }
   .fact-row__meta { flex-shrink: 0; width: 150px; padding-top: 0.2rem; }
@@ -740,11 +727,6 @@ a:focus-visible .roll-stack {
   .footer__cols { flex-direction: row; flex-wrap: nowrap; flex: 1; }
   .footer__bottom { flex-direction: row; align-items: flex-start; flex-wrap: wrap; }
   .footer__legal { width: 100%; margin-top: var(--space-md); }
-}
-
-/* Mobile: shorten the about section so it doesn't feel like dead scrolling */
-@media (max-width: 699px) {
-  .about__grid { min-height: 130vh; }
 }
 
 @media (min-width: 1024px) {
@@ -1099,12 +1081,6 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(4) .nav-overlay__l
 body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(5) .nav-overlay__link { opacity: 1; transform: translateX(0); transition-delay: 0.53s; }
 body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__link { opacity: 1; transform: translateX(0); transition-delay: 0.60s; }
 
-/* ── On Mobile: replace the hamburger with the left-edge MENU trigger ── */
-@media (max-width: 699px) {
-  /* The hamburger was only for mobile; the left-edge label now owns that job */
-  .navbar__toggle { display: none; }
-}
-
 
 /* --- 20. PAGE HEADER (non-home pages) ------------------------ */
 /* White full-viewport header with hairline grid, page label, giant h1, subtitle.
@@ -1121,7 +1097,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   border-bottom: 1px solid var(--clr-line);
 }
 
-/* Decorative hairline vertical grid � same pattern as the hero grid lines */
+/* Decorative hairline vertical grid — same pattern as the hero grid lines */
 .page-header__grid {
   position: absolute;
   inset: 0;
@@ -1142,7 +1118,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 .page-header__label {
-  /* mono page index � e.g. PAGE 02 / 05 � ACADEMICS */
+  /* mono page index — e.g. PAGE 02 / 05 — ACADEMICS */
   animation: fadeSlideUp 0.7s var(--easing) 0.1s both;
 }
 
@@ -1176,7 +1152,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 
 
 /* --- 21. EXPLORE SECTION (Home only) ------------------------- */
-/* 2�2 grid of chamfered cards linking to the 4 other pages */
+/* 2×2 grid of chamfered cards linking to the 4 other pages */
 .explore__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1232,11 +1208,11 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* --- 22. NAV OVERLAY � PAGE LIST VARIANT --------------------- */
+/* --- 22. NAV OVERLAY — PAGE LIST VARIANT --------------------- */
 /* Current page indicator: lavender square already provided by .section-label::before */
 
 .nav-overlay__item--current > label > a {
-  color: #FFFFFF; /* full white � indicates active page */
+  color: #FFFFFF; /* full white — indicates active page */
 }
 
 /* Sub-links: indented section anchors shown under the current page */
