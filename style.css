@@ -481,70 +481,34 @@ a:focus-visible .roll-stack {
 
 /* Normal-height two-column grid: bio left, mono readout right (9D rebuild).
    The portrait sequence moved to the hero; About no longer needs extra height. */
-.about__grid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
 
-.about__text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  font-family: var(--font-body);
-  font-size:   0.875rem;
-  line-height: 1.75;
-  color:       var(--clr-muted);
-  max-width:   52ch;
-}
+
+
+/* ABOUT + SKILLS layout/type -> Tailwind utilities (Prompt 27).
+   Concept map: gap-16/gap-8 = the --space-lg/--space-md stacks;
+   md:flex-row + md:flex-[3]/md:flex-[2] = the 700px two-column split
+   with the 4vw gutter and hairline divider; items-baseline = the
+   skill-row baseline alignment; skill-row dividers use
+   border-[rgba(0,0,0,0.12)] on lavender. Kept in CSS: .about__text strong,
+   the :last-child divider removal, and the .skills .section-label/.section-title
+   recolors (higher-specificity context overrides). */
 .about__text strong { color: var(--clr-text); font-weight: 500; }
 
-.about__readout {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top:   var(--space-sm);
-  padding-top:  var(--space-sm);
-  border-top:   1px solid var(--clr-line);
-}
 
-/* Right column: the mono readout block that replaced the photo (9D). */
-.about__readout-col {
-  display: flex;
-  flex-direction: column;
-}
+
+
 
 
 /* ─── 12. SKILLS SECTION ────────────────────────────────────── */
 
-.skills {
-  background-color: var(--clr-accent);
-  border-top-color: rgba(0, 0, 0, 0.12);
-}
+
 .skills .section-label { color: rgba(0, 0, 0, 0.65); }
 .skills .section-label::before { background-color: rgba(0, 0, 0, 0.4); }
 .skills .section-title { color: var(--clr-text); }
 
-.skills__list { display: flex; flex-direction: column; }
-.skill-row {
-  display: flex; align-items: baseline; gap: var(--space-md);
-  padding: 1.5rem 0; border-bottom: 1px solid rgba(0, 0, 0, 0.12); flex-wrap: wrap;
-}
+
 .skill-row:last-child { border-bottom: none; }
-.skill-row__index { flex-shrink: 0; min-width: 2.5rem; }
-.skill-row__name {
-  font-family: var(--font-display); font-size: 1.1rem;
-  font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em;
-  color: var(--clr-text); flex-shrink: 0; min-width: 10rem;
-}
-.skill-row__items {
-  font-family: var(--font-body); font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.65); flex-grow: 1;
-}
-.skill-row__plus {
-  font-family: var(--font-mono); font-size: 1.1rem; font-weight: 400;
-  color: rgba(0, 0, 0, 0.35); flex-shrink: 0; margin-left: auto;
-}
+
 
 
 /* ─── 13. PROJECTS SECTION ──────────────────────────────────── */
@@ -720,14 +684,8 @@ a:focus-visible .roll-stack {
   /* navbar responsive rules moved to md: utilities (Prompt 27) */
 
   /* Two-column layout: bio text left, sticky portrait right */
-  .about__grid { flex-direction: row; }
-  .about__text {
-    flex: 3;
-    padding-right: 4vw;
-    border-right: 1px solid var(--clr-line);
-    max-width: none;
-  }
-  .about__readout-col { flex: 2; padding-left: 4vw; }
+
+
 
   .fact-row { flex-direction: row; gap: var(--space-lg); }
   .fact-row__meta { flex-shrink: 0; width: 150px; padding-top: 0.2rem; }
