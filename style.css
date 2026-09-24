@@ -1340,3 +1340,121 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
+
+
+/* ─── 26. INTRO SCREEN (Prompt 10) ──────────────────────────
+   Full-screen black gate shown once per visit. Injected by JS;
+   wiped away with an upward clip-path on ENTER. */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 950; /* above navbar(800) and menu overlay(850) */
+  background-color: var(--clr-footer);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 0.7s var(--easing);
+}
+
+/* ENTER wipes the overlay upward, revealing the hero beneath */
+.intro--leaving {
+  clip-path: inset(0 0 100% 0);
+  pointer-events: none;
+}
+
+.intro__stage { position: relative; }
+
+.intro__word {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 14vw, 9rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #FFFFFF;
+}
+
+/* The small card circling the wordmark: a rotating wrapper carries a
+   lavender chamfered chip at its top edge, so the chip orbits the name. */
+.intro__orbit {
+  position: absolute;
+  inset: -2.5rem;
+  pointer-events: none;
+  animation: introOrbit 3s linear infinite;
+}
+.intro__orbit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 14px;
+  height: 22px;
+  background-color: var(--clr-accent);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
+}
+@keyframes introOrbit {
+  to { transform: rotate(360deg); }
+}
+
+.intro__readout {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ENTER buttons stay dimmed until preloading finishes (or the 6s
+   safety timeout fires), so the readout reads as the loading state. */
+.intro__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  opacity: 0.35;
+  transition: opacity var(--dur-base) var(--easing);
+}
+.intro--ready .intro__actions { opacity: 1; }
+
+.intro__btn {
+  background-color: transparent;
+  color: #FFFFFF;
+  outline: 1px solid #FFFFFF;
+  outline-offset: -1px;
+  border: none;
+}
+.intro__btn:hover, .intro__btn:focus-visible {
+  background-color: #FFFFFF;
+  color: var(--clr-text);
+}
+
+/* While the intro gates the first visit, hold every load-in animation
+   at its first frame; removing .intro-gated runs them on ENTER. */
+.intro-gated .reveal-text,
+.intro-gated .hero__content > .section-label,
+.intro-gated .hero__content .hero__sub,
+.intro-gated .hero__content .hero__ctas,
+.intro-gated .page-header__label,
+.intro-gated .page-header__title,
+.intro-gated .page-header__sub {
+  animation-play-state: paused;
+}
+
+/* TAP FOR SOUND chip: shown when the browser blocks audio after a
+   page change; one tap starts this page's track. */
+.tap-sound {
+  position: fixed;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  z-index: 940;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.7em 1.2em;
+  background-color: var(--clr-footer);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+}
