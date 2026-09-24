@@ -1638,3 +1638,44 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   text-transform: uppercase;
   color: var(--clr-muted);
 }
+
+
+/* ─── 31. SIDE MENU HOVER BLOCKS (Prompt 16) ──────────────────
+   kprverse-style: the hovered item gets a translucent highlight
+   block with a chamfered bottom-right corner and a tiny mono index
+   tag at its top-right. The current page sits on solid lavender. */
+.nav-overlay__item > label > a {
+  position: relative;
+  padding: 0.08em 0.35em 0.08em 0.15em;
+  transition: color var(--dur-fast) ease, background-color var(--dur-fast) ease;
+}
+
+.nav-overlay__item:hover > label > a {
+  background-color: rgba(255, 255, 255, 0.08);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+}
+
+/* Tiny mono index tag at the hovered item's top-right */
+.nav-overlay__item:hover::after {
+  content: attr(data-index);
+  position: absolute;
+  top: 0.35rem;
+  right: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
+.nav-overlay__item { position: relative; width: fit-content; }
+
+/* Current page: solid lavender block, ink text */
+.nav-overlay__item--current > label > a {
+  background-color: var(--clr-accent);
+  color: var(--clr-text);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
+}
+.nav-overlay__item--current:hover > label > a {
+  background-color: var(--clr-accent);
+  color: var(--clr-text);
+}
