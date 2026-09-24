@@ -240,3 +240,58 @@ function showTapForSound() {
   overlay.querySelector('[data-sound="on"]').addEventListener('click', () => enter(true));
   overlay.querySelector('[data-sound="off"]').addEventListener('click', () => enter(false));
 })();
+
+/* ─── PROMPT 11: SCRAMBLE ENGINE ─────────────────────────────
+   kprverse-style decode, hand-written (no library): revealed
+   letters lock in from left to right while the rest flicker as
+   random uppercase letters, settling in ~0.3-0.5s.
+   Exposed on window so every later feature can call it.
+   The original text is kept in data-scramble-text, so it is
+   never lost no matter how often the effect runs. */
+const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&@$';
+
+window.scrambleText = function scrambleText(el, { duration = 400, tick = false } = {}) {
+  if (REDUCED_MOTION) return; // reduced motion: text simply appears
+  if (el._scrambling) return; // never restart a scramble that is running
+  if (!el.dataset.scrambleText) el.dataset.scrambleText = el.textContent;
+  const original = el.dataset.scrambleText;
+  el._scrambling = true;
+  const start = performance.now();
+  let lastTick = 0;
+
+  (function frame(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const lockCount = Math.floor(p * original.length);
+    let out = original.slice(0, lockCount); // locked-in real letters
+    for (let i = lockCount; i < original.length; i++) {
+      out += original[i] === ' '
+        ? ' '
+        : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0];
+    }
+    el.textContent = out;
+    /* The tick is throttled to one every ~90ms (a few frames), so rapid
+       scrambles never overlap ticks into a buzz - and only with sound on. */
+    if (tick && p < 1 && now - lastTick > 90) {
+      lastTick = now;
+      playSfx('assets/sfx/scramble.mp3', 0.12);
+    }
+    if (p < 1) requestAnimationFrame(frame);
+    else { el.textContent = original; el._scrambling = false; }
+  })(performance.now());
+};
+
+/* First use of the engine: the mono section labels (001 / 002 ...)
+   decode once when they first enter the viewport. IntersectionObserver
+   + unobserve guarantees exactly one pass per label. */
+(function initLabelScramble() {
+  const labels = document.querySelectorAll('.section__header .section-label');
+  if (!labels.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      window.scrambleText(entry.target, { tick: true });
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.6 });
+  labels.forEach(label => io.observe(label));
+})();
