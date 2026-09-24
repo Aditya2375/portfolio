@@ -84,7 +84,11 @@ body {
   line-height:      1.6;
   font-size:        0.9375rem;
   min-height:       100vh;
+  /* overflow-x: clip, not hidden: hidden makes <body> a scroll container,
+     which breaks animation-timeline: view() (Prompt 17) - the view
+     timeline would track a scrollport that never scrolls. */
   overflow-x:       hidden;
+  overflow-x:       clip;
   
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 0v10m0 4v10M0 12h10m4 0h10' stroke='%231B1B1B' stroke-width='1'/%3E%3C/svg%3E") 12 12, crosshair;
 }
@@ -1679,3 +1683,45 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   background-color: var(--clr-accent);
   color: var(--clr-text);
 }
+
+
+/* ─── 32. DEPTH PARALLAX (Prompt 17) ──────────────────────────
+   Two systems that add up instead of fighting:
+   - mouse offsets live on the `transform` property (JS, below)
+   - scroll drift lives on the individual `translate` property
+     (pure CSS scroll-driven animation, composes with transform) */
+
+/* Perspective wrapper for the hero 3D tilt: the text block rotates
+   in 3D, the portrait frames stay flat (JS only transforms
+   .hero__content). No visual effect until JS applies a rotation. */
+.hero-sticky { perspective: 1000px; }
+
+/* Bleed so the back plate never exposes an edge while drifting
+   (mouse ±3px + scroll ±5px < 10px bleed) */
+.layer-back { inset: -10px; }
+
+/* Promote the drifting layers only where the effects can run */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .layer-back, .layer-mid, .layer-front { will-change: transform, translate; }
+}
+
+/* Scroll parallax, CSS-only: as a card crosses the viewport its
+   layers drift at different speeds (back 10px, mid 15px, front 20px)
+   so it reads like a camera moving past. Progressive: browsers
+   without scroll-driven animations simply skip it. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Named view-timeline on the CARD, not anonymous view() on the layers:
+       anonymous view() tracks the nearest scrollport, which here is
+       .project-card__thumb (overflow: hidden) - a scrollport that never
+       scrolls, which pinned the timeline at 50% forever. The card's
+       nearest scrollport is the root viewport, so --card tracks real scroll. */
+    .project-card { view-timeline: --card block; }
+    .layer-back  { animation: layer-scroll-back  linear both; animation-timeline: --card; animation-range: entry 0% exit 100%; }
+    .layer-mid   { animation: layer-scroll-mid   linear both; animation-timeline: --card; animation-range: entry 0% exit 100%; }
+    .layer-front { animation: layer-scroll-front linear both; animation-timeline: --card; animation-range: entry 0% exit 100%; }
+  }
+}
+@keyframes layer-scroll-back  { from { translate: 0  5px;   } to { translate: 0 -5px;   } }
+@keyframes layer-scroll-mid   { from { translate: 0  7.5px; } to { translate: 0 -7.5px; } }
+@keyframes layer-scroll-front { from { translate: 0 10px;   } to { translate: 0 -10px;  } }
