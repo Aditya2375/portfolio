@@ -1127,7 +1127,106 @@ window._sectionJump = function _sectionJump(target) {
     duration: 1.1,        /* seconds of glide per wheel gesture - weighty, not twitchy */
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), /* exponential-out: fast start, soft landing */
     smoothWheel: true,    /* smooth the mouse wheel (trackpads already glide) */
-    autoRaf: true         /* Lenis runs its own requestAnimationFrame loop */
+    autoRaf: typeof gsap === 'undefined'
+    /* One rAF authority only: when GSAP is present its ticker drives
+       lenis.raf (Prompt 23), so autoRaf must stand down; when GSAP is
+       absent Lenis runs its own loop. Double-driving would double-step
+       the scroll every frame. */
   });
   window._lenis = lenis;  /* the transition jump and the guide reach it here */
+})();
+
+/* ─── PROMPT 23: GSAP + SCROLLTRIGGER ─────────────────────────
+   Loaded from the jsDelivr CDN in every page. Everything below is
+   layered: if the CDN fails, the CSS scroll-driven versions under
+   Prompts 9G/17/23-fallbacks keep working untouched. Reduced motion
+   skips all of it. */
+(function initGsap() {
+  if (REDUCED_MOTION) return;
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* 1. Lenis <-> ScrollTrigger sync. Lenis is the scroll source of
+     truth, so ScrollTrigger must re-measure on every Lenis scroll
+     event (ScrollTrigger.update), and Lenis must step inside GSAP's
+     ticker so scroll physics and tween sampling share one clock -
+     two independent rAF loops would drift a frame apart and judder. */
+  if (window._lenis) {
+    window._lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => window._lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0); /* no catch-up jumps after tab switches */
+  }
+
+  /* 2a. Page background fades white -> soft lavender -> white as the
+     skills section passes through (index only). Flat colors only. */
+  const skills = document.getElementById('skills');
+  if (skills) {
+    gsap.timeline({
+      scrollTrigger: { trigger: skills, start: 'top bottom', end: 'bottom top', scrub: true }
+    })
+      .to(document.body, { backgroundColor: '#E9E4F8', ease: 'none' })
+      .to(document.body, { backgroundColor: '#FFFFFF', ease: 'none' });
+  }
+
+  /* 2b. Mountains art break (beyond.html): re-drive the ridges with
+     ScrollTrigger scrub so speeds feel physical. The CSS animation is
+     switched off inline so the two never run at the same time. */
+  const artBack = document.querySelector('.art-layer--back');
+  const artMid = document.querySelector('.art-layer--mid');
+  if (artBack && artMid) {
+    [artBack, artMid].forEach(l => { l.style.animation = 'none'; });
+    gsap.fromTo(artBack, { yPercent: -10 }, {
+      yPercent: 20, ease: 'none',
+      scrollTrigger: { trigger: '.art-break', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+    gsap.fromTo(artMid, { yPercent: -5 }, {
+      yPercent: 10, ease: 'none',
+      scrollTrigger: { trigger: '.art-break', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  }
+
+  /* 3. Fallbacks ONLY for browsers without CSS scroll-driven
+     animations - where CSS handles it, GSAP stays off these. */
+  const cssScrollOK = CSS.supports('animation-timeline: scroll()');
+  const cssViewOK = CSS.supports('animation-timeline: view()');
+
+  /* 3a. Hero portrait sequence fallback: 12-frame crossfade + slight
+     scale, reading the same --frame-count as the CSS version. */
+  const stage = document.querySelector('.hero-stage');
+  if (stage && !cssScrollOK) {
+    const frames = [...stage.querySelectorAll('.portrait-frame')];
+    const count = parseInt(stage.style.getPropertyValue('--frame-count'), 10) || frames.length;
+    gsap.set(frames, { opacity: 0, animation: 'none' });
+    ScrollTrigger.create({
+      trigger: stage, start: 'top top', end: 'bottom bottom', scrub: true,
+      onUpdate(self) {
+        const p = self.progress;
+        const current = Math.min(count, Math.floor(p * count) + 1);
+        frames.forEach((f, i) => {
+          const on = (i + 1) <= current;
+          f.style.opacity = on ? 1 : 0;
+          if (on) f.style.transform = `scale(${(1 + 0.03 * p).toFixed(4)})`; /* the slight zoom */
+        });
+      }
+    });
+  }
+
+  /* 3b. Project-card layer parallax fallback: same drifts as the CSS
+     keyframes (back 10px, mid 15px, front 20px), scrubbed. */
+  if (!cssViewOK) {
+    document.querySelectorAll('.project-card').forEach(card => {
+      const layers = [
+        { el: card.querySelector('.layer-back'),  px: 5 },
+        { el: card.querySelector('.layer-mid'),   px: 7.5 },
+        { el: card.querySelector('.layer-front'), px: 10 }
+      ].filter(l => l.el);
+      layers.forEach(({ el, px }) => {
+        el.style.animation = 'none';
+        gsap.fromTo(el, { y: px }, {
+          y: -px, ease: 'none',
+          scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true }
+        });
+      });
+    });
+  }
 })();
