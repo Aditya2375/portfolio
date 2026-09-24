@@ -1,0 +1,221 @@
+
+/* ─── 20. PAGE HEADER (non-home pages) ──────────────────────── */
+/* White full-viewport header with hairline grid, page label, giant h1, subtitle.
+   Replaces the hero on Academics, Projects, Beyond, Community pages. */
+.page-header {
+  min-height: 60vh;
+  padding-top: var(--nav-height);
+  padding-bottom: var(--space-lg);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-color: var(--clr-bg);
+  border-bottom: 1px solid var(--clr-line);
+}
+
+/* Decorative hairline vertical grid — same pattern as the hero grid lines */
+.page-header__grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg, transparent 0px, transparent 119px,
+    var(--clr-line) 119px, var(--clr-line) 120px
+  );
+}
+
+.page-header__inner {
+  position: relative;
+  z-index: 1;
+  padding: 0 clamp(1rem, 8vw, 6rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.page-header__label {
+  /* mono page index — e.g. PAGE 02 / 05 — ACADEMICS */
+  animation: fadeSlideUp 0.7s var(--easing) 0.1s both;
+}
+
+.page-header__title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 12vw, 9rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  color: var(--clr-text);
+  /* clip mask for the staggered reveal-text spans */
+  overflow: hidden;
+  animation: fadeSlideUp 0.7s var(--easing) 0.15s both;
+}
+
+/* Each line of the title wraps an overflow:hidden clipping box */
+.page-header__line {
+  display: block;
+  overflow: hidden;
+}
+
+.page-header__sub {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--clr-muted);
+  max-width: 50ch;
+  line-height: 1.65;
+  animation: fadeSlideUp 0.7s var(--easing) 0.35s both;
+}
+
+
+/* ─── 21. EXPLORE SECTION (Home only) ───────────────────────── */
+/* 2×2 grid of chamfered cards linking to the 4 other pages */
+.explore__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.explore-card {
+  /* chamfer applied via .chamfer class in HTML */
+  border: 1px solid var(--clr-line);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  transition: border-color var(--dur-fast) var(--easing);
+  background-color: var(--clr-bg);
+}
+
+.explore-card:hover {
+  border-color: var(--clr-text);
+}
+
+.explore-card__index {
+  /* mono 02, 03, 04, 05 */
+}
+
+.explore-card__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--clr-text);
+}
+
+.explore-card__desc {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--clr-muted);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.explore-card__link {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+@media (max-width: 699px) {
+  .explore__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ─── 22. NAV OVERLAY — PAGE LIST VARIANT ───────────────────── */
+/* Current page indicator: lavender square already provided by .section-label::before */
+
+.nav-overlay__item--current > label > a {
+  color: #FFFFFF; /* full white — indicates active page */
+}
+
+/* Sub-links: indented section anchors shown under the current page */
+.nav-overlay__sub {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-left: 1px solid rgba(255,255,255,0.15);
+}
+
+.nav-overlay__sub-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  transition: color var(--dur-fast) var(--easing);
+}
+
+.nav-overlay__sub-link:hover,
+.nav-overlay__sub-link:focus-visible {
+  color: #FFFFFF;
+}
+
+
+/* ─── 23. NEXT PAGE ROW ─────────────────────────────────────── */
+/* Thin hairline row at the bottom of every page before the footer.
+   Mono NEXT label + giant Archivo Black page name + arrow. */
+.next-page {
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--clr-line);
+  border-bottom: 1px solid var(--clr-line);
+}
+
+.next-page .container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.next-page__link {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  color: var(--clr-text);
+  transition: color var(--dur-fast) var(--easing);
+}
+
+.next-page__link:hover {
+  color: var(--clr-accent);
+}
+
+.next-page__name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.next-page__arrow {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  transition: transform var(--dur-base) var(--easing);
+}
+
+.next-page__link:hover .next-page__arrow {
+  transform: translateX(8px);
+}
+
+
+/* ─── 24. ALL PROJECTS LINK (Home featured projects) ────────── */
+.projects__all-link {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-md);
+}
+
+
+/* ─── 25. ART BREAK CAPTION ─────────────────────────────────── */
+.art-break__caption {
+  position: absolute;
+  bottom: var(--space-sm);
+  left: clamp(1rem, 5vw, 3rem);
+  opacity: 0.6;
+}
