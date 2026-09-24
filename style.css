@@ -513,35 +513,27 @@ a:focus-visible .roll-stack {
 
 /* ─── 13. PROJECTS SECTION ──────────────────────────────────── */
 
-.projects__grid { display: grid; grid-template-columns: 1fr; gap: var(--space-sm); }
 
-.project-card {
-  display: flex; flex-direction: column; gap: var(--space-sm);
-  padding-bottom: var(--space-md); border-top: 2px solid var(--clr-text);
-  transition: border-top-color var(--dur-base) var(--easing);
-}
-.project-card:hover { border-top-color: var(--clr-accent); }
 
+
+
+/* PROJECTS grid + cards -> Tailwind utilities (Prompt 27).
+   Concept map: grid-cols-1 -> md:auto-fill/minmax(300px) = the responsive
+   card grid; border-t-2 border-ink + hover:border-accent = the ink top
+   rule that flips lavender on hover (transition-colors + the 300ms site
+   easing); outline outline-hairline on .tag = the 1px hairline chip.
+   Kept in CSS: .project-card__thumb (clip-path chamfer) and its
+   scroll-driven @supports block. */
 .project-card__thumb {
   height: 140px; background-color: var(--clr-line);
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
 }
-.project-card__header { display: flex; flex-direction: column; gap: 4px; }
-.project-card__title {
-  font-family: var(--font-display); font-size: 1.3rem; font-weight: 900;
-  text-transform: uppercase; letter-spacing: -0.02em; line-height: 1; color: var(--clr-text);
-}
-.project-card__desc {
-  font-family: var(--font-body); font-size: 0.8125rem; color: var(--clr-muted);
-  line-height: 1.65; flex-grow: 1; max-width: 42ch;
-}
-.project-card__tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-.tag {
-  font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.08em;
-  text-transform: uppercase; padding: 0.3em 0.6em; color: var(--clr-muted);
-  outline: 1px solid var(--clr-line);
-}
-.project-card__footer { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; }
+
+
+
+
+
+
 
 
 /* ─── 13.5 ART BREAK ────────────────────────────────────────── */
@@ -691,7 +683,7 @@ a:focus-visible .roll-stack {
   .fact-row__meta { flex-shrink: 0; width: 150px; padding-top: 0.2rem; }
   .fact-row__body { flex: 1; }
 
-  .projects__grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+
 
   .footer__cols { flex-direction: row; flex-wrap: nowrap; flex: 1; }
   .footer__bottom { flex-direction: row; align-items: flex-start; flex-wrap: wrap; }
@@ -1429,7 +1421,10 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 
 /* ─── 29. SCROLLSPY ACTIVE LINK (Prompt 15) ───────────────────
    KPR-style filled square before the active navbar link. */
-.navbar__link--active {
+/* Doubled class = specificity 0,2,0 so the JS state color beats the
+   equal-specificity text-muted utility (Tailwind's style tag lands after
+   style.css, so a plain .navbar__link--active would lose). */
+.navbar__link.navbar__link--active {
   color: var(--clr-text);
 }
 .navbar__link--active::before {

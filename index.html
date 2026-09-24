@@ -264,8 +264,8 @@
           <p class="section-label">003 FEATURED PROJECTS</p>
           <h2 class="section-title" id="projects-heading"><span class="reveal-text">Things I've Built</span></h2>
         </div>
-        <div class="projects__grid">
-          <article class="project-card">
+        <div class="projects__grid grid grid-cols-1 gap-4 md:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+          <article class="project-card flex flex-col gap-4 pb-8 border-t-2 border-ink transition-colors duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-accent">
             <div class="project-card__thumb" aria-hidden="true">
               <div class="layer-back">
                 <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
@@ -281,23 +281,23 @@
                 <span class="plate-keyword">PIPELINE</span>
               </div>
             </div>
-            <header class="project-card__header">
+            <header class="project-card__header flex flex-col gap-1">
               <span class="project-card__number section-label">PROJECT #01</span>
-              <h3 class="project-card__title">Portfolio Workflow</h3>
+              <h3 class="project-card__title font-display text-[1.3rem] font-black uppercase tracking-[-0.02em] leading-none text-ink">Portfolio Workflow</h3>
             </header>
-            <p class="project-card__desc">
+            <p class="project-card__desc font-body text-[0.8125rem] text-muted leading-[1.65] grow max-w-[42ch]">
               Designed and built with an AI-assisted workflow: a custom prompt system driving the whole build, AI-generated scroll-animation assets, and a sectioned music engine.
             </p>
             <p class="project-card__tech section-label">HTML / CSS / PROMPT ENGINEERING</p>
-            <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">HTML</li><li class="tag">CSS</li><li class="tag">Prompt Engineering</li>
+            <ul class="project-card__tags flex flex-wrap gap-[0.35rem]" role="list" aria-label="Technologies used">
+              <li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">HTML</li><li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">CSS</li><li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">Prompt Engineering</li>
             </ul>
-            <footer class="project-card__footer">
+            <footer class="project-card__footer flex flex-wrap gap-2 mt-auto">
               <span class="project-card__no-link section-label">LINK PENDING DEPLOY</span>
             </footer>
           </article>
 
-          <article class="project-card">
+          <article class="project-card flex flex-col gap-4 pb-8 border-t-2 border-ink transition-colors duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-accent">
             <div class="project-card__thumb" aria-hidden="true">
               <div class="layer-back">
                 <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
@@ -312,23 +312,23 @@
                 <span class="plate-keyword">GATEWAY</span>
               </div>
             </div>
-            <header class="project-card__header">
+            <header class="project-card__header flex flex-col gap-1">
               <span class="project-card__number section-label">PROJECT #02</span>
-              <h3 class="project-card__title">OmniRoute</h3>
+              <h3 class="project-card__title font-display text-[1.3rem] font-black uppercase tracking-[-0.02em] leading-none text-ink">OmniRoute</h3>
             </header>
-            <p class="project-card__desc">
+            <p class="project-card__desc font-body text-[0.8125rem] text-muted leading-[1.65] grow max-w-[42ch]">
               Local AI coding setup: Claude Code routed through OmniRoute, an open-source local LLM gateway, so it runs on Google's free Gemini API tier instead of a paid plan. Configured the gateway endpoint, provider keys and environment variables on Windows, then debugged it over two days with an AI assistant: traced an HTTP 400 schema error to a known upstream bug and fixed it by patching compiled JavaScript runtime chunks. Local setup, not a repo.
             </p>
             <p class="project-card__tech section-label">POWERSHELL / NODE.JS / REST APIS</p>
-            <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">PowerShell</li><li class="tag">Node.js/npm</li><li class="tag">REST APIs</li>
+            <ul class="project-card__tags flex flex-wrap gap-[0.35rem]" role="list" aria-label="Technologies used">
+              <li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">PowerShell</li><li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">Node.js/npm</li><li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">REST APIs</li>
             </ul>
-            <footer class="project-card__footer">
+            <footer class="project-card__footer flex flex-wrap gap-2 mt-auto">
               <span class="project-card__no-link section-label">NO PUBLIC LINK — LOCAL SETUP</span>
             </footer>
           </article>
 
-          <article class="project-card">
+          <article class="project-card flex flex-col gap-4 pb-8 border-t-2 border-ink transition-colors duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-accent">
             <div class="project-card__thumb" aria-hidden="true">
               <div class="layer-back">
                 <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
@@ -345,18 +345,18 @@
                 <span class="plate-keyword">PRACTICE</span>
               </div>
             </div>
-            <header class="project-card__header">
+            <header class="project-card__header flex flex-col gap-1">
               <span class="project-card__number section-label">PROJECT #05</span>
-              <h3 class="project-card__title">CP Practice Pipeline</h3>
+              <h3 class="project-card__title font-display text-[1.3rem] font-black uppercase tracking-[-0.02em] leading-none text-ink">CP Practice Pipeline</h3>
             </header>
-            <p class="project-card__desc">
+            <p class="project-card__desc font-body text-[0.8125rem] text-muted leading-[1.65] grow max-w-[42ch]">
               Competitive programming practice with a pipeline behind it: Codeforces solutions auto-pushed to GitHub via the CFPusher extension, plus a daily streak system.
             </p>
             <p class="project-card__tech section-label">C++ / CODEFORCES / GITHUB ACTIONS</p>
-            <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">C++</li><li class="tag">Codeforces</li><li class="tag">GitHub Actions</li>
+            <ul class="project-card__tags flex flex-wrap gap-[0.35rem]" role="list" aria-label="Technologies used">
+              <li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">C++</li><li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">Codeforces</li><li class="tag font-mono text-[0.625rem] tracking-[0.08em] uppercase py-[0.3em] px-[0.6em] text-muted outline outline-1 outline-hairline">GitHub Actions</li>
             </ul>
-            <footer class="project-card__footer">
+            <footer class="project-card__footer flex flex-wrap gap-2 mt-auto">
               <a href="https://github.com/Aditya2375/Competitive_Programming_Practice" class="btn btn--outline btn--sm" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
             </footer>
           </article>
