@@ -21,7 +21,7 @@
        bg-accent / text-ink / border-hairline / font-display match the
        design system exactly. */
     tailwind.config = {
-      corePlugins: { preflight: false },
+      corePlugins: { preflight: false, container: false } /* container OFF: collides with the site2019s own .container class */,
       theme: {
         /* the site's own breakpoints as md/lg, so responsive utilities
            match the existing 700px / 1024px media queries exactly */
@@ -194,8 +194,8 @@
           <p class="section-label">001 ABOUT</p>
           <h2 class="section-title" id="about-heading"><span class="reveal-text">Who I Am</span></h2>
         </div>
-        <div class="about__grid">
-          <div class="about__text">
+        <div class="about__grid flex flex-col gap-16 md:flex-row">
+          <div class="about__text flex flex-col gap-8 font-body text-[0.875rem] leading-[1.75] text-muted max-w-[52ch] md:max-w-none md:flex-[3] md:pr-[4vw] md:border-r md:border-hairline">
             <p>
               I'm Aditya Kulkarni, 18, from Pune — now in Bengaluru studying CS and AI at Scaler School of Technology, and parallelly pursuing an undergraduation in Computer Science from BITS Pilani. I scored a 97.4 percentile in JEE Main, a 98.4 in MHT-CET, and AIR 21,300 in JEE Advanced, and I picked SST because it lets me build from day one. Right now that means AI tooling, web projects, and competitive programming in C++.
             </p>
@@ -203,8 +203,8 @@
               Outside the compiler, I run and cycle, and I have been trekking with GGIM Pune for the past seven years — monthly Sahyadri climbs, five Himalayan summits, and the first to summit Thorate Lake. I play the guitar and piano and sing too, led my school's debate club, was the school captain, and organized all of the school and society events. I post what I'm learning on LinkedIn as I go.
             </p>
           </div>
-          <div class="about__readout-col">
-            <div class="about__readout" aria-hidden="true">
+          <div class="about__readout-col flex flex-col md:flex-[2] md:pl-[4vw]">
+            <div class="about__readout flex flex-col gap-1 mt-4 pt-4 border-t border-hairline" aria-hidden="true">
               <p class="section-label">FILE_01 / NAME - ADITYA KULKARNI</p>
               <p class="section-label">FILE_02 / BASE - BENGALURU</p>
               <p class="section-label">FILE_03 / ROLE - CS STUDENT + BUILDER</p>
@@ -216,42 +216,42 @@
     </section>
 
     <!-- ── SKILLS ─────────────────────────────────────── -->
-    <section class="section skills" id="skills" aria-labelledby="skills-heading">
+    <section class="section skills bg-accent border-t-[rgba(0,0,0,0.12)]" id="skills" aria-labelledby="skills-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">002 SKILLS</p>
           <h2 class="section-title" id="skills-heading"><span class="reveal-text">What I Know</span></h2>
         </div>
-        <ul class="skills__list" role="list">
-          <li class="skill-row">
-            <span class="skill-row__index section-label">01</span>
-            <span class="skill-row__name">Languages</span>
-            <span class="skill-row__items">HTML / CSS / Java / C / C++ (competitive programming) / JavaScript (learning)</span>
-            <span class="skill-row__plus" aria-hidden="true">+</span>
+        <ul class="skills__list flex flex-col" role="list">
+          <li class="skill-row flex items-baseline gap-8 py-6 border-b border-[rgba(0,0,0,0.12)] flex-wrap">
+            <span class="skill-row__index section-label shrink-0 min-w-10">01</span>
+            <span class="skill-row__name font-display text-[1.1rem] font-black uppercase tracking-[-0.02em] text-ink shrink-0 min-w-40">Languages</span>
+            <span class="skill-row__items font-body text-[0.875rem] text-[rgba(0,0,0,0.65)] grow">HTML / CSS / Java / C / C++ (competitive programming) / JavaScript (learning)</span>
+            <span class="skill-row__plus font-mono text-[1.1rem] font-normal text-[rgba(0,0,0,0.35)] shrink-0 ml-auto" aria-hidden="true">+</span>
           </li>
-          <li class="skill-row">
-            <span class="skill-row__index section-label">02</span>
-            <span class="skill-row__name">Frontend</span>
-            <span class="skill-row__items">responsive layouts / Flexbox + Grid / CSS animation / this site, hand-built</span>
-            <span class="skill-row__plus" aria-hidden="true">+</span>
+          <li class="skill-row flex items-baseline gap-8 py-6 border-b border-[rgba(0,0,0,0.12)] flex-wrap">
+            <span class="skill-row__index section-label shrink-0 min-w-10">02</span>
+            <span class="skill-row__name font-display text-[1.1rem] font-black uppercase tracking-[-0.02em] text-ink shrink-0 min-w-40">Frontend</span>
+            <span class="skill-row__items font-body text-[0.875rem] text-[rgba(0,0,0,0.65)] grow">responsive layouts / Flexbox + Grid / CSS animation / this site, hand-built</span>
+            <span class="skill-row__plus font-mono text-[1.1rem] font-normal text-[rgba(0,0,0,0.35)] shrink-0 ml-auto" aria-hidden="true">+</span>
           </li>
-          <li class="skill-row">
-            <span class="skill-row__index section-label">03</span>
-            <span class="skill-row__name">Tools</span>
-            <span class="skill-row__items">Git / GitHub / PowerShell / Node.js + npm / REST APIs (curl) / Claude Code / Antigravity</span>
-            <span class="skill-row__plus" aria-hidden="true">+</span>
+          <li class="skill-row flex items-baseline gap-8 py-6 border-b border-[rgba(0,0,0,0.12)] flex-wrap">
+            <span class="skill-row__index section-label shrink-0 min-w-10">03</span>
+            <span class="skill-row__name font-display text-[1.1rem] font-black uppercase tracking-[-0.02em] text-ink shrink-0 min-w-40">Tools</span>
+            <span class="skill-row__items font-body text-[0.875rem] text-[rgba(0,0,0,0.65)] grow">Git / GitHub / PowerShell / Node.js + npm / REST APIs (curl) / Claude Code / Antigravity</span>
+            <span class="skill-row__plus font-mono text-[1.1rem] font-normal text-[rgba(0,0,0,0.35)] shrink-0 ml-auto" aria-hidden="true">+</span>
           </li>
-          <li class="skill-row">
-            <span class="skill-row__index section-label">04</span>
-            <span class="skill-row__name">Learning</span>
-            <span class="skill-row__items">data structures + algorithms / backend / JavaScript / C / competitive programming / open source contribution</span>
-            <span class="skill-row__plus" aria-hidden="true">+</span>
+          <li class="skill-row flex items-baseline gap-8 py-6 border-b border-[rgba(0,0,0,0.12)] flex-wrap">
+            <span class="skill-row__index section-label shrink-0 min-w-10">04</span>
+            <span class="skill-row__name font-display text-[1.1rem] font-black uppercase tracking-[-0.02em] text-ink shrink-0 min-w-40">Learning</span>
+            <span class="skill-row__items font-body text-[0.875rem] text-[rgba(0,0,0,0.65)] grow">data structures + algorithms / backend / JavaScript / C / competitive programming / open source contribution</span>
+            <span class="skill-row__plus font-mono text-[1.1rem] font-normal text-[rgba(0,0,0,0.35)] shrink-0 ml-auto" aria-hidden="true">+</span>
           </li>
-          <li class="skill-row">
-            <span class="skill-row__index section-label">05</span>
-            <span class="skill-row__name">Off Keyboard</span>
-            <span class="skill-row__items">communication + articulation (debate club lead, Orators SST) / decision-making under pressure / critical thinking / participated in 6 hackathons with multiple podium finishes / gym 5 days a week</span>
-            <span class="skill-row__plus" aria-hidden="true">+</span>
+          <li class="skill-row flex items-baseline gap-8 py-6 border-b border-[rgba(0,0,0,0.12)] flex-wrap">
+            <span class="skill-row__index section-label shrink-0 min-w-10">05</span>
+            <span class="skill-row__name font-display text-[1.1rem] font-black uppercase tracking-[-0.02em] text-ink shrink-0 min-w-40">Off Keyboard</span>
+            <span class="skill-row__items font-body text-[0.875rem] text-[rgba(0,0,0,0.65)] grow">communication + articulation (debate club lead, Orators SST) / decision-making under pressure / critical thinking / participated in 6 hackathons with multiple podium finishes / gym 5 days a week</span>
+            <span class="skill-row__plus font-mono text-[1.1rem] font-normal text-[rgba(0,0,0,0.35)] shrink-0 ml-auto" aria-hidden="true">+</span>
           </li>
         </ul>
       </div>

@@ -21,7 +21,7 @@
        bg-accent / text-ink / border-hairline / font-display match the
        design system exactly. */
     tailwind.config = {
-      corePlugins: { preflight: false },
+      corePlugins: { preflight: false, container: false } /* container OFF: collides with the site2019s own .container class */,
       theme: {
         /* the site's own breakpoints as md/lg, so responsive utilities
            match the existing 700px / 1024px media queries exactly */
@@ -104,14 +104,14 @@
   </header>
 
   <main>
-    <header class="page-header section" id="hero">
+    <header class="page-header section min-h-[60vh] pt-14 pb-16 relative flex flex-col justify-end bg-white border-b border-hairline" id="hero">
       <div class="page-header__grid" aria-hidden="true"></div>
-      <div class="container page-header__inner">
+      <div class="container page-header__inner relative z-[1] px-[clamp(1rem,8vw,6rem)] flex flex-col gap-4">
         <p class="section-label page-header__label">PAGE 03 / 05 — PROJECTS</p>
-        <h1 class="page-header__title">
-          <span class="page-header__line"><span class="reveal-text">PROJECTS.</span></span>
+        <h1 class="page-header__title font-display text-[clamp(3.5rem,12vw,9rem)] font-black uppercase tracking-[-0.03em] leading-[0.92] text-ink">
+          <span class="page-header__line block overflow-hidden"><span class="reveal-text">PROJECTS.</span></span>
         </h1>
-        <p class="page-header__sub">Five things built: from AI routing and automation to a community platform and competitive programming.</p>
+        <p class="page-header__sub font-body text-[0.9375rem] text-muted max-w-[50ch] leading-[1.65]">Five things built: from AI routing and automation to a community platform and competitive programming.</p>
       </div>
     </header>
 
