@@ -1821,3 +1821,113 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   .transition-overlay__bracket,
   .transition-overlay__shard { transition: none !important; }
 }
+
+
+/* ─── 35. AI GUIDE (Prompt 20) ────────────────────────────────
+   Side-panels cover mode for the guide's open/close, the trigger
+   buttons, the fixed mini button, the docked panel with its
+   speaking waveform, and the section decode/reveal the guide
+   triggers as it walks the page. All DOM is JS-injected. */
+
+/* Two black panels closing in from the sides (used when the overlay
+   carries .transition-overlay--sides); the default veil hides. */
+.transition-overlay__panel {
+  position: absolute; top: 0; bottom: 0; width: 50.5%;
+  background-color: #000;
+  transition: transform 360ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.transition-overlay__panel--left  { left: 0;  transform: translateX(-101%); }
+.transition-overlay__panel--right { right: 0; transform: translateX(101%); }
+.transition-overlay--sides .transition-overlay__veil { display: none; }
+.transition-overlay.is-covering .transition-overlay__panel,
+.transition-overlay.is-covered .transition-overlay__panel { transform: translateX(0); }
+.transition-overlay.is-covered .transition-overlay__panel { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .transition-overlay__panel { transition: none !important; }
+}
+
+/* Speaking waveform mark: 4 tiny bars; on triggers it always
+   animates, in the panel it only runs while .is-speaking */
+.guide-wave { display: inline-flex; align-items: flex-end; gap: 2px; height: 10px; }
+.guide-wave i {
+  width: 2px; height: 100%; background-color: currentColor;
+  transform-origin: bottom; transform: scaleY(0.3);
+  animation: guideWave 0.9s ease-in-out infinite;
+}
+.guide-wave i:nth-child(2) { animation-delay: 0.15s; }
+.guide-wave i:nth-child(3) { animation-delay: 0.3s; }
+.guide-wave i:nth-child(4) { animation-delay: 0.45s; }
+@keyframes guideWave { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .guide-wave i { animation: none; }
+}
+
+/* Trigger in the hero / page header: sits next to the other CTAs */
+.guide-open { display: inline-flex; align-items: center; gap: 0.5rem; }
+
+/* Small fixed button once the hero / page header scrolls away */
+.guide-fab {
+  position: fixed; right: 1rem; bottom: 1rem; z-index: 870;
+  display: none; align-items: center; gap: 0.5rem;
+  font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.15em;
+  padding: 0.6rem 0.8rem;
+  background-color: var(--clr-text); color: var(--clr-bg);
+  border: none; cursor: pointer;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+}
+.guide-fab.is-visible { display: inline-flex; }
+
+/* The docked guide panel: black slab, bottom-right, chamfered */
+.guide-panel {
+  position: fixed; right: 1rem; bottom: 1rem; z-index: 880;
+  width: min(400px, calc(100vw - 2rem));
+  background-color: #000; color: #FFF;
+  padding: 1rem 1.1rem 0.9rem;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+  display: none;
+}
+.guide-panel.is-open { display: block; }
+.guide-panel__kicker {
+  font-family: var(--font-mono); font-size: 0.5625rem; letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.5); margin: 0 0 0.5rem;
+}
+.guide-panel__line {
+  font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6;
+  min-height: 3.6em; /* two lines of text: panel doesn't jump while typing */
+  margin: 0;
+}
+.guide-panel__wave { margin-top: 0.6rem; color: var(--clr-accent); }
+.guide-panel__wave i { animation-play-state: paused; }
+.guide-panel.is-speaking .guide-panel__wave i { animation-play-state: running; }
+.guide-panel__controls { display: flex; gap: 0.5rem; margin-top: 0.7rem; }
+.guide-panel__controls button {
+  font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.12em;
+  background: none; border: 1px solid rgba(255, 255, 255, 0.35); color: #FFF;
+  padding: 0.35rem 0.7rem; cursor: pointer;
+  transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+.guide-panel__controls button:hover:not(:disabled) { border-color: var(--clr-accent); color: var(--clr-accent); }
+.guide-panel__controls button:disabled { opacity: 0.35; cursor: default; }
+.guide-panel__nextpage {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 0.7rem; padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.12em;
+  color: var(--clr-accent);
+}
+.guide-panel__nextpage:hover { color: #FFF; }
+
+/* Section decode/reveal the guide triggers as it arrives:
+   rows and cards pop back in under the scramble */
+@media (prefers-reduced-motion: no-preference) {
+  .guide-arrived :is(.project-card, .stat-card, article, li, .explore__grid > *) {
+    animation: guideRowIn 0.55s var(--easing) both;
+  }
+  .guide-arrived :is(.project-card, .stat-card, article, li, .explore__grid > *):nth-child(2) { animation-delay: 0.08s; }
+  .guide-arrived :is(.project-card, .stat-card, article, li, .explore__grid > *):nth-child(3) { animation-delay: 0.16s; }
+  .guide-arrived :is(.project-card, .stat-card, article, li, .explore__grid > *):nth-child(4) { animation-delay: 0.24s; }
+}
+@keyframes guideRowIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
