@@ -425,30 +425,75 @@ a:focus-visible .roll-stack {
 
 /* ─── 11. ABOUT SECTION ─────────────────────────────────────── */
 
-.about__grid { display: flex; flex-direction: column; gap: var(--space-lg); }
+/* The section itself needs no extra height property — height comes from
+   .about__grid below being taller than the viewport. */
+.about__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  /* ~220vh gives enough scroll distance to complete the 5-frame sequence
+     while the bio text reads normally. Reduced to 120vh on mobile below. */
+  min-height: 220vh;
+}
 
 .about__text {
-  display: flex; flex-direction: column; gap: var(--space-md);
-  font-family: var(--font-body); font-size: 0.875rem;
-  line-height: 1.75; color: var(--clr-muted); max-width: 52ch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  font-family: var(--font-body);
+  font-size:   0.875rem;
+  line-height: 1.75;
+  color:       var(--clr-muted);
+  max-width:   52ch;
 }
 .about__text strong { color: var(--clr-text); font-weight: 500; }
 
 .about__readout {
-  display: flex; flex-direction: column; gap: 4px;
-  margin-top: var(--space-sm); padding-top: var(--space-sm);
-  border-top: 1px solid var(--clr-line);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top:   var(--space-sm);
+  padding-top:  var(--space-sm);
+  border-top:   1px solid var(--clr-line);
 }
 
+/* Right column: sticks in view as the left column scrolls. */
 .about__photo {
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Placeholder box for the scroll sequence */
-.about__photo-placeholder {
-  width: 100%; height: 100%;
-  min-height: 350px;
-  background-color: var(--clr-line);
+/* The chamfered frame container.
+   position:sticky keeps it in the viewport; top centres it below the navbar.
+   overflow:hidden is required for clip-path to work correctly. */
+.about__photo-frame {
+  position: sticky;
+  top: calc(var(--nav-height) + 2rem);
+  width:  100%;
+  /* Intrinsic aspect ratio from the 600×800 images (3:4) */
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border: 1px solid var(--clr-line);
+}
+
+/* All portrait frames are absolutely stacked on top of each other,
+   filling the frame with object-fit:cover so they never distort. */
+.portrait-frame {
+  position:    absolute;
+  inset:       0;
+  width:       100%;
+  height:      100%;
+  object-fit:  cover;
+  object-position: center top;
+  /* Default: all frames hidden. frame5 (.portrait-frame--default) overrides this. */
+  opacity: 0;
+}
+
+/* Fallback: frame5 is always visible at full opacity unless the @supports block
+   takes control. This is the static portrait for unsupported browsers AND
+   for prefers-reduced-motion users. */
+.portrait-frame--default {
+  opacity: 1;
 }
 
 
@@ -694,10 +739,13 @@ a:focus-visible .roll-stack {
   .navbar__toggle { display: none; }
   .navbar__cta { display: inline-flex; }
 
+  /* Two-column layout: bio text left, sticky portrait right */
   .about__grid { flex-direction: row; }
   .about__text {
-    flex: 3; padding-right: 4vw;
-    border-right: 1px solid var(--clr-line); max-width: none;
+    flex: 3;
+    padding-right: 4vw;
+    border-right: 1px solid var(--clr-line);
+    max-width: none;
   }
   .about__photo { flex: 2; padding-left: 4vw; }
 
@@ -710,6 +758,11 @@ a:focus-visible .roll-stack {
   .footer__cols { flex-direction: row; flex-wrap: nowrap; flex: 1; }
   .footer__bottom { flex-direction: row; align-items: flex-start; flex-wrap: wrap; }
   .footer__legal { width: 100%; margin-top: var(--space-md); }
+}
+
+/* Mobile: shorten the about section so it doesn't feel like dead scrolling */
+@media (max-width: 699px) {
+  .about__grid { min-height: 130vh; }
 }
 
 @media (min-width: 1024px) {
@@ -752,9 +805,87 @@ a:focus-visible .roll-stack {
 @supports (animation-timeline: view()) {
   /* Prevent scrolling animations if the user has requested reduced motion */
   @media (prefers-reduced-motion: no-preference) {
-    
+
+    /* ── Portrait Sequence Animation ──
+       We attach a NAMED view-timeline to the About section so every frame
+       can share the exact same timeline reference, keeping them in sync.
+       The about section is the scroll subject; its entry through the viewport
+       drives the animation from 0% (frame1 at top of section entering viewport)
+       to 100% (frame5 when section is near exit). */
+    .about {
+      /* Declare a named timeline on this element's scroll intersection.
+         Any child can reference this by name instead of creating its own view(). */
+      view-timeline-name: --about-scroll;
+      view-timeline-axis: block;
+    }
+
+    /* The whole photo frame scales from 1 → 1.06 across the full about scroll,
+       giving a slow "coming forward / zooming toward camera" feel.
+       animation-range: cover = entire time the element is crossing the viewport. */
+    .about__photo-frame {
+      animation: portraitZoom linear both;
+      animation-timeline: --about-scroll;
+      animation-range: entry 0% exit 100%;
+    }
+
+    @keyframes portraitZoom {
+      0%   { transform: scale(1);    }
+      100% { transform: scale(1.06); }
+    }
+
+    /* Each frame fades in over its slice of the scroll range, then fades out.
+       The slice boundaries are computed from CSS custom properties set in HTML:
+         --frame-count = 5  (on the container)
+         --i           = 1..5 (on each <img>)
+       Each frame owns exactly (1 / --frame-count) = 20% of the total range.
+       Frame i starts fading in at (i-1)/5 of the range and peaks at i/5.
+
+       Because CSS does not support division natively with var() in animation-range,
+       we use a trick: set the range via a calc() in animation-range-start/end.
+       The 'cover' keyword maps 0% = element enters viewport, 100% = exits. */
+    .portrait-frame {
+      animation: portraitCrossfade linear both;
+      animation-timeline: --about-scroll;
+      /* Start of this frame's fade window: (--i - 1) / --frame-count of the range */
+      animation-range-start: calc(
+        (var(--i) - 1) / var(--frame-count) * 100%
+      ) entry 0%;
+      /* End of this frame's fade window: --i / --frame-count of the range */
+      animation-range-end: calc(
+        var(--i) / var(--frame-count) * 100%
+      ) entry 0%;
+    }
+
+    @keyframes portraitCrossfade {
+      /* Frame fades in at 0% of its slice, is full opacity at 50%, fades out by 100% */
+      0%   { opacity: 0; }
+      30%  { opacity: 1; }
+      70%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* frame5 stays visible at the end of the sequence rather than fading to 0.
+       We re-declare it with a range that ends at 100% of the about-scroll,
+       and the keyframe ends at opacity:1 instead of 0. */
+    .portrait-frame--default {
+      animation-range-start: calc(
+        (var(--i) - 1) / var(--frame-count) * 100%
+      ) entry 0%;
+      animation-range-end: entry 0%;  /* effectively pins it from its start to the very end */
+      animation-name: portraitCrossfadeLast;
+    }
+
+    @keyframes portraitCrossfadeLast {
+      0%   { opacity: 0; }
+      30%  { opacity: 1; }
+      100% { opacity: 1; } /* stays visible — does not fade out */
+    }
+
+    /* Exclude .about__text > p from the generic scrollReveal.
+       It lives inside a sticky layout and view() on its own timeline causes
+       it to never trigger properly (the sticky context confuses the intersection).
+       The text just reads normally — no reveal needed here. */
     .section__header,
-    .about__text > p,
     .project-card,
     .skill-row,
     .fact-row,

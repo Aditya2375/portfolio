@@ -196,15 +196,18 @@
           <h2 class="section-title" id="about-heading"><span class="reveal-text">Who I Am</span></h2>
         </div>
 
-        <!-- Two-column layout: text on left, photo on right. -->
+        <!-- Two-column layout: text on left (scrolls normally), photo on right (sticky).
+             .about__grid is set to min-height ~220vh in CSS so the section is tall enough
+             to scrub the portrait sequence while the text reads naturally alongside. -->
         <div class="about__grid">
 
+          <!-- Left column: bio text. Sits in normal flow — just reads top-to-bottom. -->
           <div class="about__text">
             <p>
-              I'm Aditya Kulkarni, 18, from Pune - now in Bengaluru studying CS and AI at Scaler School of Technology, and parallelly pursuing an undergraduation in Computer Science from BITS Pilani. I scored a 97.4 percentile in JEE Main, a 98.4 in MHT-CET, and AIR 21,300 in JEE Advanced, and I picked SST because it lets me build from day one. Right now that means AI tooling, web projects, and competitive programming in C++.
+              I'm Aditya Kulkarni, 18, from Pune — now in Bengaluru studying CS and AI at Scaler School of Technology, and parallelly pursuing a BSc Computer Science from BITS Pilani. I scored a 97.4 percentile in JEE Main, a 98.4 in MHT-CET, and AIR 21,300 in JEE Advanced, and I picked SST because it lets me build from day one. Right now that means AI tooling, web projects, and competitive programming in C++.
             </p>
             <p>
-              Outside the compiler, I run and cycle, and I have been trekking with GGIM Pune for the past seven years - monthly Sahyadri climbs, five Himalayan summits, and the first to summit Thorate Lake. I play the guitar and piano and sing too, led my school's debate club, was the school captain, and organized all of the school and society events. I post what I'm learning on LinkedIn as I go.
+              Outside the compiler, I run and cycle, and I have been trekking with GGIM Pune for the past seven years — monthly Sahyadri climbs, five Himalayan summits, and the first to summit Thorate Lake. I play the guitar and piano and sing too, led my school's debate club, was the school captain, and organized all of the school and society events. I post what I'm learning on LinkedIn as I go.
             </p>
 
             <!-- Decorative HUD readout lines -->
@@ -212,13 +215,89 @@
               <p class="section-label">FILE_01 / NAME - ADITYA KULKARNI</p>
               <p class="section-label">FILE_02 / BASE - BENGALURU</p>
               <p class="section-label">FILE_03 / ROLE - CS STUDENT + BUILDER</p>
+              <p class="section-label">FILE_04 / LANGUAGES - HINDI / MARATHI / ENGLISH / KANNADA (UNDERSTAND + SOME SPOKEN)</p>
             </div>
           </div>
 
-          <!-- Photo placeholder for AI scroll sequence -->
+          <!-- Right column: sticky portrait frame.
+               position:sticky keeps the chamfered frame in view while the parent
+               scrolls. The 5 <img> elements are stacked absolutely inside it.
+
+               HOW --i AND --frame-count WORK TOGETHER:
+               Each <img> carries  style="--i: N"  where N is its 1-based frame index.
+               The container carries style="--frame-count: 5".
+               In CSS, each frame's slice of the scroll timeline is computed as:
+                 slice = 1 / var(--frame-count)          → 0.2  (20% of the range each)
+                 start = (var(--i) - 1) * slice          → when this frame should appear
+                 end   = var(--i)       * slice           → when this frame should disappear
+               This means CSS never needs a hardcoded number of frames; change --frame-count
+               in one place and all the math adjusts automatically. -->
           <div class="about__photo">
-            <!-- TODO: content slot for AI-generated scroll sequence -->
-            <div class="chamfer about__photo-placeholder" aria-label="AI-generated scroll sequence of Aditya"></div>
+            <div
+              class="chamfer about__photo-frame"
+              style="--frame-count: 5"
+              role="img"
+              aria-label="AI-generated portrait of Aditya Kulkarni"
+            >
+              <!-- Frame 1 — side profile (first in the turn sequence).
+                   aria-hidden because frame5 carries the single meaningful alt text. -->
+              <img
+                src="assets/frames/frame1.png"
+                alt=""
+                aria-hidden="true"
+                class="portrait-frame"
+                style="--i: 1"
+                width="600"
+                height="800"
+                decoding="async"
+              >
+              <!-- Frame 2 — quarter turn -->
+              <img
+                src="assets/frames/frame2.png"
+                alt=""
+                aria-hidden="true"
+                class="portrait-frame"
+                style="--i: 2"
+                width="600"
+                height="800"
+                decoding="async"
+              >
+              <!-- Frame 3 — half turn -->
+              <img
+                src="assets/frames/frame3.png"
+                alt=""
+                aria-hidden="true"
+                class="portrait-frame"
+                style="--i: 3"
+                width="600"
+                height="800"
+                decoding="async"
+              >
+              <!-- Frame 4 — three-quarter turn -->
+              <img
+                src="assets/frames/frame4.png"
+                alt=""
+                aria-hidden="true"
+                class="portrait-frame"
+                style="--i: 4"
+                width="600"
+                height="800"
+                decoding="async"
+              >
+              <!-- Frame 5 — facing front.
+                   This is the FALLBACK frame: it is shown by default (opacity:1) and
+                   only overridden by the scroll animation inside @supports.
+                   It also carries the single descriptive alt text for screen readers. -->
+              <img
+                src="assets/frames/frame5.png"
+                alt="AI-generated portrait of Aditya Kulkarni"
+                class="portrait-frame portrait-frame--default"
+                style="--i: 5"
+                width="600"
+                height="800"
+                decoding="async"
+              >
+            </div>
           </div>
 
         </div>
@@ -288,10 +367,32 @@
 
         <div class="projects__grid">
 
-          <!-- PROJECT 1 -->
+          <!-- ═══════════════════════════════════════════
+               PROJECT 01 — PORTFOLIO WORKFLOW
+               Plate: vertical hairline columns + lavender left-third band
+          ═══════════════════════════════════════════ -->
           <article class="project-card">
-            <!-- TODO: content slot for thumbnail -->
-            <div class="project-card__thumb" aria-hidden="true"></div>
+            <!-- aria-hidden: plate is decorative; card title and text carry all meaning -->
+            <div class="project-card__thumb" aria-hidden="true">
+
+              <!-- .layer-back: white field with 1px hairline grid + coordinate readout -->
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="75"  y1="0" x2="75"  y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="150" y1="0" x2="150" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="225" y1="0" x2="225" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:001 / Y:001</text>
+                </svg>
+              </div>
+              <!-- .layer-mid: lavender vertical band, left third of the thumbnail -->
+              <div class="layer-mid plate-01-mid"></div>
+              <!-- .layer-front: giant index number + one keyword -->
+              <div class="layer-front">
+                <span class="plate-index">01</span>
+                <span class="plate-keyword">PIPELINE</span>
+              </div>
+
+            </div>
             <header class="project-card__header">
               <span class="project-card__number section-label">PROJECT #01</span>
               <h3 class="project-card__title">Portfolio Workflow</h3>
@@ -299,54 +400,117 @@
             <p class="project-card__desc">
               Designed and built with an AI-assisted workflow: a custom prompt system driving the whole build, AI-generated scroll-animation assets, and a sectioned music engine.
             </p>
+            <p class="project-card__tech section-label">HTML / CSS / PROMPT ENGINEERING</p>
             <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">HTML</li>
-              <li class="tag">CSS</li>
-              <li class="tag">Prompt Engineering</li>
+              <li class="tag">HTML</li><li class="tag">CSS</li><li class="tag">Prompt Engineering</li>
             </ul>
+            <footer class="project-card__footer">
+              <span class="project-card__no-link section-label">LINK PENDING DEPLOY</span>
+            </footer>
           </article>
 
 
-          <!-- PROJECT 2 -->
+          <!-- ═══════════════════════════════════════════
+               PROJECT 02 — OMNI ROUTE
+               Plate: horizontal hairlines + lavender diagonal band
+          ═══════════════════════════════════════════ -->
           <article class="project-card">
-            <!-- TODO: content slot for thumbnail -->
-            <div class="project-card__thumb" aria-hidden="true"></div>
+            <div class="project-card__thumb" aria-hidden="true">
+
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="0" y1="66"  x2="300" y2="66"  stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="0" y1="133" x2="300" y2="133" stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:002 / Y:001</text>
+                </svg>
+              </div>
+              <!-- clip-path diagonal band across the middle of the plate -->
+              <div class="layer-mid plate-02-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">02</span>
+                <span class="plate-keyword">GATEWAY</span>
+              </div>
+
+            </div>
             <header class="project-card__header">
               <span class="project-card__number section-label">PROJECT #02</span>
               <h3 class="project-card__title">OmniRoute</h3>
             </header>
             <p class="project-card__desc">
-              Local AI coding setup: Claude Code routed through OmniRoute, an open-source local LLM gateway, so it runs on Google's free Gemini API tier instead of a paid plan. Configured the gateway endpoint, provider keys and environment variables on Windows, then debugged it over two days with an AI assistant: traced an HTTP 400 schema error to a known upstream bug and fixed it by patching the compiled JavaScript runtime chunks (the TypeScript source never ran), verifying each patch. When HTTP 429s followed, isolated the cause by calling the Gemini API directly with curl - the configured model had been retired - and switched models. Rotated an API key after it leaked in a screenshot. No link - local setup, not a repo.
+              Local AI coding setup: Claude Code routed through OmniRoute, an open-source local LLM gateway, so it runs on Google's free Gemini API tier instead of a paid plan. Configured the gateway endpoint, provider keys and environment variables on Windows, then debugged it over two days with an AI assistant: traced an HTTP 400 schema error to a known upstream bug and fixed it by patching compiled JavaScript runtime chunks. Local setup, not a repo.
             </p>
+            <p class="project-card__tech section-label">POWERSHELL / NODE.JS / REST APIS</p>
             <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">PowerShell</li>
-              <li class="tag">Node.js/npm</li>
-              <li class="tag">REST APIs</li>
+              <li class="tag">PowerShell</li><li class="tag">Node.js/npm</li><li class="tag">REST APIs</li>
             </ul>
+            <footer class="project-card__footer">
+              <span class="project-card__no-link section-label">NO PUBLIC LINK — LOCAL SETUP</span>
+            </footer>
           </article>
 
 
-          <!-- PROJECT 3 -->
+          <!-- ═══════════════════════════════════════════
+               PROJECT 03 — INSTAGRAM GROWTH BOT
+               Plate: square grid cells + lavender bottom-right cell fill
+          ═══════════════════════════════════════════ -->
           <article class="project-card">
-            <!-- TODO: content slot for thumbnail -->
-            <div class="project-card__thumb" aria-hidden="true"></div>
+            <div class="project-card__thumb" aria-hidden="true">
+
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="100" y1="0"   x2="100" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="200" y1="0"   x2="200" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="0"   y1="100" x2="300" y2="100" stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:003 / Y:001</text>
+                </svg>
+              </div>
+              <!-- Lavender filled square in the bottom-right grid cell -->
+              <div class="layer-mid plate-03-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">03</span>
+                <span class="plate-keyword">AUTOMATION</span>
+              </div>
+
+            </div>
             <header class="project-card__header">
               <span class="project-card__number section-label">PROJECT #03</span>
               <h3 class="project-card__title">Instagram Growth Bot</h3>
             </header>
             <p class="project-card__desc">
-              Follower-growth automation linked to my Instagram account. It walks the Discover People feed and scores every account it surfaces - mutual count, follow-back ratio and other signals consolidated into a single score. Over a set threshold, it sends a follow request, waits a set window, and unfollows accounts that don't follow back. The interesting part is the scoring engine and the automation design. Built and run with AI assistance; the account later hit Instagram's rate limits, which ended the experiment.
+              Follower-growth automation linked to my Instagram account. It walks the Discover People feed and scores every account it surfaces — mutual count, follow-back ratio and other signals consolidated into a single score. Over a set threshold, it sends a follow request, waits a set window, and unfollows accounts that don't follow back. Hit Instagram's rate limits; experiment concluded.
             </p>
+            <p class="project-card__tech section-label">AUTOMATION / SCORING ENGINE</p>
             <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">Automation</li>
-              <li class="tag">Scoring Engine</li>
+              <li class="tag">Automation</li><li class="tag">Scoring Engine</li>
             </ul>
+            <footer class="project-card__footer">
+              <span class="project-card__no-link section-label">NO PUBLIC LINK</span>
+            </footer>
           </article>
 
-          <!-- PROJECT 4 -->
+          <!-- ═══════════════════════════════════════════
+               PROJECT 04 — JUNIOR-SENIOR DOUBT PLATFORM
+               Plate: concentric SVG rings + lavender top bar
+          ═══════════════════════════════════════════ -->
           <article class="project-card">
-            <!-- TODO: content slot for thumbnail -->
-            <div class="project-card__thumb" aria-hidden="true"></div>
+            <div class="project-card__thumb" aria-hidden="true">
+
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <circle cx="150" cy="100" r="50"  fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <circle cx="150" cy="100" r="90"  fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <circle cx="150" cy="100" r="130" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:004 / Y:001</text>
+                </svg>
+              </div>
+              <!-- Lavender horizontal bar across the top quarter -->
+              <div class="layer-mid plate-04-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">04</span>
+                <span class="plate-keyword">COMMUNITY</span>
+              </div>
+
+            </div>
             <header class="project-card__header">
               <span class="project-card__number section-label">PROJECT #04</span>
               <h3 class="project-card__title">Junior-Senior Doubt Platform</h3>
@@ -354,16 +518,40 @@
             <p class="project-card__desc">
               A doubt-solving platform where seniors and juniors connect. Anyone posts a doubt freely; answers are rated on helpfulness and practicality and earn a score; askers carry a score too, and sorting is score-based, so the best answers and the best askers rise to the top. An anonymous mode lets people ask without being shamed.
             </p>
+            <p class="project-card__tech section-label">PLATFORM DESIGN / RANKING ALGORITHM</p>
             <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">Platform Design</li>
-              <li class="tag">Ranking Algorithm</li>
+              <li class="tag">Platform Design</li><li class="tag">Ranking Algorithm</li>
             </ul>
+            <footer class="project-card__footer">
+              <span class="project-card__no-link section-label">NO PUBLIC LINK</span>
+            </footer>
           </article>
 
-          <!-- PROJECT 5 -->
+          <!-- ═══════════════════════════════════════════
+               PROJECT 05 — CP PRACTICE PIPELINE
+               Plate: diagonal crosshatch lines + lavender corner bracket (top-right)
+          ═══════════════════════════════════════════ -->
           <article class="project-card">
-            <!-- TODO: content slot for thumbnail -->
-            <div class="project-card__thumb" aria-hidden="true"></div>
+            <div class="project-card__thumb" aria-hidden="true">
+
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <!-- 45° diagonal hairlines sweeping across the plate -->
+                  <line x1="-50" y1="100" x2="100" y2="-50"  stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="0"   y1="200" x2="200" y2="0"    stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="100" y1="200" x2="300" y2="0"    stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="200" y1="200" x2="400" y2="0"    stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:005 / Y:001</text>
+                </svg>
+              </div>
+              <!-- Lavender right-angle bracket in the top-right corner, drawn as two thin rects via CSS -->
+              <div class="layer-mid plate-05-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">05</span>
+                <span class="plate-keyword">PRACTICE</span>
+              </div>
+
+            </div>
             <header class="project-card__header">
               <span class="project-card__number section-label">PROJECT #05</span>
               <h3 class="project-card__title">CP Practice Pipeline</h3>
@@ -371,10 +559,9 @@
             <p class="project-card__desc">
               Competitive programming practice with a pipeline behind it: Codeforces solutions auto-pushed to GitHub via the CFPusher extension, plus a daily streak system.
             </p>
+            <p class="project-card__tech section-label">C++ / CODEFORCES / GITHUB ACTIONS</p>
             <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">C++</li>
-              <li class="tag">Codeforces</li>
-              <li class="tag">GitHub Actions</li>
+              <li class="tag">C++</li><li class="tag">Codeforces</li><li class="tag">GitHub Actions</li>
             </ul>
             <footer class="project-card__footer">
               <a href="https://github.com/Aditya2375/Competitive_Programming_Practice" class="btn btn--outline btn--sm" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
@@ -403,7 +590,7 @@
             </div>
             <div class="fact-row__body">
               <h3 class="fact-row__title">BSc Computer Science</h3>
-              <p class="fact-row__desc">Scaler School of Technology, Bengaluru (first year)</p>
+              <p class="fact-row__desc">Scaler School of Technology, Bengaluru (first year, admits about 3.4% of applicants)</p>
             </div>
           </li>
 
@@ -478,20 +665,20 @@
               <!-- Grid of plain stat cards for running metrics -->
               <div class="stat-grid">
                 <div class="stat-card">
-                  <span class="stat-card__value">5:00</span>
-                  <span class="stat-card__label">AM START</span>
+                  <span class="stat-card__value">5 AM</span>
+                  <span class="stat-card__label">WHEN MOST OF MY RUNS START</span>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-card__value">7 km</span>
-                  <span class="stat-card__label">WEEKDAY LOOP</span>
+                  <span class="stat-card__value">~7 KM</span>
+                  <span class="stat-card__label">MY WEEKDAY LOOP</span>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-card__value">15 km</span>
-                  <span class="stat-card__label">WEEKEND LONG</span>
+                  <span class="stat-card__value">~15 KM</span>
+                  <span class="stat-card__label">THE WEEKEND LONG RUN</span>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-card__value">~45 km</span>
-                  <span class="stat-card__label">PER WEEK</span>
+                  <span class="stat-card__value">~45 KM</span>
+                  <span class="stat-card__label">A NORMAL WEEK</span>
                 </div>
               </div>
             </div>
@@ -499,112 +686,56 @@
 
           <li class="fact-row">
             <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Trekking</span>
+              <span class="section-label fact-row__year">Leadership</span>
             </div>
             <div class="fact-row__body">
-              <h3 class="fact-row__title">7 years with GGIM Pune (Age 11 to 18)</h3>
-              <p class="fact-row__desc">Monthly Sahyadri treks and 5 Himalayan summits, most recently the Thorate Lake Trek (Rohru, Shimla district, Himachal Pradesh).</p>
+              <h3 class="fact-row__title">School Captain & House Captain</h3>
+              <p class="fact-row__desc">Organized every school cultural fest and society event (Ganpati, Diwali, Christmas, sports day, annual day).</p>
+              
+              <h3 class="fact-row__title" style="margin-top: 1rem;">Debate Club</h3>
+              <p class="fact-row__desc">Led my school's debate club.</p>
+
+              <h3 class="fact-row__title" style="margin-top: 1rem;">SST Gym Petition</h3>
+              <p class="fact-row__desc">Started a student petition for gym access that got 800+ responses, and the new campus gym opened earlier than planned after it.</p>
+
+              <h3 class="fact-row__title" style="margin-top: 1rem;">BITS Pilani Group at SST</h3>
+              <p class="fact-row__desc">Created the group, brought everyone into it and run it as admin, got it added to the SST student community, which also put me in the community's separate Admins group.</p>
             </div>
           </li>
 
           <li class="fact-row">
             <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Cycling</span>
+              <span class="section-label fact-row__year">Stage & Art</span>
             </div>
             <div class="fact-row__body">
-              <h3 class="fact-row__title">Daily Commute</h3>
-              <p class="fact-row__desc">Commute to college by cycle every day.</p>
+              <h3 class="fact-row__title">Orators Club, SST</h3>
+              <p class="fact-row__desc">Member, my team placed 1st at WTFQ (an Orators Club event).</p>
+
+              <h3 class="fact-row__title" style="margin-top: 1rem;">Rangoli Competition</h3>
+              <p class="fact-row__desc">1st place (team).</p>
             </div>
           </li>
           
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Sport</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Football, Basketball, Swimming</h3>
-              <p class="fact-row__desc">Inter-school football (near state level), inter-school basketball (city level), inter-school and inter-club swimming (multiple inter-club and inter-school championship wins), some chess.</p>
-            </div>
-          </li>
-
           <li class="fact-row">
             <div class="fact-row__meta">
               <span class="section-label fact-row__year">Music</span>
             </div>
             <div class="fact-row__body">
               <h3 class="fact-row__title">Guitar, Piano, Singing</h3>
-            </div>
-          </li>
-          
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Debate & Stage</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Public Speaking</h3>
-              <p class="fact-row__desc">Debate club leader at school; member of the Orators club at SST.</p>
+              <p class="fact-row__desc">Played guitar at the seniors' icebreaker talent show at SST.</p>
             </div>
           </li>
 
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Academics Extras</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Olympiads</h3>
-              <p class="fact-row__desc">Olympiad participation/cracks.</p>
-            </div>
-          </li>
-          
           <li class="fact-row">
             <div class="fact-row__meta">
               <span class="section-label fact-row__year">Community</span>
             </div>
             <div class="fact-row__body">
-              <h3 class="fact-row__title">Volunteering</h3>
-              <p class="fact-row__desc">NGO volunteering in Pune.</p>
+              <h3 class="fact-row__title">Open Source Club, SST</h3>
+              <p class="fact-row__desc">Member.</p>
             </div>
           </li>
 
-        </ul>
-      </div>
-    </section>
-
-    <!-- ── LANGUAGES ──────────────────────────────────── -->
-    <section class="section" id="languages" aria-labelledby="languages-heading">
-      <div class="container">
-        <div class="section__header">
-          <p class="section-label">006 LANGUAGES</p>
-          <h2 class="section-title" id="languages-heading"><span class="reveal-text">Spoken</span></h2>
-        </div>
-        <ul class="fact-list" role="list">
-          <li class="fact-row">
-            <div class="fact-row__meta"><span class="section-label fact-row__year">Full</span></div>
-            <div class="fact-row__body"><h3 class="fact-row__title">Hindi, Marathi, English</h3></div>
-          </li>
-          <li class="fact-row">
-            <div class="fact-row__meta"><span class="section-label fact-row__year">Partial</span></div>
-            <div class="fact-row__body"><h3 class="fact-row__title">Kannada</h3><p class="fact-row__desc">Spoken understanding only.</p></div>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ── LEADERSHIP ─────────────────────────────────── -->
-    <section class="section" id="leadership" aria-labelledby="leadership-heading">
-      <div class="container">
-        <div class="section__header">
-          <p class="section-label">007 LEADERSHIP</p>
-          <h2 class="section-title" id="leadership-heading"><span class="reveal-text">Taking Charge</span></h2>
-        </div>
-        <ul class="fact-list" role="list">
-          <li class="fact-row">
-            <div class="fact-row__meta"><span class="section-label fact-row__year">Roles</span></div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">School Captain & House Captain</h3>
-              <p class="fact-row__desc">Organized every school cultural fest and society events (Ganpati, Diwali, Christmas, sports day, annual day).</p>
-            </div>
-          </li>
         </ul>
       </div>
     </section>
@@ -615,7 +746,7 @@
       <div class="container">
 
         <div class="section__header">
-          <p class="section-label">008 CONTACT</p>
+          <p class="section-label">006 CONTACT</p>
           <h2 class="section-title" id="contact-heading"><span class="reveal-text">Get In Touch.</span></h2>
         </div>
 
@@ -630,6 +761,24 @@
             <a href="https://www.threads.com/@adityaa_kulkarni_" class="contact__link" target="_blank" rel="noopener noreferrer">Threads</a>
             <a href="https://x.com/Adityaa_Kulkarn" class="contact__link" target="_blank" rel="noopener noreferrer">X / Twitter</a>
           </div>
+
+          <!-- Contact Form -->
+          <form class="contact__form" action="mailto:adityakulkarni2708@gmail.com" method="post" enctype="text/plain">
+            <div class="form-group">
+              <label for="name" class="section-label">NAME</label>
+              <input type="text" id="name" name="Name" required>
+            </div>
+            <div class="form-group">
+              <label for="email" class="section-label">EMAIL</label>
+              <input type="email" id="email" name="Email" required>
+            </div>
+            <div class="form-group">
+              <label for="message" class="section-label">MESSAGE</label>
+              <textarea id="message" name="Message" required rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn btn--primary">SEND MESSAGE</button>
+            <p class="section-label form-note">OPENS YOUR EMAIL APP - NOTHING IS STORED.</p>
+          </form>
         </div>
 
       </div>
