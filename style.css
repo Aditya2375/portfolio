@@ -850,6 +850,33 @@ a:focus-visible .roll-stack {
 
 .menu-trigger:hover { border-color: var(--clr-text); }
 
+/* REVIEW ROUND 2: once the page scrolls, the whole navbar box fills with a
+   translucent gray (with a soft blur behind it) instead of staying flat
+   white - the bar reads as a floating panel over the content. */
+.navbar {
+  transition: background-color var(--dur-base) var(--easing);
+}
+.navbar--scrolled {
+  background-color: rgba(240, 240, 240, 0.82) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Skill-row expander detail: wraps to its own full-width line under the row */
+.skill-row__detail {
+  flex-basis: 100%;
+  padding-top: 0.25rem;
+}
+.skill-row__plus {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: transform var(--dur-fast) var(--easing), color var(--dur-fast) var(--easing);
+}
+.skill-row__plus:hover { color: var(--clr-text); }
+.skill-row__plus[aria-expanded="true"] { transform: rotate(45deg); color: var(--clr-text); }
+
 /* the three stripes; the middle one shortens on hover, a small wink */
 .menu-trigger__bars {
   display: flex;

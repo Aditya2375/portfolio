@@ -520,6 +520,34 @@ window._sectionJump = function _sectionJump(target) {
   }
 })();
 
+/* ─── REVIEW ROUND 2: NAVBAR SCROLL FILL + SKILL EXPANDERS ─────
+   Two small wirings: the navbar gets its translucent gray fill once
+   the page scrolls, and the + buttons in What I Know open a one-line
+   detail under their row (button + hidden span, so no-JS stays clean). */
+(function initNavbarFill() {
+  const navbar = document.getElementById('navbar');
+  if (!navbar) return;
+  const onScroll = () => navbar.classList.toggle('navbar--scrolled', window.scrollY > 24);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+(function initSkillExpanders() {
+  document.querySelectorAll('.skill-row__plus').forEach(btn => {
+    const detail = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!detail) return;
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      detail.hidden = open;
+      if (!open) {
+        playSfx('assets/sfx/hover.mp3', 0.15);
+        window.scrambleText(detail, { duration: 350 });
+      }
+    });
+  });
+})();
+
 /* ─── PROMPT 16: SIDE MENU UPGRADE ────────────────────────────
    The checkbox/:has() CSS mechanism stays the no-JS base; this only
    layers sound and scramble on top. */
