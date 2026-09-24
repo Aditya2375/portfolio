@@ -588,9 +588,10 @@ window._sectionJump = function _sectionJump(target) {
      for the base path; Prompt 19 wraps the jump in the transition. */
 })();
 
-/* ─── PROMPT 17: 3D MOUSE PARALLAX + HERO TILT ────────────────
+/* ─── PROMPT 17: 3D MOUSE PARALLAX (REVIEW ROUND: BG, NOT TEXT) ─
    Mouse-driven depth, lerped in one shared rAF loop:
-   1. hero text block tilts a few degrees toward the cursor
+   1. hero BACKGROUND stack drifts in three depths (portrait, grid,
+      crosshair) - the text stays put
    2. project-card plate layers shift opposite the cursor
       (front 20px, mid 10px, back 3px)
    Off by default on touch devices and under prefers-reduced-motion.
@@ -621,28 +622,42 @@ window._sectionJump = function _sectionJump(target) {
   }
   function kick() { if (!raf) raf = requestAnimationFrame(loop); }
 
-  /* 1. Hero 3D tilt: rotateX/rotateY a few degrees toward the mouse.
-     Perspective comes from .hero-sticky; the portrait frames are
-     siblings and stay flat. */
-  const heroContent = document.querySelector('.hero__content');
-  if (heroContent) {
-    const heroArea = heroContent.closest('.hero-sticky');
-    const tilt = {
+  /* 1. Hero background 3D parallax (review round): the portrait stack
+     drifts OPPOSITE the cursor (deepest layer), the grid lines drift
+     with it, the crosshair drifts hardest - three depths, one lerp.
+     The hero text no longer tilts; it stays put.
+     `translate` and `scale` are standalone CSS properties, so they
+     compose with the scroll-driven heroZoom `transform` on .hero-bg
+     instead of fighting it. The constant 1.05 overscan keeps the
+     drift from ever showing an edge. */
+  const heroBg = document.querySelector('.hero-bg');
+  if (heroBg) {
+    const heroArea = heroBg.closest('.hero-sticky');
+    const gridLines = heroArea.querySelector('.hero__grid-lines');
+    const crosshair = heroArea.querySelector('.hero__crosshair');
+    heroBg.style.scale = '1.05';
+    const layers = [
+      { el: heroBg,    depth: -36 }, /* opposite the cursor, ±18px */
+      { el: gridLines, depth: 16 },  /* with the cursor, ±8px */
+      { el: crosshair, depth: 44 }   /* loosest layer, ±22px */
+    ].filter(l => l.el).map(l => ({
       cx: 0, cy: 0, tx: 0, ty: 0,
       apply(x, y) {
-        heroContent.style.transform = `rotateX(${(-y).toFixed(3)}deg) rotateY(${x.toFixed(3)}deg)`;
+        l.el.style.translate = `${(x * l.depth).toFixed(2)}px ${(y * l.depth).toFixed(2)}px`;
       }
-    };
-    items.push(tilt);
+    }));
+    layers.forEach(l => items.push(l));
     heroArea.addEventListener('mousemove', (e) => {
       const r = heroArea.getBoundingClientRect();
       const nx = (e.clientX - r.left) / r.width - 0.5;  /* -0.5 … 0.5 */
       const ny = (e.clientY - r.top) / r.height - 0.5;
-      tilt.tx = nx * 8;  /* up to ±4deg */
-      tilt.ty = ny * 6;  /* up to ±3deg */
+      layers.forEach(l => { l.tx = nx; l.ty = ny; });
       kick();
     });
-    heroArea.addEventListener('mouseleave', () => { tilt.tx = 0; tilt.ty = 0; kick(); });
+    heroArea.addEventListener('mouseleave', () => {
+      layers.forEach(l => { l.tx = 0; l.ty = 0; });
+      kick();
+    });
   }
 
   /* 2. Card layer parallax: layers move opposite the cursor, scaled
@@ -1223,18 +1238,23 @@ window._sectionJump = function _sectionJump(target) {
   const stage = document.querySelector('.hero-stage');
   if (stage && !cssScrollOK) {
     const frames = [...stage.querySelectorAll('.portrait-frame')];
+    const bg = stage.querySelector('.hero-bg');
     const count = parseInt(stage.style.getPropertyValue('--frame-count'), 10) || frames.length;
     gsap.set(frames, { opacity: 0, animation: 'none' });
+    gsap.set(frames[0], { opacity: 1 });
     ScrollTrigger.create({
       trigger: stage, start: 'top top', end: 'bottom bottom', scrub: true,
       onUpdate(self) {
-        const p = self.progress;
-        const current = Math.min(count, Math.floor(p * count) + 1);
+        /* Same maths as the CSS slices: frame i crossfades in from
+           (i-2)/(count-1) to i/(count-1) of a 77% window, then holds. */
+        const q = self.progress * 100;
         frames.forEach((f, i) => {
-          const on = (i + 1) <= current;
-          f.style.opacity = on ? 1 : 0;
-          if (on) f.style.transform = `scale(${(1 + 0.03 * p).toFixed(4)})`; /* the slight zoom */
+          if (i === 0) return; /* the base frame stays on */
+          const start = (i - 2) / (count - 1) * 77;
+          const end = i / (count - 1) * 77;
+          f.style.opacity = Math.min(1, Math.max(0, (q - start) / (end - start))).toFixed(3);
         });
+        if (bg) bg.style.transform = `scale(${(1 + 0.06 * Math.min(1, q / 84)).toFixed(4)})`;
       }
     });
   }
@@ -1257,6 +1277,51 @@ window._sectionJump = function _sectionJump(target) {
       });
     });
   }
+})();
+
+/* ─── REVIEW ROUND: HERO SCROLL STORY ─────────────────────────
+   As the 300vh hero-stage scrolls past, a small mono line at the
+   right edge narrates the face turn in four beats, then clears
+   before About arrives. JS-injected, so no-JS never sees it;
+   beat swaps run through scrambleText (plain text under
+   reduced motion). */
+(function initHeroStory() {
+  const stage = document.querySelector('.hero-stage');
+  if (!stage) return;
+  const sticky = stage.querySelector('.hero-sticky');
+  if (!sticky) return;
+  const BEATS = [
+    [0.00, 'SCROLL — THE FACE TURNS'],
+    [0.28, 'EVERY FRAME, A DIFFERENT ANGLE.'],
+    [0.56, 'SAME GUY. DEEPER STORY.'],
+    [0.82, 'NOW THE WORK ↓']
+  ];
+  const el = document.createElement('p');
+  el.className = 'hero__story';
+  el.setAttribute('aria-hidden', 'true');
+  sticky.appendChild(el);
+  let current = -1, ticking = false;
+  function update() {
+    ticking = false;
+    const r = stage.getBoundingClientRect();
+    const range = r.height - innerHeight;
+    if (range <= 0) return;
+    const p = Math.min(1, Math.max(0, -r.top / range));
+    let beat = -1;
+    for (let i = 0; i < BEATS.length; i++) if (p >= BEATS[i][0]) beat = i;
+    if (p > 0.97) beat = -1; /* clear before About takes over */
+    if (beat === current) return;
+    current = beat;
+    if (beat < 0) { el.classList.remove('is-live'); return; }
+    el.classList.add('is-live');
+    el.dataset.scrambleText = BEATS[beat][1];
+    if (REDUCED_MOTION || el._scrambling) el.textContent = BEATS[beat][1];
+    else window.scrambleText(el, { duration: 300 });
+  }
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
 })();
 
 /* ─── PROMPT 24: FOOTER WORDMARK FINALE ───────────────────────

@@ -467,6 +467,18 @@ a:focus-visible .roll-stack {
 }
 .hero__scroll-hint:hover { opacity: 1; }
 
+/* Review round: the scroll-story beat line, bottom-right of the sticky
+   hero screen. JS-injected; hidden until the first beat goes live. */
+.hero__story {
+  position: absolute; right: clamp(1rem, 8vw, 6rem); bottom: var(--space-md);
+  z-index: 2; margin: 0; max-width: 30ch; text-align: right;
+  font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(255, 255, 255, 0.65);
+  opacity: 0; transition: opacity var(--dur-base) var(--easing);
+  pointer-events: none;
+}
+.hero__story.is-live { opacity: 1; }
+
 
 /* ─── 10. SHARED SECTION STYLES ─────────────────────────────── */
 
@@ -689,10 +701,11 @@ a:focus-visible .roll-stack {
        bottom. That maps the scrub precisely onto the time the sticky screen
        is pinned, with no dead scrolling before or after.
        How --i and --frame-count work together: the stage carries
-       --frame-count: 12 and each frame carries --i: 1-12. Frame i owns the
-       slice from (i-2)/(count-1) to (i-1)/(count-1) of an 85% window, so
-       frame02 fades in over 0%-7.7%, frame12 over 77.3%-85%, and frame12
-       (facing front) then HOLDS for the last 15% while About scrolls up. */
+       --frame-count: 12 and each frame carries --i: 1-12. Frame i fades in
+       from (i-2)/(count-1) to i/(count-1) of a 77% window - two slice-widths
+       per frame, so every frame is a long crossfade through its neighbours
+       instead of a hard step (review round: buttery face turn). Frame12
+       (facing front) lands at 84% and HOLDS while About scrolls up. */
     .hero-stage {
       height: 300vh; /* 12 frames need more scroll distance than 5 did */
       view-timeline-name: --hero;
@@ -720,8 +733,8 @@ a:focus-visible .roll-stack {
       animation: portraitFadeIn linear both;
       animation-timeline: --hero;
       animation-range:
-        contain calc((var(--i) - 2) / (var(--frame-count) - 1) * 85%)
-        contain calc((var(--i) - 1) / (var(--frame-count) - 1) * 85%);
+        contain calc((var(--i) - 2) / (var(--frame-count) - 1) * 77%)
+        contain calc(var(--i) / (var(--frame-count) - 1) * 77%);
     }
 
     @keyframes portraitFadeIn {
@@ -754,9 +767,15 @@ a:focus-visible .roll-stack {
     }
     
     @keyframes scrollReveal {
+      /* Swoop (review round): a longer rise that overshoots slightly past
+         home and settles back - the scrub makes it read as weight, not pop. */
       0% {
         opacity: 0;
-        transform: translateY(40px);
+        transform: translateY(72px);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(-5px);
       }
       100% {
         opacity: 1;
