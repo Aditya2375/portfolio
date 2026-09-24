@@ -789,17 +789,23 @@ window._sectionJump = function _sectionJump(target) {
       '<span class="transition-overlay__bracket transition-overlay__bracket--bl"></span>' +
       '<span class="transition-overlay__shard transition-overlay__shard--1"></span>' +
       '<span class="transition-overlay__shard transition-overlay__shard--2"></span>' +
-      '<span class="transition-overlay__shard transition-overlay__shard--3"></span>';
+      '<span class="transition-overlay__shard transition-overlay__shard--3"></span>' +
+      '<span class="transition-overlay__panel transition-overlay__panel--left"></span>' +
+      '<span class="transition-overlay__panel transition-overlay__panel--right"></span>';
     document.body.appendChild(overlay);
     return overlay;
   }
 
-  window.playTransition = function playTransition(callback) {
+  window.playTransition = function playTransition(callback, opts) {
     /* Re-entrant call while one is running: skip the animation but
        never drop the action. */
     if (running) { if (callback) callback(); return; }
     running = true;
     const el = buildOverlay();
+    /* mode 'sides' (Prompt 20's guide): two black panels close in from
+       the left and right edges instead of the single veil wipe. */
+    const sides = !!(opts && opts.mode === 'sides');
+    if (sides) el.classList.add('transition-overlay--sides');
     const coverMs = REDUCED_MOTION ? 0 : COVER_MS;
     const uncoverMs = REDUCED_MOTION ? 0 : UNCOVER_MS;
     el.classList.add('is-active', 'is-covering');
@@ -813,7 +819,7 @@ window._sectionJump = function _sectionJump(target) {
         el.classList.remove('is-covered');
         el.classList.add('is-uncovering');
         setTimeout(() => {
-          el.classList.remove('is-active', 'is-uncovering');
+          el.classList.remove('is-active', 'is-uncovering', 'transition-overlay--sides');
           running = false;
         }, uncoverMs);
       }, REDUCED_MOTION ? 0 : HOLD_MS);
@@ -894,4 +900,189 @@ window._sectionJump = function _sectionJump(target) {
       location.href = url.href; /* a #hash rides along: lands on the section */
     });
   });
+})();
+
+/* ─── PROMPT 20: THE AI GUIDE ─────────────────────────────────
+   A fully scripted host - no API, no AI. It talks to the visitor
+   about Aditya and what they came to see, walks the page section by
+   section, and times each line to land just after the section's own
+   scramble decode begins. Lines live in LINES below, one array per
+   page, each entry tied to a section selector - edit them here. */
+(function initGuide() {
+  const LINES = {
+    'index.html': [
+      { sel: '#hero',     text: "Welcome to Aditya's portfolio. Make yourself at home - I'll show you around." },
+      { sel: '#hero',     text: "This is Aditya Kulkarni: 18, from Pune, now studying CS and AI at Scaler School of Technology in Bengaluru, and pursuing Computer Science at BITS Pilani alongside it." },
+      { sel: '#about',    text: "Here's who he is. JEE Main 97.4 percentile, MHT-CET 98.4, and when he's not coding, he's running, cycling or climbing mountains." },
+      { sel: '#skills',   text: "His toolkit: HTML, CSS, Java, C, and C++ for competitive programming - with JavaScript and backend next on the list." },
+      { sel: '#projects', text: "Five things he's actually built - this very site, a local AI coding setup, an Instagram growth bot, a doubt platform for juniors and seniors, and his competitive programming pipeline." },
+      /* Home has no education/beyond sections: those two lines ride on
+         #explore, the hub that links out to those pages. */
+      { sel: '#explore',  text: "The road here: EuroKids, Symbiosis, Vikhe Patil Memorial School, Lokseva, and now CS and AI at Scaler School of Technology, with an undergraduation in Computer Science from BITS Pilani alongside it." },
+      { sel: '#explore',  text: "Off the screen: seven years of trekking with five Himalayan summits, school captain, debate club lead, and the student petition that got SST's gym opened early." },
+      { sel: '#contact',  text: "Like what you see? Say hi - email, LinkedIn and GitHub are right here, or leave a message in the form." },
+      { sel: '.footer',   text: "Thanks for stopping by. Enjoy the rest of the site." }
+    ],
+    'academics.html': [
+      { sel: '.page-header', text: "This is the study side of Aditya - everything from the very beginning." },
+      { sel: '#now',         text: "Right now he studies CS and AI at Scaler School of Technology in Bengaluru, and is pursuing an undergraduation in Computer Science from BITS Pilani alongside it." },
+      { sel: '#exams',       text: "The entrance exams: JEE Main 97.4 percentile, MHT-CET 98.4 percentile, and JEE Advanced AIR 21,300." },
+      { sel: '#school',      text: "School took him from EuroKids and Symbiosis to Vikhe Patil Memorial School, with 94% in Grade 10, and Lokseva, with 89% in Grade 12." },
+      { sel: '#learning',    text: "And he is still learning - here is what is on his desk right now." }
+    ],
+    'projects.html': [
+      { sel: '.page-header', text: "Five things he has actually built. Take your time with each one." },
+      { sel: '#portfolio',   text: "First up, the site you are standing in." },
+      { sel: '#cp-pipeline', text: "And the one he uses every day - his competitive programming pipeline." }
+    ],
+    'beyond.html': [
+      { sel: '.page-header', text: "Now the fun part - what he does away from the screen." },
+      { sel: '#trekking',    text: "Seven years of trekking, with five Himalayan summits so far." },
+      { sel: '#running',     text: "He runs at 5 AM. Press and hold a card to see the numbers." },
+      { sel: '#music',       text: "And when he is not moving, he is playing guitar, piano, or singing." }
+    ],
+    'community.html': [
+      { sel: '.page-header', text: "This page is about the people - the teams, clubs and events he is part of." },
+      { sel: '#leadership',  text: "School captain, debate club lead, and the student petition that got SST's gym opened early." },
+      { sel: '#clubs',       text: "At SST he is in the Orators Club, where his team placed first at WTFQ, and the Open Source Club." },
+      { sel: '#events',      text: "Six hackathons with multiple podium finishes - and a first place in a team Rangoli competition." },
+      { sel: '#connect',     text: "Want to talk? All his links are right here." }
+    ]
+  };
+
+  /* Where the guide sends the visitor after the last line */
+  const NEXT = {
+    'index.html':     { href: 'academics.html', name: 'Academics' },
+    'academics.html': { href: 'projects.html',  name: 'Projects' },
+    'projects.html':  { href: 'beyond.html',    name: 'Beyond The Terminal' },
+    'beyond.html':    { href: 'community.html', name: 'Community' },
+    'community.html': { href: 'index.html',     name: 'Back Home' }
+  };
+
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const lines = LINES[page];
+  if (!lines || !lines.length) return;
+  const next = NEXT[page];
+
+  const waveHTML = '<span class="guide-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>';
+
+  /* Trigger: hero on Home, page header on the inner pages */
+  const host = document.querySelector('.hero__ctas') || document.querySelector('.page-header');
+  if (host) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn--outline guide-open';
+    btn.innerHTML = 'ASK THE GUIDE ' + waveHTML;
+    host.appendChild(btn);
+    btn.addEventListener('click', openGuide);
+  }
+
+  /* Small fixed button once the hero / page header scrolls away */
+  const fab = document.createElement('button');
+  fab.type = 'button';
+  fab.className = 'guide-fab';
+  fab.innerHTML = 'GUIDE ' + waveHTML;
+  fab.setAttribute('aria-label', 'Open the guide');
+  document.body.appendChild(fab);
+  fab.addEventListener('click', openGuide);
+  const topAnchor = document.querySelector('.hero-stage') || document.querySelector('.page-header');
+  if (topAnchor && 'IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      entries.forEach(en => fab.classList.toggle('is-visible', !en.isIntersecting));
+    }, { threshold: 0.05 }).observe(topAnchor);
+  }
+
+  /* The docked panel */
+  const panel = document.createElement('aside');
+  panel.className = 'guide-panel';
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-label', 'Site guide');
+  panel.innerHTML =
+    '<p class="guide-panel__kicker">//THE GUIDE</p>' +
+    '<p class="guide-panel__line" aria-live="polite"></p>' +
+    '<span class="guide-panel__wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
+    '<div class="guide-panel__controls">' +
+      '<button type="button" data-guide="prev">PREV</button>' +
+      '<button type="button" data-guide="next">NEXT</button>' +
+      '<button type="button" data-guide="close">CLOSE</button>' +
+    '</div>' +
+    (next ? `<a class="guide-panel__nextpage" href="${next.href}" hidden><span>NEXT</span><span>${next.name} →</span></a>` : '');
+  document.body.appendChild(panel);
+  const lineEl = panel.querySelector('.guide-panel__line');
+  const prevBtn = panel.querySelector('[data-guide="prev"]');
+  const nextBtn = panel.querySelector('[data-guide="next"]');
+  const nextRow = panel.querySelector('.guide-panel__nextpage');
+
+  let idx = 0, isOpen = false, robotFlip = false;
+  let timers = [];
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+
+  /* (b) the section decode: mono label, headline and key text run
+     scrambleText() again while cards/rows pop back in via CSS */
+  function decodeSection(section) {
+    section.classList.remove('guide-arrived');
+    void section.offsetWidth; /* restart the CSS reveal */
+    section.classList.add('guide-arrived');
+    const targets = [...section.querySelectorAll('.section-label, .reveal-text, h2, h3, p')]
+      .filter(el => el.children.length === 0 && el.textContent.trim())
+      .slice(0, 6);
+    targets.forEach(el => window.scrambleText(el, { duration: 450 }));
+  }
+
+  /* (c) the line itself: robot sting, waveform on, scramble in, vibrate */
+  function speak(text) {
+    robotFlip = !robotFlip;
+    playSfx(robotFlip ? 'assets/sfx/robot-1.mp3' : 'assets/sfx/robot-2.mp3', 0.15);
+    try { if ('vibrate' in navigator) navigator.vibrate(25); } catch (err) { /* no-op */ }
+    panel.classList.add('is-speaking');
+    lineEl.dataset.scrambleText = text;
+    const dur = REDUCED_MOTION ? 0 : Math.min(1100, 220 + text.length * 14);
+    window.scrambleText(lineEl, { duration: dur });
+    if (REDUCED_MOTION) lineEl.textContent = text;
+    timers.push(setTimeout(() => panel.classList.remove('is-speaking'), dur + 150));
+  }
+
+  /* (a) scroll -> (b) decode as it arrives -> (c) line 0.7s later */
+  function showLine(i) {
+    idx = Math.max(0, Math.min(lines.length - 1, i));
+    clearTimers();
+    const { sel, text } = lines[idx];
+    const section = document.querySelector(sel);
+    if (section) {
+      section.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
+      timers.push(setTimeout(() => decodeSection(section), REDUCED_MOTION ? 0 : 550));
+      timers.push(setTimeout(() => speak(text), REDUCED_MOTION ? 60 : 1250));
+    } else {
+      timers.push(setTimeout(() => speak(text), 300));
+    }
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === lines.length - 1;
+    if (nextRow) nextRow.hidden = idx !== lines.length - 1;
+  }
+
+  function openGuide() {
+    if (isOpen) return;
+    isOpen = true;
+    fab.classList.remove('is-visible');
+    window.playTransition(() => {
+      panel.classList.add('is-open');
+      idx = 0;
+      /* first line after the panels open back out */
+      setTimeout(() => showLine(0), REDUCED_MOTION ? 60 : 500);
+    }, { mode: 'sides' });
+  }
+
+  function closeGuide() {
+    if (!isOpen) return;
+    isOpen = false;
+    clearTimers();
+    window.playTransition(() => {
+      panel.classList.remove('is-open', 'is-speaking');
+      /* the visitor stays exactly where the guide stopped */
+    }, { mode: 'sides' });
+  }
+
+  prevBtn.addEventListener('click', () => showLine(idx - 1));
+  nextBtn.addEventListener('click', () => showLine(idx + 1));
+  panel.querySelector('[data-guide="close"]').addEventListener('click', closeGuide);
 })();
