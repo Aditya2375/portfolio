@@ -292,46 +292,12 @@ a:focus-visible .roll-stack {
 
 /* ─── 8. NAVBAR ─────────────────────────────────────────────── */
 
-.navbar {
-  position:         fixed;
-  top:              0;
-  left:             0;
-  right:            0;
-  z-index:          800;
-  background-color: var(--clr-bg);
-  border-bottom:    1px solid var(--clr-line);
-}
-
-.navbar__inner {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  padding:         0 clamp(1rem, 4vw, 3rem);
-  /* min-height (not fixed height): long link lists (Projects) wrap to two
-     lines on tablets without overflowing the bar */
-  min-height:      var(--nav-height);
-  max-width:       var(--max-width);
-  margin:          0 auto;
-}
-
-.navbar__logo {
-  font-family:    var(--font-display);
-  font-size:      1.1rem;
-  font-weight:    900;
-  letter-spacing: -0.02em;
-  color:          var(--clr-text);
-  text-transform: uppercase;
-}
-
-.navbar__links { display: none; }
-.navbar__link {
-  font-family:    var(--font-mono); font-size: 0.6875rem;
-  font-weight:    500; letter-spacing: 0.1em; text-transform: uppercase;
-  color:          var(--clr-muted); padding: 0.3em 0.5em;
-  transition:     color var(--dur-fast) var(--easing);
-}
-.navbar__link:hover, .navbar__link:focus-visible { color: var(--clr-text); outline: none; }
-.navbar__cta { display: none; }
+/* NAVBAR -> Tailwind utilities on the elements (Prompt 27).
+   Concept map: fixed top-0 inset-x-0 z-[800] = position:fixed + z-index;
+   flex items-center justify-between = the flexbox bar; border-b
+   border-hairline = the 1px bottom hairline; hidden md:flex = the 700px
+   breakpoint; hover:text-ink = the color transition. The scrollspy
+   .navbar__link--active rules below stay in CSS (JS state class). */
 
 
 /* ─── 9. HERO SECTION ───────────────────────────────────────── */
@@ -745,8 +711,7 @@ a:focus-visible .roll-stack {
 /* ─── 17. MEDIA QUERIES ─────────────────────────────────────── */
 
 @media (min-width: 700px) {
-  .navbar__links { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; justify-content: center; }
-  .navbar__cta { display: inline-flex; }
+  /* navbar responsive rules moved to md: utilities (Prompt 27) */
 
   /* Two-column layout: bio text left, sticky portrait right */
   .about__grid { flex-direction: row; }
