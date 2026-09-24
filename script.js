@@ -761,3 +761,137 @@ window._sectionJump = function _sectionJump(target) {
     card.addEventListener('contextmenu', (e) => e.preventDefault());
   });
 })();
+
+/* ─── PROMPT 19: BRACKET-FRAME SCREEN TRANSITIONS ─────────────
+   window.playTransition(callback): the bracket overlay covers the
+   screen, runs callback() at full cover (with the transition sweep
+   when sound is on), then uncovers. Same-page section jumps happen
+   INSTANTLY under the cover; other-page links navigate at full cover
+   and the new page starts covered (sessionStorage handshake) and
+   uncovers once loaded. If playTransition somehow never loads, every
+   link keeps its default behavior (smooth scroll / normal open). */
+(function initTransitions() {
+  const COVER_MS = 380;   /* veil wipe-in */
+  const HOLD_MS = 80;     /* beat at full cover before uncovering */
+  const UNCOVER_MS = 380; /* veil wipe-out */
+  let overlay = null, running = false;
+
+  function buildOverlay() {
+    if (overlay) return overlay;
+    overlay = document.createElement('div');
+    overlay.className = 'transition-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML =
+      '<div class="transition-overlay__veil"></div>' +
+      '<span class="transition-overlay__bracket transition-overlay__bracket--tl"></span>' +
+      '<span class="transition-overlay__bracket transition-overlay__bracket--tr"></span>' +
+      '<span class="transition-overlay__bracket transition-overlay__bracket--br"></span>' +
+      '<span class="transition-overlay__bracket transition-overlay__bracket--bl"></span>' +
+      '<span class="transition-overlay__shard transition-overlay__shard--1"></span>' +
+      '<span class="transition-overlay__shard transition-overlay__shard--2"></span>' +
+      '<span class="transition-overlay__shard transition-overlay__shard--3"></span>';
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+
+  window.playTransition = function playTransition(callback) {
+    /* Re-entrant call while one is running: skip the animation but
+       never drop the action. */
+    if (running) { if (callback) callback(); return; }
+    running = true;
+    const el = buildOverlay();
+    const coverMs = REDUCED_MOTION ? 0 : COVER_MS;
+    const uncoverMs = REDUCED_MOTION ? 0 : UNCOVER_MS;
+    el.classList.add('is-active', 'is-covering');
+    setTimeout(() => {
+      el.classList.remove('is-covering');
+      el.classList.add('is-covered');
+      playSfx('assets/sfx/transition.mp3', 0.5); /* sweep at full cover */
+      try { if (callback) callback(); } catch (err) { console.error(err); }
+      /* If the callback navigated away, the rest never runs here. */
+      setTimeout(() => {
+        el.classList.remove('is-covered');
+        el.classList.add('is-uncovering');
+        setTimeout(() => {
+          el.classList.remove('is-active', 'is-uncovering');
+          running = false;
+        }, uncoverMs);
+      }, REDUCED_MOTION ? 0 : HOLD_MS);
+    }, coverMs);
+  };
+
+  /* Same-page jumps go through the hook Prompt 15 wired into the
+     navbar: now the jump happens instantly under full cover. */
+  window._sectionJump = function _sectionJump(target) {
+    window.playTransition(() => {
+      const root = document.documentElement;
+      const prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto'; /* beat the CSS smooth scroll */
+      window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY);
+      root.style.scrollBehavior = prev;
+    });
+  };
+
+  /* Arriving from another page through a transition: start covered,
+     uncover once the page is ready. */
+  if (sessionStorage.getItem('ak-transition-arrive') === '1') {
+    sessionStorage.removeItem('ak-transition-arrive');
+    const el = buildOverlay();
+    el.classList.add('is-active', 'is-covered');
+    running = true;
+    const uncover = () => {
+      el.classList.remove('is-covered');
+      el.classList.add('is-uncovering');
+      setTimeout(() => {
+        el.classList.remove('is-active', 'is-uncovering');
+        running = false;
+      }, REDUCED_MOTION ? 0 : UNCOVER_MS);
+    };
+    if (document.readyState === 'complete') setTimeout(uncover, 90);
+    else window.addEventListener('load', () => setTimeout(uncover, 90), { once: true });
+  }
+
+  /* One delegated click handler covers navbar leftovers, side-menu
+     page links and sub-links, footer quick links, NEXT rows, and
+     CONTACT from inner pages. Handled clicks call preventDefault;
+     anything already handled (navbar same-page links) or external
+     passes through untouched. */
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]');
+    if (!a || e.defaultPrevented) return;
+    if (a.target === '_blank' || a.hasAttribute('download')) return;
+    const href = a.getAttribute('href');
+    if (!href || /^(https?:|mailto:|tel:)/i.test(href)) return;
+
+    /* same-page section anchor (side-menu sub-links, footer quick links) */
+    if (href.startsWith('#')) {
+      const target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault();
+      const mt = document.getElementById('menu-toggle');
+      if (mt) mt.checked = false; /* close the side menu over the jump */
+      window._sectionJump(target);
+      return;
+    }
+
+    /* other-page .html links open under full cover */
+    let url;
+    try { url = new URL(href, location.href); } catch { return; }
+    if (url.origin !== location.origin || !/\.html?$/i.test(url.pathname)) return;
+    if (url.pathname === location.pathname && url.hash) {
+      const target = document.querySelector(url.hash);
+      if (!target) return;
+      e.preventDefault();
+      const mt = document.getElementById('menu-toggle');
+      if (mt) mt.checked = false;
+      window._sectionJump(target);
+      return;
+    }
+    if (url.pathname === location.pathname) return; /* bare self-link: default */
+    e.preventDefault();
+    window.playTransition(() => {
+      sessionStorage.setItem('ak-transition-arrive', '1');
+      location.href = url.href; /* a #hash rides along: lands on the section */
+    });
+  });
+})();
