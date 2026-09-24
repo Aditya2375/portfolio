@@ -1391,6 +1391,19 @@ window._sectionJump = function _sectionJump(target) {
   }
 })();
 
+/* ─── REVIEW ROUND: FOOTER LOCAL TIME ───────────────────────
+   The third footer column shows Bengaluru time, live. */
+(function initFooterClock() {
+  const els = document.querySelectorAll('.footer-clock');
+  if (!els.length) return;
+  const fmt = new Intl.DateTimeFormat('en-GB', {
+    hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata'
+  });
+  function tick() { const t = fmt.format(new Date()); els.forEach(el => el.textContent = t); }
+  tick();
+  setInterval(tick, 30000);
+})();
+
 /* ─── REVIEW ROUND: HERO SCROLL STORY ─────────────────────────
    As the 300vh hero-stage scrolls past, a small mono line at the
    right edge narrates the face turn in four beats, then clears
@@ -1457,11 +1470,17 @@ window._sectionJump = function _sectionJump(target) {
     return s;
   });
 
+  const acro = document.querySelector('.footer__acrostic');
+  if (acro && !REDUCED_MOTION) acro.classList.add('will-stage');
+
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
       io.unobserve(footer); /* the ending happens once */
       wordmark.classList.add('is-dropping');
+      /* the acrostic stages in right after the last letter lands */
+      if (acro) setTimeout(() => acro.classList.add('is-staged'),
+        REDUCED_MOTION ? 0 : letters.length * 90 + 400);
       if (!REDUCED_MOTION) {
         letters.forEach((s, i) => {
           s.style.animationDelay = (i * 0.09) + 's';

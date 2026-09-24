@@ -1901,3 +1901,33 @@ html.lenis, html.lenis body { height: auto; }
 @media (prefers-reduced-motion: reduce) {
   .card-context__fill, .card-context.is-holding .card-context__fill { transition: none; }
 }
+
+
+/* ─── REVIEW ROUND: FOOTER ACROSTIC + THIRD COLUMN ───────────
+   A-D-I-T-Y-A as six staged words under the wordmark (the "something
+   rhyming with A/D/I/T/Y/A" ask). Static and readable without JS;
+   with JS the finale stages them in after the letter drop. */
+.footer__acrostic {
+  display: flex; flex-wrap: wrap; gap: 0.75rem 1.75rem;
+  margin: 0; padding: 0; list-style: none;
+}
+.footer__acrostic li {
+  display: inline-flex; align-items: baseline; gap: 0.45rem;
+  font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255, 255, 255, 0.7);
+}
+.footer__acrostic-letter { color: var(--clr-accent); font-weight: 700; }
+.footer__acrostic.will-stage li { opacity: 0; transform: translateY(10px); }
+.footer__acrostic.is-staged li {
+  opacity: 1; transform: none;
+  transition: opacity 0.4s var(--easing), transform 0.4s var(--easing);
+}
+.footer__acrostic.is-staged li:nth-child(1) { transition-delay: 0s; }
+.footer__acrostic.is-staged li:nth-child(2) { transition-delay: 0.08s; }
+.footer__acrostic.is-staged li:nth-child(3) { transition-delay: 0.16s; }
+.footer__acrostic.is-staged li:nth-child(4) { transition-delay: 0.24s; }
+.footer__acrostic.is-staged li:nth-child(5) { transition-delay: 0.32s; }
+.footer__acrostic.is-staged li:nth-child(6) { transition-delay: 0.4s; }
+@media (prefers-reduced-motion: reduce) {
+  .footer__acrostic.will-stage li { opacity: 1; transform: none; }
+}
