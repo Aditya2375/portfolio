@@ -336,18 +336,86 @@ a:focus-visible .roll-stack {
   100% { opacity: 1; transform: translateY(0); }
 }
 
-.hero {
-  min-height:      100svh; min-height: 100vh;
-  padding-top:     var(--nav-height);
-  display:         flex; flex-direction: column; justify-content: center;
-  position:        relative; background-color: var(--clr-bg);
+/* Fallback height: a normal 100vh hero. The @supports scroll-driven block
+   (section 18) stretches the stage to 300vh only where the scrub can run. */
+.hero-stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh; /* svh tracks the mobile URL bar, so the hero never jumps */
+  background-color: #000; /* the one dark photo section on the page */
+}
+
+/* The sticky screen: holds the frames and the text in place while the
+   300vh stage scrolls past underneath. */
+.hero-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* The frame stack fills the sticky screen behind everything else. */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #000;
+}
+
+/* Every frame fills the stack; object-fit: cover fills without distorting.
+   Phones/portrait tablets (4:5 set): 50% 20% only trims the sides. */
+.portrait-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  /* Hidden by default - frame01 (--first) and the fallback frame12
+     (--default) override this below. */
+  opacity: 0;
+}
+
+.portrait-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+
+/* Wide screens get the 16:9 set (same condition as the <source> media):
+   the face stays right of centre so the headline sits over the empty
+   dark left half. */
+@media (min-aspect-ratio: 1/1) {
+  .portrait-frame img { object-position: 70% 30%; }
+}
+
+/* frame01, the side profile every visit starts on: always visible at the
+   bottom of the stack. */
+.portrait-frame--first { opacity: 1; }
+
+/* Fallback (no scroll-driven animations, script.js deleted, or
+   prefers-reduced-motion): frame12 (facing front) shows as the static hero.
+   Inside the @supports scrub block the animation drives its opacity
+   instead, so the two rules never fight. */
+.portrait-frame--default { opacity: 1; }
+
+/* FLAT translucent overlay above the frames and below the text:
+   rgba(0,0,0,0.35), no gradient - the design bans gradients. */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.35);
 }
 
 .hero__grid-lines {
   position: absolute; inset: 0; pointer-events: none;
+  /* hard-stop repeating gradient = hairlines, not a visual gradient */
   background: repeating-linear-gradient(
     90deg, transparent 0px, transparent 119px,
-    var(--clr-line) 119px, var(--clr-line) 120px
+    rgba(255, 255, 255, 0.12) 119px, rgba(255, 255, 255, 0.12) 120px
   );
 }
 
@@ -357,11 +425,11 @@ a:focus-visible .roll-stack {
 }
 .hero__crosshair::before {
   content: ''; position: absolute; top: 50%; left: 0;
-  width: 100%; height: 1px; background: var(--clr-text); transform: translateY(-50%);
+  width: 100%; height: 1px; background: rgba(255, 255, 255, 0.6); transform: translateY(-50%);
 }
 .hero__crosshair::after {
   content: ''; position: absolute; left: 50%; top: 0;
-  width: 1px; height: 100%; background: var(--clr-text); transform: translateX(-50%);
+  width: 1px; height: 100%; background: rgba(255, 255, 255, 0.6); transform: translateX(-50%);
 }
 
 .hero__content {
@@ -377,7 +445,7 @@ a:focus-visible .roll-stack {
 .hero__name {
   font-family: var(--font-display); font-size: clamp(4rem, 14vw, 10rem);
   font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em;
-  line-height: 0.92; color: var(--clr-text);
+  line-height: 0.92; color: #FFFFFF; /* white on the dark photo hero */
   display: flex; flex-direction: column; align-items: flex-start;
 }
 
@@ -394,7 +462,23 @@ a:focus-visible .roll-stack {
 
 .hero__sub {
   font-family: var(--font-body); font-size: 0.875rem;
-  color: var(--clr-muted); max-width: 42ch; line-height: 1.65;
+  color: rgba(255, 255, 255, 0.75); max-width: 42ch; line-height: 1.65;
+}
+
+/* Hero labels and buttons: white on the dark photo (9G readability rule) */
+.hero-stage .section-label { color: rgba(255, 255, 255, 0.65); }
+.hero-stage .section-label::before { background-color: rgba(255, 255, 255, 0.35); }
+.hero-stage .btn--primary,
+.hero-stage .btn--outline {
+  background-color: transparent;
+  color: #FFFFFF;
+  outline: 1px solid #FFFFFF;
+  outline-offset: -1px;
+}
+.hero-stage .btn--primary:hover, .hero-stage .btn--primary:focus-visible,
+.hero-stage .btn--outline:hover, .hero-stage .btn--outline:focus-visible {
+  background-color: #FFFFFF;
+  color: var(--clr-text);
 }
 
 .hero__ctas { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-xs); }
@@ -449,39 +533,6 @@ a:focus-visible .roll-stack {
 .about__readout-col {
   display: flex;
   flex-direction: column;
-}
-
-/* The chamfered frame container.
-   position:sticky keeps it in the viewport; top centres it below the navbar.
-   overflow:hidden is required for clip-path to work correctly. */
-.hero-bg {
-  position: sticky;
-  top: calc(var(--nav-height) + 2rem);
-  width:  100%;
-  /* Intrinsic aspect ratio from the 600×800 images (3:4) */
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  border: 1px solid var(--clr-line);
-}
-
-/* All portrait frames are absolutely stacked on top of each other,
-   filling the frame with object-fit:cover so they never distort. */
-.portrait-frame {
-  position:    absolute;
-  inset:       0;
-  width:       100%;
-  height:      100%;
-  object-fit:  cover;
-  object-position: center top;
-  /* Default: all frames hidden. frame5 (.portrait-frame--default) overrides this. */
-  opacity: 0;
-}
-
-/* Fallback: frame5 is always visible at full opacity unless the @supports block
-   takes control. This is the static portrait for unsupported browsers AND
-   for prefers-reduced-motion users. */
-.portrait-frame--default {
-  opacity: 1;
 }
 
 
@@ -770,80 +821,58 @@ a:focus-visible .roll-stack {
   /* Prevent scrolling animations if the user has requested reduced motion */
   @media (prefers-reduced-motion: no-preference) {
 
-    /* ── Portrait Sequence Animation ──
-       We attach a NAMED view-timeline to the About section so every frame
-       can share the exact same timeline reference, keeping them in sync.
-       The about section is the scroll subject; its entry through the viewport
-       drives the animation from 0% (frame1 at top of section entering viewport)
-       to 100% (frame5 when section is near exit). */
+    /* ── Hero portrait scrub (9G, 12 frames) ──
+       A NAMED view-timeline on the 300vh stage so all 12 frames share one
+       timeline and stay in sync.
+       Why 'contain': the stage is TALLER than the viewport, so the contain
+       phase is exactly the span where the stage fully covers the viewport -
+       'contain 0%' is the top of the page (stage already covers the screen)
+       and 'contain 100%' is the moment its bottom edge reaches the viewport
+       bottom. That maps the scrub precisely onto the time the sticky screen
+       is pinned, with no dead scrolling before or after.
+       How --i and --frame-count work together: the stage carries
+       --frame-count: 12 and each frame carries --i: 1-12. Frame i owns the
+       slice from (i-2)/(count-1) to (i-1)/(count-1) of an 85% window, so
+       frame02 fades in over 0%-7.7%, frame12 over 77.3%-85%, and frame12
+       (facing front) then HOLDS for the last 15% while About scrolls up. */
     .hero-stage {
-      /* Declare a named timeline on this element's scroll intersection.
-         Any child can reference this by name instead of creating its own view(). */
-      view-timeline-name: --hero-scroll;
+      height: 300vh; /* 12 frames need more scroll distance than 5 did */
+      view-timeline-name: --hero;
       view-timeline-axis: block;
     }
 
-    /* The whole photo frame scales from 1 → 1.06 across the full about scroll,
-       giving a slow "coming forward / zooming toward camera" feel.
-       animation-range: cover = entire time the element is crossing the viewport. */
+    /* The whole frame stack scales 1 -> 1.06 across the same range for the
+       coming-forward feel. */
     .hero-bg {
-      animation: portraitZoom linear both;
-      animation-timeline: --hero-scroll;
-      animation-range: entry 0% exit 100%;
+      animation: heroZoom linear both;
+      animation-timeline: --hero;
+      animation-range: contain 0% contain 85%;
     }
 
-    @keyframes portraitZoom {
-      0%   { transform: scale(1);    }
+    @keyframes heroZoom {
+      0%   { transform: scale(1); }
       100% { transform: scale(1.06); }
     }
 
-    /* Each frame fades in over its slice of the scroll range, then fades out.
-       The slice boundaries are computed from CSS custom properties set in HTML:
-         --frame-count = 5  (on the container)
-         --i           = 1..5 (on each <img>)
-       Each frame owns exactly (1 / --frame-count) = 20% of the total range.
-       Frame i starts fading in at (i-1)/5 of the range and peaks at i/5.
-
-       Because CSS does not support division natively with var() in animation-range,
-       we use a trick: set the range via a calc() in animation-range-start/end.
-       The 'cover' keyword maps 0% = element enters viewport, 100% = exits. */
+    /* Each frame fades from opacity 0 to 1 over its own slice, with
+       animation-fill-mode: both so it stays visible after its slice ends.
+       Frames stack in DOM order (02 over 01, 03 over 02, ...), so a simple
+       fade-IN (no fade-out) reads as a smooth turn. */
     .portrait-frame {
-      animation: portraitCrossfade linear both;
-      animation-timeline: --hero-scroll;
-      /* Start of this frame's fade window: (--i - 1) / --frame-count of the range */
-      animation-range-start: calc(
-        (var(--i) - 1) / var(--frame-count) * 100%
-      ) entry 0%;
-      /* End of this frame's fade window: --i / --frame-count of the range */
-      animation-range-end: calc(
-        var(--i) / var(--frame-count) * 100%
-      ) entry 0%;
+      animation: portraitFadeIn linear both;
+      animation-timeline: --hero;
+      animation-range:
+        contain calc((var(--i) - 2) / (var(--frame-count) - 1) * 85%)
+        contain calc((var(--i) - 1) / (var(--frame-count) - 1) * 85%);
     }
 
-    @keyframes portraitCrossfade {
-      /* Frame fades in at 0% of its slice, is full opacity at 50%, fades out by 100% */
+    @keyframes portraitFadeIn {
       0%   { opacity: 0; }
-      30%  { opacity: 1; }
-      70%  { opacity: 1; }
-      100% { opacity: 0; }
+      100% { opacity: 1; }
     }
 
-    /* frame5 stays visible at the end of the sequence rather than fading to 0.
-       We re-declare it with a range that ends at 100% of the about-scroll,
-       and the keyframe ends at opacity:1 instead of 0. */
-    .portrait-frame--default {
-      animation-range-start: calc(
-        (var(--i) - 1) / var(--frame-count) * 100%
-      ) entry 0%;
-      animation-range-end: entry 0%;  /* effectively pins it from its start to the very end */
-      animation-name: portraitCrossfadeLast;
-    }
-
-    @keyframes portraitCrossfadeLast {
-      0%   { opacity: 0; }
-      30%  { opacity: 1; }
-      100% { opacity: 1; } /* stays visible — does not fade out */
-    }
+    /* frame01 is the base image under the whole sequence - not animated. */
+    .portrait-frame--first { animation: none; opacity: 1; }
 
     /* Exclude .about__text > p from the generic scrollReveal.
        It lives inside a sticky layout and view() on its own timeline causes
