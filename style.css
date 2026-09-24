@@ -1853,3 +1853,51 @@ html.lenis, html.lenis body { height: auto; }
    minimums are harmless at every width. */
 .menu-trigger { min-width: 44px; min-height: 44px; }  /* was 61x42 */
 .guide-open { min-height: 44px; align-items: center; } /* was 40 tall */
+
+
+/* ─── REVIEW ROUND: PROJECT CARD TILT + HOLD-FOR-CONTEXT ─────
+   The plate tilt itself is JS-driven (script.js, initDepthParallax);
+   this is the hold overlay and the positioning the cards need. */
+.project-card { position: relative; }
+.card-context {
+  position: absolute; inset: 0; z-index: 5; overflow: hidden;
+  pointer-events: none; /* the card itself takes the pointer events */
+}
+.card-context__fill {
+  position: absolute; left: var(--cx, 50%); top: var(--cy, 50%);
+  width: 24px; height: 24px; border-radius: 50%;
+  background-color: #000;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.35s var(--easing); /* shrink-back on early release */
+}
+.card-context.is-holding .card-context__fill {
+  transform: translate(-50%, -50%) scale(var(--r, 30));
+  transition: transform 0.6s linear; /* the hold fills in hold time */
+}
+.card-context.is-revealed .card-context__fill {
+  transform: translate(-50%, -50%) scale(var(--r, 30));
+  transition: transform 0.2s linear;
+}
+.card-context__body {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  justify-content: center; gap: 0.5rem; padding: 1.25rem;
+  opacity: 0; transition: opacity 0.25s var(--easing);
+}
+.card-context.is-revealed .card-context__body { opacity: 1; }
+.card-context__kicker {
+  font-family: var(--font-mono); font-size: 0.5625rem; letter-spacing: 0.15em;
+  color: var(--clr-accent); margin: 0;
+}
+.card-context__text {
+  font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6;
+  color: #FFF; margin: 0; max-width: 40ch;
+}
+.card-context-hint {
+  position: absolute; right: 0.75rem; bottom: 0.75rem; z-index: 4;
+  font-family: var(--font-mono); font-size: 0.5625rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-context__fill, .card-context.is-holding .card-context__fill { transition: none; }
+}
