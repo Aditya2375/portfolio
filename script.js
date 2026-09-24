@@ -1376,7 +1376,7 @@ window._sectionJump = function _sectionJump(target) {
         const q = self.progress * 100;
         frames.forEach((f, i) => {
           if (i === 0) return; /* the base frame stays on */
-          const start = (i - 2) / (count - 1) * 77;
+          const start = (i - 2.5) / (count - 1) * 77;
           const end = i / (count - 1) * 77;
           f.style.opacity = Math.min(1, Math.max(0, (q - start) / (end - start))).toFixed(3);
         });
@@ -1416,6 +1416,40 @@ window._sectionJump = function _sectionJump(target) {
   function tick() { const t = fmt.format(new Date()); els.forEach(el => el.textContent = t); }
   tick();
   setInterval(tick, 30000);
+})();
+
+/* ─── V3: SCROLL-STAGED HERO SEQUENCE ────────────────────────
+   Progress over the (now 380vh) hero stage flips three beat classes
+   on the stage: the name swings in first, the tagline follows, the
+   buttons land last - all while the face keeps turning underneath.
+   Reduced motion never gets .hero-seq, so nothing is ever hidden. */
+(function initHeroSequence() {
+  if (REDUCED_MOTION) return;
+  const stage = document.querySelector('.hero-stage');
+  if (!stage) return;
+  stage.classList.add('hero-seq');
+  const state = { name: null, sub: null, cta: null };
+  let ticking = false;
+  function update() {
+    ticking = false;
+    const r = stage.getBoundingClientRect();
+    const range = r.height - innerHeight;
+    if (range <= 0) return;
+    const p = Math.min(1, Math.max(0, -r.top / range));
+    const beats = { name: p >= 0.05, sub: p >= 0.28, cta: p >= 0.46 };
+    for (const k of ['name', 'sub', 'cta']) {
+      if (beats[k] === state[k]) continue;
+      if (k === 'name' && beats.name && state.name !== null) {
+        playSfx('assets/sfx/hover.mp3', 0.12); /* a soft stamp as the name lands */
+      }
+      state[k] = beats[k];
+      stage.classList.toggle('seq-' + k, beats[k]);
+    }
+  }
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
 })();
 
 /* ─── REVIEW ROUND: HERO SCROLL STORY ─────────────────────────

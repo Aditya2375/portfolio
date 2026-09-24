@@ -707,7 +707,7 @@ a:focus-visible .roll-stack {
        instead of a hard step (review round: buttery face turn). Frame12
        (facing front) lands at 84% and HOLDS while About scrolls up. */
     .hero-stage {
-      height: 300vh; /* 12 frames need more scroll distance than 5 did */
+      height: 380vh; /* v3: longer travel per frame - the turn reads smooth, not stepped */
       view-timeline-name: --hero;
       view-timeline-axis: block;
     }
@@ -733,7 +733,7 @@ a:focus-visible .roll-stack {
       animation: portraitFadeIn linear both;
       animation-timeline: --hero;
       animation-range:
-        contain calc((var(--i) - 2) / (var(--frame-count) - 1) * 77%)
+        contain calc((var(--i) - 2.5) / (var(--frame-count) - 1) * 77%)
         contain calc(var(--i) / (var(--frame-count) - 1) * 77%);
     }
 
@@ -1938,3 +1938,34 @@ html.lenis, html.lenis body { height: auto; }
 @media (max-width: 700px) {
   .hero__story { bottom: 4.75rem; }
 }
+
+
+/* ─── V3: SCROLL-STAGED HERO SEQUENCE ─────────────────────────
+   The video-style hero: at the top only the face + grid show. A
+   little scroll and ADITYA swings in (rotate + rise with overshoot,
+   second line chasing), then the tagline, then the buttons - each
+   beat tied to scroll progress, reversible when you scroll back.
+   All hidden states live under .hero-seq, which only JS adds, so
+   no-JS and reduced-motion keep the normal fully-visible hero. */
+.hero-seq .hero__content > .section-label,
+.hero-seq .hero__sub,
+.hero-seq .hero__ctas {
+  animation: none;
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s var(--easing), transform 0.7s var(--easing);
+}
+.hero-seq .hero__name .reveal-text {
+  animation: none !important;
+  opacity: 0;
+  transform: translateY(110%) rotate(5deg);
+  transform-origin: left bottom;
+  transition: transform 1.05s cubic-bezier(0.2, 1.35, 0.3, 1), opacity 0.4s ease;
+}
+.hero-seq .hero__line:nth-child(2) .reveal-text { transition-delay: 0.12s; }
+.hero-seq.seq-name .hero__name .reveal-text { opacity: 1; transform: none; }
+.hero-seq.seq-name .hero__content > .section-label {
+  opacity: 1; transform: none; transition-delay: 0.25s;
+}
+.hero-seq.seq-sub .hero__sub { opacity: 1; transform: none; }
+.hero-seq.seq-cta .hero__ctas { opacity: 1; transform: none; }
