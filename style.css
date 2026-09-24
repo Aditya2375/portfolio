@@ -1458,3 +1458,50 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   border: 1px solid rgba(255, 255, 255, 0.4);
   cursor: pointer;
 }
+
+
+/* ─── 27. MUSIC TOGGLE (Prompt 12) ────────────────────────────
+   5 thin bars, one CSS keyframe equalizer. Each bar gets its own
+   duration + delay so they never move in sync. animation-play-state
+   is the whole mute mechanism: paused bars freeze mid-dance. */
+.music-toggle {
+  position: fixed;
+  bottom: var(--space-md);
+  left: var(--space-md);
+  z-index: 940;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 44px; /* comfortable tap target */
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0 8px;
+}
+
+.music-toggle span {
+  display: block;
+  width: 2px;
+  height: 14px;
+  background-color: var(--clr-text);
+  transform-origin: bottom;
+  animation: eqBar 0.9s ease-in-out infinite;
+}
+.music-toggle span:nth-child(1) { animation-duration: 0.82s; }
+.music-toggle span:nth-child(2) { animation-duration: 0.67s; animation-delay: 0.12s; }
+.music-toggle span:nth-child(3) { animation-duration: 0.95s; animation-delay: 0.05s; }
+.music-toggle span:nth-child(4) { animation-duration: 0.71s; animation-delay: 0.18s; }
+.music-toggle span:nth-child(5) { animation-duration: 0.88s; animation-delay: 0.09s; }
+
+@keyframes eqBar {
+  0%, 100% { transform: scaleY(0.3); }
+  50%      { transform: scaleY(1); }
+}
+
+/* Frozen equalizer = muted (or entered without sound) */
+.music-toggle--muted span {
+  animation-play-state: paused;
+  opacity: 0.4;
+}

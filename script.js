@@ -56,6 +56,10 @@ const musicEngine = (() => {
   let ctx = null;
   let gains = [];
   const TARGET = 0.18;      // quiet background-music loudness
+  /* Mute persists across pages of one visit via sessionStorage, so
+     muting on one page keeps the whole site muted on the next. */
+  let muted = sessionStorage.getItem('muted') === '1';
+  const targetVolume = () => (muted ? 0 : TARGET);
 
   /* Must be called inside a user gesture the first time:
      browsers suspend AudioContexts created without one. */
@@ -89,7 +93,7 @@ const musicEngine = (() => {
     d.loop = loop;
     if (d.getAttribute('src') !== src) d.src = src;
     const p = d.play();
-    setDeckVolume(active, TARGET, 300);
+    setDeckVolume(active, targetVolume(), 300);
     currentTrack = src;
     return p; // a Promise — callers catch autoplay rejection
   }
@@ -103,15 +107,25 @@ const musicEngine = (() => {
     next.src = src;
     if (ctx && ctx.state === 'suspended') ctx.resume();
     next.play().catch(() => {});
-    setDeckVolume(old, 0, 500);         // old track ramps down...
-    setDeckVolume(active, TARGET, 500); // ...while the new one ramps up
+    setDeckVolume(old, 0, 500);                  // old track ramps down...
+    setDeckVolume(active, targetVolume(), 500);  // ...while the new one ramps up
     currentTrack = src;
+  }
+
+  /* Mute is a gain ramp to 0 (and back), never a pause — the track
+     position keeps moving so unmuting rejoins mid-song. */
+  function setMuted(m) {
+    muted = m;
+    sessionStorage.setItem('muted', m ? '1' : '0');
+    setDeckVolume(active, targetVolume(), 300);
   }
 
   return {
     ensureContext,
     playTrack,
     crossfadeTo,
+    setMuted,
+    isMuted: () => muted,
     get currentTrack() { return currentTrack; },
   };
 })();
@@ -294,4 +308,34 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
     });
   }, { threshold: 0.6 });
   labels.forEach(label => io.observe(label));
+})();
+
+/* ─── PROMPT 12: MUSIC TOGGLE ─────────────────────────────────
+   Fixed bottom-left equalizer: 5 thin bars, pure CSS animation —
+   JS only toggles a class and calls the engine. Frozen while
+   muted, dancing while music plays. Injected from JS so the
+   no-JS site never shows it. */
+(function initMusicToggle() {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'music-toggle';
+  btn.setAttribute('aria-label', 'Toggle music');
+  btn.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
+  document.body.appendChild(btn);
+
+  function render() {
+    const playing = window.SOUND_ON && !musicEngine.isMuted();
+    btn.classList.toggle('music-toggle--playing', playing);
+    btn.classList.toggle('music-toggle--muted', !playing);
+    btn.setAttribute('aria-pressed', String(playing));
+  }
+  render();
+
+  btn.addEventListener('click', () => {
+    if (!window.SOUND_ON) return; // entered without sound: nothing to toggle
+    const nowMuted = !musicEngine.isMuted();
+    musicEngine.setMuted(nowMuted);
+    if (!nowMuted) playSfx('assets/sfx/hover.mp3', 0.25); // blip on unmute
+    render();
+  });
 })();
