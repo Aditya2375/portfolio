@@ -558,22 +558,13 @@ a:focus-visible .roll-stack {
 
 /* ─── 14. FACT ROWS (Education, Beyond, Extras, Languages) ──── */
 
-.fact-list { display: flex; flex-direction: column; }
-.fact-row {
-  display: flex; flex-direction: column; gap: var(--space-sm);
-  padding: var(--space-md) 0; border-bottom: 1px solid var(--clr-line);
-}
+
+/* FACT-LIST rows -> Tailwind utilities (Prompt 27).
+   Concept map: py-8 = the --space-md row rhythm; border-b border-hairline
+   = the row divider; the display/tracking/leading scale mirrors the
+   hand-written rules. Kept in CSS: :last-child divider removal. */
 .fact-row:last-child { border-bottom: none; }
-.fact-row__meta { display: block; }
-.fact-row__title {
-  font-family: var(--font-display); font-size: 1.2rem; font-weight: 900;
-  text-transform: uppercase; letter-spacing: -0.02em; line-height: 1.1;
-  color: var(--clr-text); margin-bottom: 0.35rem;
-}
-.fact-row__desc {
-  font-family: var(--font-body); font-size: 0.875rem; color: var(--clr-muted);
-  max-width: 60ch; line-height: 1.6;
-}
+
 
 .stat-grid {
   display: grid;
