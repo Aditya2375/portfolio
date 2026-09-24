@@ -1969,3 +1969,31 @@ html.lenis, html.lenis body { height: auto; }
 }
 .hero-seq.seq-sub .hero__sub { opacity: 1; transform: none; }
 .hero-seq.seq-cta .hero__ctas { opacity: 1; transform: none; }
+
+
+/* ─── V3: PHOTO SECTION BACKGROUNDS (Beyond The Terminal) ─────
+   Real photographs behind the five beyond sections, flattened with
+   a dark scrim (no gradients) so the white type reads. The image
+   itself drifts opposite the cursor - same 3D-depth language as
+   the hero background. */
+.section--photo { position: relative; overflow: hidden; }
+.section-bg { position: absolute; inset: 0; }
+.section-bg img { width: 100%; height: 100%; object-fit: cover; }
+.section-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background-color: rgba(0, 0, 0, 0.58); /* flat scrim, design-safe */
+}
+.section--photo .container { position: relative; z-index: 1; }
+.section--photo .section-title,
+.section--photo .text-ink,
+.section--photo h2, .section--photo h3 { color: #FFF !important; }
+.section--photo .text-muted { color: rgba(255, 255, 255, 0.8) !important; }
+.section--photo .section-label { color: rgba(255, 255, 255, 0.65); }
+.section--photo .section-label::before { background-color: rgba(255, 255, 255, 0.35); }
+.section--photo .fact-row { border-color: rgba(255, 255, 255, 0.28) !important; }
+.section--photo .stat-card {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+.section--photo .stat-card__value { color: #FFF !important; }
+.section--photo .stat-card__label { color: rgba(255, 255, 255, 0.7) !important; }
