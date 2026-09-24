@@ -94,6 +94,12 @@ body {
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 0v10m0 4v10M0 12h10m4 0h10' stroke='%231B1B1B' stroke-width='1'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 
+/* Prompt 27: Tailwind preflight is OFF, so re-assert the one base rule
+   its border utilities depend on - without border-style: solid here,
+   border-b etc. compute to 0px. Universal selector, specificity 0: every
+   class-level border rule in this file still wins. */
+*, ::before, ::after { border: 0 solid var(--clr-line); }
+
 a { color: inherit; text-decoration: none; }
 ul, ol { list-style: none; }
 img { max-width: 100%; display: block; }
