@@ -1210,7 +1210,12 @@ window._sectionJump = function _sectionJump(target) {
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.rate = 1.05; u.pitch = 0.95; u.volume = 0.9;
-        speechSynthesis.speak(u);
+        /* Chrome drops an utterance spoken in the same tick as cancel();
+           the tiny delay (tracked in timers, so CLOSE can kill it)
+           makes every line actually sound. */
+        timers.push(setTimeout(() => {
+          try { speechSynthesis.speak(u); } catch (err) { /* no-op */ }
+        }, 60));
       } catch (err) { /* speech unavailable: text still renders */ }
     }
     try { if ('vibrate' in navigator) navigator.vibrate(25); } catch (err) { /* no-op */ }
