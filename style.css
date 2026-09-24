@@ -40,6 +40,7 @@
   --clr-accent:  #968ADF;
   --clr-line:    #E5E5E5;
   --clr-footer:  #000000;
+  --clr-plate:   #F7F7F7; /* project-card plate background */
 
   --font-display: 'Archivo Black', sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
@@ -258,12 +259,12 @@ a:focus-visible .roll-stack {
 
 .btn--primary {
   background-color: var(--clr-text);
-  color:            #FFFFFF;
+  color:            var(--clr-bg);
 }
 
 .btn--primary:hover, .btn--primary:focus-visible {
   background-color: #333333;
-  color:            #FFFFFF;
+  color:            var(--clr-bg);
 }
 
 .btn--outline {
@@ -275,7 +276,7 @@ a:focus-visible .roll-stack {
 
 .btn--outline:hover, .btn--outline:focus-visible {
   background-color: var(--clr-text);
-  color:            #FFFFFF;
+  color:            var(--clr-bg);
 }
 
 .btn--sm {
@@ -451,7 +452,7 @@ a:focus-visible .roll-stack {
      of the portrait's face on wide screens (headline over the dark left half) */
   font-family: var(--font-display); font-size: clamp(2.75rem, 9vw, 8rem);
   font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em;
-  line-height: 0.92; color: #FFFFFF; /* white on the dark photo hero */
+  line-height: 0.92; color: var(--clr-bg); /* white on the dark photo hero */
   display: flex; flex-direction: column; align-items: flex-start;
 }
 
@@ -477,13 +478,13 @@ a:focus-visible .roll-stack {
 .hero-stage .btn--primary,
 .hero-stage .btn--outline {
   background-color: transparent;
-  color: #FFFFFF;
-  outline: 1px solid #FFFFFF;
+  color: var(--clr-bg);
+  outline: 1px solid var(--clr-bg);
   outline-offset: -1px;
 }
 .hero-stage .btn--primary:hover, .hero-stage .btn--primary:focus-visible,
 .hero-stage .btn--outline:hover, .hero-stage .btn--outline:focus-visible {
-  background-color: #FFFFFF;
+  background-color: var(--clr-bg);
   color: var(--clr-text);
 }
 
@@ -627,24 +628,6 @@ a:focus-visible .roll-stack {
 }
 
 
-
-
-
-
-
-
-
-.art-frame__caption {
-  position: absolute;
-  bottom: var(--space-sm);
-  right: var(--space-sm);
-  background-color: var(--clr-bg);
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--clr-text);
-  z-index: 10;
-}
-
-
 /* ─── 14. FACT ROWS (Education, Beyond, Extras, Languages) ──── */
 
 .fact-list { display: flex; flex-direction: column; }
@@ -724,13 +707,13 @@ a:focus-visible .roll-stack {
 /* ─── 16. FOOTER ────────────────────────────────────────────── */
 
 .footer {
-  background-color: var(--clr-footer); color: #FFFFFF;
+  background-color: var(--clr-footer); color: var(--clr-bg);
   padding-top: var(--space-lg);
 }
 .footer__wordmark {
   font-family: var(--font-display); font-size: clamp(3rem, 15vw, 10rem);
   font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em;
-  line-height: 0.9; color: #FFFFFF;
+  line-height: 0.9; color: var(--clr-bg);
   padding: 0 clamp(1rem, 5vw, 5rem); padding-bottom: var(--space-md);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -750,7 +733,7 @@ a:focus-visible .roll-stack {
   letter-spacing: 0.05em; text-transform: uppercase;
   color: rgba(255, 255, 255, 0.7); transition: color var(--dur-fast) var(--easing);
 }
-.footer__link:hover { color: #FFFFFF; }
+.footer__link:hover { color: var(--clr-bg); }
 
 .footer__legal {
   color: #545454; margin-top: var(--space-sm);
@@ -1068,7 +1051,7 @@ body:has(.menu-checkbox:checked) .nav-overlay {
 .nav-overlay__footer.section-label::before {
   background-color: rgba(255, 255, 255, 0.25);
 }
-.nav-overlay__close:hover .section-label { color: #FFFFFF; }
+.nav-overlay__close:hover .section-label { color: var(--clr-bg); }
 
 /* ── Nav Link List ── */
 .nav-overlay__nav {
@@ -1100,7 +1083,7 @@ body:has(.menu-checkbox:checked) .nav-overlay {
   text-transform: uppercase;
   letter-spacing: -0.03em;
   line-height:    1;
-  color:          #FFFFFF;
+  color:          var(--clr-bg);
   opacity:        0;
   transform:      translateX(-48px);
   /* transition covers opacity, transform, AND color (for the hover accent) */
@@ -1252,7 +1235,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 /* Current page indicator: lavender square already provided by .section-label::before */
 
 .nav-overlay__item--current > label > a {
-  color: #FFFFFF; /* full white — indicates active page */
+  color: var(--clr-bg); /* full white — indicates active page */
 }
 
 /* Sub-links: indented section anchors shown under the current page */
@@ -1276,7 +1259,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 
 .nav-overlay__sub-link:hover,
 .nav-overlay__sub-link:focus-visible {
-  color: #FFFFFF;
+  color: var(--clr-bg);
 }
 
 
@@ -1377,7 +1360,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   font-weight: 900;
   letter-spacing: -0.03em;
   line-height: 1;
-  color: #FFFFFF;
+  color: var(--clr-bg);
 }
 
 /* The small card circling the wordmark: a rotating wrapper carries a
@@ -1423,13 +1406,13 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 
 .intro__btn {
   background-color: transparent;
-  color: #FFFFFF;
-  outline: 1px solid #FFFFFF;
+  color: var(--clr-bg);
+  outline: 1px solid var(--clr-bg);
   outline-offset: -1px;
   border: none;
 }
 .intro__btn:hover, .intro__btn:focus-visible {
-  background-color: #FFFFFF;
+  background-color: var(--clr-bg);
   color: var(--clr-text);
 }
 
@@ -1458,7 +1441,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   text-transform: uppercase;
   padding: 0.7em 1.2em;
   background-color: var(--clr-footer);
-  color: #FFFFFF;
+  color: var(--clr-bg);
   border: 1px solid rgba(255, 255, 255, 0.4);
   cursor: pointer;
 }
@@ -1528,7 +1511,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   width: 6px;
   height: 6px;
   margin: -3px 0 0 -3px; /* centre on the pointer */
-  background-color: #FFFFFF;
+  background-color: var(--clr-bg);
   border-radius: 50%;
 }
 
@@ -1536,7 +1519,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   width: 28px;
   height: 28px;
   margin: -14px 0 0 -14px;
-  border: 1px solid #FFFFFF;
+  border: 1px solid var(--clr-bg);
   border-radius: 50%;
   transition: width 0.25s var(--easing), height 0.25s var(--easing),
               margin 0.25s var(--easing);
@@ -1585,7 +1568,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 .layer-back {
-  background-color: #F7F7F7; /* the plate under the SVG hairlines */
+  background-color: var(--clr-plate); /* the plate under the SVG hairlines */
 }
 .layer-back svg {
   position: absolute;
