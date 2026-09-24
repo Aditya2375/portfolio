@@ -430,3 +430,83 @@ const FOOTER_TRACK = 'assets/music/footer.mp3';
       !!e.target.closest('a, button, .btn, label[for]'));
   });
 })();
+
+/* ─── PROMPT 15: NAVBAR WIRING ────────────────────────────────
+   Smooth anchors, scrollspy, hover scramble + blip, hash landing,
+   and a JS fallback for the CSS scroll progress bar.
+   Section jumps route through window._sectionJump so Prompt 19 can
+   later swap in the bracket transition WITHOUT rebinding anything. */
+window._sectionJump = function _sectionJump(target) {
+  target.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
+};
+
+(function initNavbar() {
+  const links = [...document.querySelectorAll('.navbar__link')];
+
+  /* 1 + 2. Clicking a navbar link scrolls smoothly to that section.
+     Each page's navbar lists only its own sections, so every #href
+     here resolves on this page. */
+  links.forEach(a => a.addEventListener('click', (e) => {
+    const href = a.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+    const target = document.querySelector(href);
+    if (!target) return;
+    e.preventDefault();
+    window._sectionJump(target);
+  }));
+
+  /* 2. Scrollspy: a section crossing the upper-middle band marks its
+     navbar link active (the filled square is pure CSS). */
+  const spyTargets = links
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+  if (spyTargets.length) {
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        links.forEach(a => a.classList.toggle(
+          'navbar__link--active',
+          a.getAttribute('href') === '#' + entry.target.id));
+      });
+    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+    spyTargets.forEach(sec => spy.observe(sec));
+  }
+
+  /* When a page opens with a #hash (e.g. index.html#contact from an
+     inner page), jump to that section once everything has loaded. */
+  if (location.hash) {
+    addEventListener('load', () => {
+      const target = document.querySelector(location.hash);
+      if (target) target.scrollIntoView({ behavior: 'auto' });
+    });
+  }
+
+  /* 3. Hover scramble + blip on every navbar and footer link.
+     The decode runs on the DUPLICATE label (.roll-text--dup), so the
+     CSS roll hover and the scramble resolve together. The original
+     text stays safe in the data attribute; a running scramble is
+     never restarted (the engine guards it). With script.js deleted,
+     the CSS roll hover still works on its own. */
+  document.querySelectorAll('.navbar__link, .footer__link').forEach(a => {
+    const dup = a.querySelector('.roll-text--dup') || a;
+    a.addEventListener('mouseenter', () => {
+      window.scrambleText(dup, { duration: 300 });
+      playSfx('assets/sfx/hover.mp3', 0.2);
+    });
+  });
+
+  /* 4. Progress-bar fallback: where CSS scroll-timeline is unsupported
+     the @supports block never renders the bar, so JS drives scaleX. */
+  if (!CSS.supports('animation-timeline: scroll()')) {
+    const bar = document.querySelector('.scroll-progress');
+    if (bar) {
+      bar.style.display = 'block';
+      const update = () => {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+      };
+      addEventListener('scroll', update, { passive: true });
+      update();
+    }
+  }
+})();

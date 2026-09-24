@@ -1548,3 +1548,18 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 @media (hover: none) {
   .cursor-dot, .cursor-ring { display: none; }
 }
+
+
+/* ─── 29. SCROLLSPY ACTIVE LINK (Prompt 15) ───────────────────
+   KPR-style filled square before the active navbar link. */
+.navbar__link--active {
+  color: var(--clr-text);
+}
+.navbar__link--active::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 4px;
+  background-color: var(--clr-text);
+}
