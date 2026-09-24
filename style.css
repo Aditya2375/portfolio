@@ -443,7 +443,9 @@ a:focus-visible .roll-stack {
 .hero__content .hero__ctas      { animation: fadeSlideUp 0.7s var(--easing) 0.52s both; }
 
 .hero__name {
-  font-family: var(--font-display); font-size: clamp(4rem, 14vw, 10rem);
+  /* clamp keeps the giant headline inside the viewport at 375px and clear
+     of the portrait's face on wide screens (headline over the dark left half) */
+  font-family: var(--font-display); font-size: clamp(2.75rem, 9vw, 8rem);
   font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em;
   line-height: 0.92; color: #FFFFFF; /* white on the dark photo hero */
   display: flex; flex-direction: column; align-items: flex-start;
@@ -783,6 +785,11 @@ a:focus-visible .roll-stack {
 @media (min-width: 1024px) {
   .projects__grid { grid-template-columns: repeat(3, 1fr); }
   .hero__content { padding: var(--space-xl) clamp(1rem, 8vw, 8rem); }
+}
+
+/* Phones: push the hero text right of the fixed left-edge MENU trigger */
+@media (max-width: 699px) {
+  .hero__content { padding-left: 3rem; }
 }
 
 /* ─── 18. SCROLL-DRIVEN ANIMATIONS ──────────────────────────── */
