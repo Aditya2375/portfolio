@@ -1931,3 +1931,10 @@ html.lenis, html.lenis body { height: auto; }
 @media (prefers-reduced-motion: reduce) {
   .footer__acrostic.will-stage li { opacity: 1; transform: none; }
 }
+
+/* Review round, mobile fit: keep the hold bar on one line and lift the
+   hero story beat clear of it on narrow screens. */
+.guide-hold__label { white-space: nowrap; }
+@media (max-width: 700px) {
+  .hero__story { bottom: 4.75rem; }
+}
