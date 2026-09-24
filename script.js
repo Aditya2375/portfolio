@@ -510,3 +510,43 @@ window._sectionJump = function _sectionJump(target) {
     }
   }
 })();
+
+/* ─── PROMPT 16: SIDE MENU UPGRADE ────────────────────────────
+   The checkbox/:has() CSS mechanism stays the no-JS base; this only
+   layers sound and scramble on top. */
+(function initSideMenu() {
+  const checkbox = document.getElementById('menu-toggle');
+  if (!checkbox) return;
+  const links = [...document.querySelectorAll('.nav-overlay__link, .nav-overlay__sub-link')];
+
+  /* 1. On open, each link's label scrambles in, staggered one after
+     another (70ms apart), with the tick on the first only. */
+  checkbox.addEventListener('change', () => {
+    if (!checkbox.checked) return;
+    links.forEach((a, i) => {
+      setTimeout(() => window.scrambleText(a, { duration: 350, tick: i === 0 }), i * 70);
+    });
+  });
+
+  /* 2. Hover scramble + blip on every menu link and the MENU trigger.
+     Each item scrambles on its own (the engine's no-restart guard is
+     per-element), so sweeping down the list leaves several settling. */
+  links.forEach(a => a.addEventListener('mouseenter', () => {
+    window.scrambleText(a, { duration: 300 });
+    playSfx('assets/sfx/hover.mp3', 0.2);
+  }));
+  const trigger = document.querySelector('.menu-trigger');
+  const triggerText = document.querySelector('.menu-trigger__text');
+  if (trigger && triggerText) {
+    trigger.addEventListener('mouseenter', () => {
+      window.scrambleText(triggerText, { duration: 250 });
+      playSfx('assets/sfx/hover.mp3', 0.2);
+    });
+  }
+
+  /* 3. Menu links are anchors inside <label for="menu-toggle">, so a
+     click already closes the menu (the label unchecks the box) and
+     then follows the link - page links open their page, same-page
+     section links smooth-scroll via CSS scroll-behavior. No JS needed
+     for the base path; Prompt 19 wraps the jump in the transition. */
+})();
