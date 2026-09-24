@@ -1079,17 +1079,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 /* --- 20. PAGE HEADER (non-home pages) ------------------------ */
 /* White full-viewport header with hairline grid, page label, giant h1, subtitle.
    Replaces the hero on Academics, Projects, Beyond, Community pages. */
-.page-header {
-  min-height: 60vh;
-  padding-top: var(--nav-height);
-  padding-bottom: var(--space-lg);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  background-color: var(--clr-bg);
-  border-bottom: 1px solid var(--clr-line);
-}
+
 
 /* Decorative hairline vertical grid — same pattern as the hero grid lines */
 .page-header__grid {
@@ -1102,47 +1092,18 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   );
 }
 
-.page-header__inner {
-  position: relative;
-  z-index: 1;
-  padding: 0 clamp(1rem, 8vw, 6rem);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
+
 
 .page-header__label {
   /* mono page index — e.g. PAGE 02 / 05 — ACADEMICS */
   animation: fadeSlideUp 0.7s var(--easing) 0.1s both;
 }
 
-.page-header__title {
-  font-family: var(--font-display);
-  font-size: clamp(3.5rem, 12vw, 9rem);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.03em;
-  line-height: 0.92;
-  color: var(--clr-text);
-  /* clip mask for the staggered reveal-text spans */
-  overflow: hidden;
-  animation: fadeSlideUp 0.7s var(--easing) 0.15s both;
-}
 
-/* Each line of the title wraps an overflow:hidden clipping box */
-.page-header__line {
-  display: block;
-  overflow: hidden;
-}
 
-.page-header__sub {
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-  color: var(--clr-muted);
-  max-width: 50ch;
-  line-height: 1.65;
-  animation: fadeSlideUp 0.7s var(--easing) 0.35s both;
-}
+
+
+
 
 
 /* --- 21. EXPLORE SECTION (Home only) ------------------------- */
