@@ -566,24 +566,10 @@ a:focus-visible .roll-stack {
 .fact-row:last-child { border-bottom: none; }
 
 
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 1rem; margin-top: 0.5rem;
-}
-.stat-card {
-  display: flex; flex-direction: column; padding: 1rem;
-  border: 1px solid var(--clr-line);
-  background: var(--clr-bg);
-}
-.stat-card__value {
-  font-family: var(--font-display); font-size: 1.5rem; color: var(--clr-text);
-  line-height: 1; margin-bottom: 0.5rem;
-}
-.stat-card__label {
-  font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.05em;
-  color: var(--clr-muted);
-}
+
+
+
+
 
 
 /* ─── 15. CONTACT SECTION ───────────────────────────────────── */
@@ -1590,6 +1576,11 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
    The hold affordance lives entirely in JS-injected elements
    (.stat-card__hint, .stat-card__progress) so the no-JS site never
    shows them; CSS only styles them and runs the progress line. */
+/* STAT cards -> Tailwind utilities (Prompt 27).
+   Concept map: auto-fit/minmax(130px) grid, p-4 + hairline border cards.
+   Kept in CSS: .chamfer clip-path, position/user-select for the
+   hold-to-reveal interaction, .stat-card__hint/__progress, and the
+   is-revealed/is-holding JS states. */
 .stat-card { position: relative; user-select: none; -webkit-touch-callout: none; }
 .stat-card:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 3px; }
 
