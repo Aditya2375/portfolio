@@ -174,7 +174,6 @@ function showTapForSound() {
   overlay.innerHTML = `
     <div class="intro__stage">
       <p class="intro__word" aria-hidden="true">ADITYA</p>
-      <span class="intro__orbit" aria-hidden="true"></span>
     </div>
     <p class="intro__readout" role="status">//INITIALIZING PORTFOLIO... [0%]</p>
     <div class="intro__actions">
@@ -352,13 +351,16 @@ window.scrambleText.cancel = function cancelScramble(el) { el._scrambling = fals
    the map is per page. The mountains art break keeps whatever is
    playing. If the visitor entered without sound or muted, the
    engine's volume stays at 0 - nothing audible happens. */
+/* REVIEW ROUND 2: music now changes only between FUNDAMENTALLY
+   different zones, not every small section - home has three zones
+   (intro/story, work, say-hi) instead of six rapid switches. */
 const SECTION_TRACKS = {
   home: {
     hero: 'assets/music/hero.mp3',
-    about: 'assets/music/about.mp3',
-    skills: 'assets/music/skills.mp3',
+    about: 'assets/music/hero.mp3',     // intro/story zone keeps the pop beat
+    skills: 'assets/music/hero.mp3',
     projects: 'assets/music/projects.mp3',
-    explore: 'assets/music/about.mp3', // Explore reuses the About track
+    explore: 'assets/music/projects.mp3', // work zone
     contact: 'assets/music/contact.mp3',
   },
   academics: { hero: 'assets/music/education.mp3', now: 'assets/music/education.mp3', exams: 'assets/music/education.mp3', school: 'assets/music/education.mp3', olympiads: 'assets/music/education.mp3', learning: 'assets/music/education.mp3' },
@@ -366,7 +368,9 @@ const SECTION_TRACKS = {
   beyond:    { hero: 'assets/music/about.mp3', trekking: 'assets/music/about.mp3', running: 'assets/music/about.mp3', cycling: 'assets/music/about.mp3', sport: 'assets/music/about.mp3', music: 'assets/music/about.mp3' },
   community: { hero: 'assets/music/about.mp3', leadership: 'assets/music/about.mp3', clubs: 'assets/music/about.mp3', events: 'assets/music/about.mp3', volunteering: 'assets/music/about.mp3', connect: 'assets/music/about.mp3' },
 };
-const FOOTER_TRACK = 'assets/music/footer.mp3';
+/* REVIEW ROUND 2: footer.mp3 (the dark horror-ish track) is retired -
+   the footer stays on the calm contact track. */
+const FOOTER_TRACK = 'assets/music/contact.mp3';
 
 (function initSectionSoundtrack() {
   const map = SECTION_TRACKS[PAGE_ID] || {};
@@ -826,21 +830,17 @@ window._sectionJump = function _sectionJump(target) {
     }, coverMs);
   };
 
-  /* Same-page jumps go through the hook Prompt 15 wired into the
-     navbar: now the jump happens instantly under full cover. */
+  /* REVIEW ROUND 2: same-page jumps no longer play the bracket
+     transition (it felt like being taken to a different website).
+     Clicking a nav link now just glides down to the section - a
+     visible SCROLL animation, eased through Lenis when it runs.
+     Page-to-page links still get the full transition below. */
   window._sectionJump = function _sectionJump(target) {
-    window.playTransition(() => {
-      if (window._lenis) {
-        /* Prompt 22: Lenis owns scrolling - jump instantly under the cover */
-        window._lenis.scrollTo(target, { immediate: true });
-        return;
-      }
-      const root = document.documentElement;
-      const prev = root.style.scrollBehavior;
-      root.style.scrollBehavior = 'auto'; /* beat the CSS smooth scroll */
-      window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY);
-      root.style.scrollBehavior = prev;
-    });
+    if (window._lenis) {
+      window._lenis.scrollTo(target, { duration: 1.4 }); /* slow, weighty glide */
+      return;
+    }
+    target.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
   };
 
   /* Arriving from another page through a transition: start covered,
@@ -1124,7 +1124,7 @@ window._sectionJump = function _sectionJump(target) {
   if (REDUCED_MOTION) return;          /* reduced motion: native scrolling */
   if (typeof Lenis === 'undefined') return; /* CDN unreachable: native stays */
   const lenis = new Lenis({
-    duration: 1.1,        /* seconds of glide per wheel gesture - weighty, not twitchy */
+    duration: 1.55,       /* REVIEW ROUND 2: heavier, KSR-style scroll weight (was 1.1) */
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), /* exponential-out: fast start, soft landing */
     smoothWheel: true,    /* smooth the mouse wheel (trackpads already glide) */
     autoRaf: typeof gsap === 'undefined'
