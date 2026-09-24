@@ -550,3 +550,87 @@ window._sectionJump = function _sectionJump(target) {
      section links smooth-scroll via CSS scroll-behavior. No JS needed
      for the base path; Prompt 19 wraps the jump in the transition. */
 })();
+
+/* ─── PROMPT 17: 3D MOUSE PARALLAX + HERO TILT ────────────────
+   Mouse-driven depth, lerped in one shared rAF loop:
+   1. hero text block tilts a few degrees toward the cursor
+   2. project-card plate layers shift opposite the cursor
+      (front 20px, mid 10px, back 3px)
+   Off by default on touch devices and under prefers-reduced-motion.
+   Scroll drift for the same layers is pure CSS (see style.css §32),
+   living on `translate` so it adds to these `transform` offsets. */
+(function initDepthParallax() {
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!finePointer || reduced) return; /* touch / reduced-motion: static site */
+
+  /* One lerp list drives every animated element. Each entry eases
+     cx,cy toward tx,ty; the loop sleeps once everything settles. */
+  const items = [];
+  let raf = null;
+  function loop() {
+    let alive = false;
+    for (const it of items) {
+      it.cx += (it.tx - it.cx) * 0.08; /* ease factor: slow, weighty settle */
+      it.cy += (it.ty - it.cy) * 0.08;
+      if (Math.abs(it.tx - it.cx) < 0.02 && Math.abs(it.ty - it.cy) < 0.02) {
+        it.cx = it.tx; it.cy = it.ty; /* snap the last epsilon, then sleep */
+      } else {
+        alive = true;
+      }
+      it.apply(it.cx, it.cy);
+    }
+    raf = alive ? requestAnimationFrame(loop) : null;
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(loop); }
+
+  /* 1. Hero 3D tilt: rotateX/rotateY a few degrees toward the mouse.
+     Perspective comes from .hero-sticky; the portrait frames are
+     siblings and stay flat. */
+  const heroContent = document.querySelector('.hero__content');
+  if (heroContent) {
+    const heroArea = heroContent.closest('.hero-sticky');
+    const tilt = {
+      cx: 0, cy: 0, tx: 0, ty: 0,
+      apply(x, y) {
+        heroContent.style.transform = `rotateX(${(-y).toFixed(3)}deg) rotateY(${x.toFixed(3)}deg)`;
+      }
+    };
+    items.push(tilt);
+    heroArea.addEventListener('mousemove', (e) => {
+      const r = heroArea.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width - 0.5;  /* -0.5 … 0.5 */
+      const ny = (e.clientY - r.top) / r.height - 0.5;
+      tilt.tx = nx * 8;  /* up to ±4deg */
+      tilt.ty = ny * 6;  /* up to ±3deg */
+      kick();
+    });
+    heroArea.addEventListener('mouseleave', () => { tilt.tx = 0; tilt.ty = 0; kick(); });
+  }
+
+  /* 2. Card layer parallax: layers move opposite the cursor, scaled
+     by depth - front ±20px, mid ±10px, back ±3px - so the plate
+     feels like a real stack. */
+  document.querySelectorAll('.project-card').forEach((card) => {
+    const back = card.querySelector('.layer-back');
+    const mid = card.querySelector('.layer-mid');
+    const front = card.querySelector('.layer-front');
+    if (!back || !mid || !front) return;
+    const st = {
+      cx: 0, cy: 0, tx: 0, ty: 0,
+      apply(x, y) {
+        front.style.transform = `translate(${(-x * 40).toFixed(2)}px, ${(-y * 40).toFixed(2)}px)`;
+        mid.style.transform   = `translate(${(-x * 20).toFixed(2)}px, ${(-y * 20).toFixed(2)}px)`;
+        back.style.transform  = `translate(${(-x * 6).toFixed(2)}px, ${(-y * 6).toFixed(2)}px)`;
+      }
+    };
+    items.push(st);
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      st.tx = (e.clientX - r.left) / r.width - 0.5;
+      st.ty = (e.clientY - r.top) / r.height - 0.5;
+      kick();
+    });
+    card.addEventListener('mouseleave', () => { st.tx = 0; st.ty = 0; kick(); });
+  });
+})();
