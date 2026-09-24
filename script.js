@@ -1180,8 +1180,17 @@ window._sectionJump = function _sectionJump(target) {
 
   /* (c) the line itself: robot sting, waveform on, scramble in, vibrate */
   function speak(text) {
-    robotFlip = !robotFlip;
-    playSfx(robotFlip ? 'assets/sfx/robot-1.mp3' : 'assets/sfx/robot-2.mp3', 0.15);
+    /* v3: the agent actually READS the line aloud (browser speech
+       synthesis, only when the visitor entered with sound). The old
+       robot blip went away with it - it read as a random noise. */
+    if (window.SOUND_ON && 'speechSynthesis' in window) {
+      try {
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 1.05; u.pitch = 0.95; u.volume = 0.9;
+        speechSynthesis.speak(u);
+      } catch (err) { /* speech unavailable: text still renders */ }
+    }
     try { if ('vibrate' in navigator) navigator.vibrate(25); } catch (err) { /* no-op */ }
     panel.classList.add('is-speaking');
     lineEl.dataset.scrambleText = text;
@@ -1192,14 +1201,18 @@ window._sectionJump = function _sectionJump(target) {
   }
 
   /* (a) scroll -> (b) decode as it arrives -> (c) line 0.7s later */
+  let lastShowAt = 0;
   function showLine(i) {
+    const now = Date.now();
+    if (now - lastShowAt < 900) return; /* v3: no accidental section skips */
+    lastShowAt = now;
     idx = Math.max(0, Math.min(lines.length - 1, i));
     clearTimers();
     const { sel, text } = lines[idx];
     const section = sel ? document.querySelector(sel) : null;
     if (section) {
       /* Prompt 22: eased through Lenis when it runs, native otherwise */
-      if (window._lenis) window._lenis.scrollTo(section, { duration: 1.0 });
+      if (window._lenis) window._lenis.scrollTo(section, { duration: 1.8 });
       else section.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
       timers.push(setTimeout(() => decodeSection(section), REDUCED_MOTION ? 0 : 550));
       timers.push(setTimeout(() => speak(text), REDUCED_MOTION ? 60 : 1250));
@@ -1213,7 +1226,7 @@ window._sectionJump = function _sectionJump(target) {
        to the next section on its own - no clicks needed. Manual
        PREV/NEXT re-enters the same flow at that line. */
     const speakDur = REDUCED_MOTION ? 0 : Math.min(1100, 220 + text.length * 14);
-    const readPause = 1600 + text.length * 30;
+    const readPause = 2200 + text.length * 35;
     if (idx < lines.length - 1) {
       timers.push(setTimeout(() => { if (isOpen) showLine(idx + 1); },
         (REDUCED_MOTION ? 60 : 1250) + speakDur + readPause));
@@ -1237,6 +1250,7 @@ window._sectionJump = function _sectionJump(target) {
     if (!isOpen) return;
     isOpen = false;
     clearTimers();
+    if ('speechSynthesis' in window) try { speechSynthesis.cancel(); } catch (err) {}
     window.playTransition(() => {
       panel.classList.remove('is-open', 'is-speaking');
       bar.classList.remove('is-hidden');
