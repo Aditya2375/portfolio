@@ -957,46 +957,42 @@ window._sectionJump = function _sectionJump(target) {
    scramble decode begins. Lines live in LINES below, one array per
    page, each entry tied to a section selector - edit them here. */
 (function initGuide() {
-  const LINES = {
-    'index.html': [
-      { sel: '#hero',     text: "Welcome to Aditya's portfolio. Make yourself at home - I'll show you around." },
-      { sel: '#hero',     text: "This is Aditya Kulkarni: 18, from Pune, now studying CS and AI at Scaler School of Technology in Bengaluru, and pursuing Computer Science at BITS Pilani alongside it." },
-      { sel: '#about',    text: "Here's who he is. JEE Main 97.4 percentile, MHT-CET 98.4, and when he's not coding, he's running, cycling or climbing mountains." },
-      { sel: '#skills',   text: "His toolkit: HTML, CSS, Java, C, and C++ for competitive programming - with JavaScript and backend next on the list." },
-      { sel: '#projects', text: "Five things he's actually built - this very site, a local AI coding setup, an Instagram growth bot, a doubt platform for juniors and seniors, and his competitive programming pipeline." },
-      /* Home has no education/beyond sections: those two lines ride on
-         #explore, the hub that links out to those pages. */
-      { sel: '#explore',  text: "The road here: EuroKids, Symbiosis, Vikhe Patil Memorial School, Lokseva, and now CS and AI at Scaler School of Technology, with an undergraduation in Computer Science from BITS Pilani alongside it." },
-      { sel: '#explore',  text: "Off the screen: seven years of trekking with five Himalayan summits, school captain, debate club lead, and the student petition that got SST's gym opened early." },
-      { sel: '#contact',  text: "Like what you see? Say hi - email, LinkedIn and GitHub are right here, or leave a message in the form." },
-      { sel: '.footer',   text: "Thanks for stopping by. Enjoy the rest of the site." }
-    ],
-    'academics.html': [
-      { sel: '.page-header', text: "This is the study side of Aditya - everything from the very beginning." },
-      { sel: '#now',         text: "Right now he studies CS and AI at Scaler School of Technology in Bengaluru, and is pursuing an undergraduation in Computer Science from BITS Pilani alongside it." },
-      { sel: '#exams',       text: "The entrance exams: JEE Main 97.4 percentile, MHT-CET 98.4 percentile, and JEE Advanced AIR 21,300." },
-      { sel: '#school',      text: "School took him from EuroKids and Symbiosis to Vikhe Patil Memorial School, with 94% in Grade 10, and Lokseva, with 89% in Grade 12." },
-      { sel: '#learning',    text: "And he is still learning - here is what is on his desk right now." }
-    ],
-    'projects.html': [
-      { sel: '.page-header', text: "Five things he has actually built. Take your time with each one." },
-      { sel: '#portfolio',   text: "First up, the site you are standing in." },
-      { sel: '#cp-pipeline', text: "And the one he uses every day - his competitive programming pipeline." }
-    ],
-    'beyond.html': [
-      { sel: '.page-header', text: "Now the fun part - what he does away from the screen." },
-      { sel: '#trekking',    text: "Seven years of trekking, with five Himalayan summits so far." },
-      { sel: '#running',     text: "He runs at 5 AM. Press and hold a card to see the numbers." },
-      { sel: '#music',       text: "And when he is not moving, he is playing guitar, piano, or singing." }
-    ],
-    'community.html': [
-      { sel: '.page-header', text: "This page is about the people - the teams, clubs and events he is part of." },
-      { sel: '#leadership',  text: "School captain, debate club lead, and the student petition that got SST's gym opened early." },
-      { sel: '#clubs',       text: "At SST he is in the Orators Club, where his team placed first at WTFQ, and the Open Source Club." },
-      { sel: '#events',      text: "Six hackathons with multiple podium finishes - and a first place in a team Rangoli competition." },
-      { sel: '#connect',     text: "Want to talk? All his links are right here." }
-    ]
-  };
+  /* Review round: the agent narrates from the LIVE DOM instead of a
+     canned script - each line is built from the section's own heading
+     and first real paragraph, so the tour can never go stale. */
+  function firstSentence(t) {
+    const clean = t.trim().replace(/\s+/g, ' ');
+    const m = clean.match(/^.*?[.!?](?=\s|$)/);
+    return (m ? m[0] : clean).slice(0, 220);
+  }
+  function buildLines() {
+    const out = [{
+      sel: null,
+      text: "Hi - I'm the AI agent built into this site. Sit back, I'll scroll and show you what Aditya does."
+    }];
+    document.querySelectorAll('main > section, footer.footer').forEach(sec => {
+      if (sec.classList.contains('footer')) {
+        out.push({ sel: '.footer', text: "That's the tour. Say hi before you go - the links are right here." });
+        return;
+      }
+      if (!sec.id) return;
+      let text;
+      if (sec.id === 'hero') {
+        const sub = sec.querySelector('.hero__sub');
+        text = 'This is Aditya Kulkarni. ' + (sub ? firstSentence(sub.textContent) : '');
+      } else {
+        const head = sec.querySelector('h1, h2, h3');
+        const label = sec.querySelector('.section-label');
+        const name = (head || label ? (head || label).textContent : sec.id)
+          .trim().replace(/\s+/g, ' ').replace(/[.:;]+$/, '');
+        const p = [...sec.querySelectorAll('p')].find(el =>
+          !el.classList.contains('section-label') && el.textContent.trim().length > 40);
+        text = name + '. ' + (p ? firstSentence(p.textContent) : '');
+      }
+      out.push({ sel: '#' + sec.id, text: text.trim() });
+    });
+    return out;
+  }
 
   /* Where the guide sends the visitor after the last line */
   const NEXT = {
@@ -1008,37 +1004,52 @@ window._sectionJump = function _sectionJump(target) {
   };
 
   const page = location.pathname.split('/').pop() || 'index.html';
-  const lines = LINES[page];
+  const lines = buildLines();
   if (!lines || !lines.length) return;
   const next = NEXT[page];
 
   const waveHTML = '<span class="guide-wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>';
 
-  /* Trigger: hero on Home, page header on the inner pages */
-  const host = document.querySelector('.hero__ctas') || document.querySelector('.page-header');
-  if (host) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn btn--outline guide-open';
-    btn.innerHTML = 'ASK THE GUIDE ' + waveHTML;
-    host.appendChild(btn);
-    btn.addEventListener('click', openGuide);
-  }
+  /* Review round: one translucent bottom-center bar replaces the old
+     ASK THE GUIDE button and the corner FAB. Hold SPACE (or press and
+     hold the bar itself) for 900ms and the AI agent takes over with a
+     blackout, then walks the page on its own. Music keeps playing. */
+  const bar = document.createElement('button');
+  bar.type = 'button';
+  bar.className = 'guide-hold';
+  bar.innerHTML =
+    '<span class="guide-hold__fill" aria-hidden="true"></span>' +
+    '<span class="guide-hold__label">HOLD SPACE FOR AI AGENT</span>' + waveHTML;
+  bar.setAttribute('aria-label', 'Hold space, or press and hold, for the AI agent');
+  document.body.appendChild(bar);
 
-  /* Small fixed button once the hero / page header scrolls away */
-  const fab = document.createElement('button');
-  fab.type = 'button';
-  fab.className = 'guide-fab';
-  fab.innerHTML = 'GUIDE ' + waveHTML;
-  fab.setAttribute('aria-label', 'Open the guide');
-  document.body.appendChild(fab);
-  fab.addEventListener('click', openGuide);
-  const topAnchor = document.querySelector('.hero-stage') || document.querySelector('.page-header');
-  if (topAnchor && 'IntersectionObserver' in window) {
-    new IntersectionObserver((entries) => {
-      entries.forEach(en => fab.classList.toggle('is-visible', !en.isIntersecting));
-    }, { threshold: 0.05 }).observe(topAnchor);
+  const HOLD_MS = 900;
+  let holdTimer = null;
+  function startHold() {
+    if (isOpen || holdTimer) return;
+    bar.classList.add('is-holding');
+    holdTimer = setTimeout(() => { cancelHold(); openGuide(); }, HOLD_MS);
   }
+  function cancelHold() {
+    if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+    bar.classList.remove('is-holding');
+  }
+  bar.addEventListener('pointerdown', (e) => { e.preventDefault(); startHold(); });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev =>
+    bar.addEventListener(ev, cancelHold));
+  bar.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && !e.repeat) { e.preventDefault(); startHold(); }
+  });
+  bar.addEventListener('keyup', (e) => { if (e.code === 'Space') cancelHold(); });
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) { closeGuide(); return; }
+    if (e.code !== 'Space' || e.repeat || isOpen) return;
+    const t = e.target;
+    if (t && t.closest && t.closest('input, textarea, select, [contenteditable], a, button')) return;
+    e.preventDefault(); /* space scrolls by default - the hold owns it here */
+    startHold();
+  });
+  addEventListener('keyup', (e) => { if (e.code === 'Space') cancelHold(); });
 
   /* The docked panel */
   const panel = document.createElement('aside');
@@ -1046,7 +1057,7 @@ window._sectionJump = function _sectionJump(target) {
   panel.setAttribute('role', 'dialog');
   panel.setAttribute('aria-label', 'Site guide');
   panel.innerHTML =
-    '<p class="guide-panel__kicker">//THE GUIDE</p>' +
+    '<p class="guide-panel__kicker">//AI AGENT</p>' +
     '<p class="guide-panel__line" aria-live="polite"></p>' +
     '<span class="guide-panel__wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
     '<div class="guide-panel__controls">' +
@@ -1095,7 +1106,7 @@ window._sectionJump = function _sectionJump(target) {
     idx = Math.max(0, Math.min(lines.length - 1, i));
     clearTimers();
     const { sel, text } = lines[idx];
-    const section = document.querySelector(sel);
+    const section = sel ? document.querySelector(sel) : null;
     if (section) {
       /* Prompt 22: eased through Lenis when it runs, native otherwise */
       if (window._lenis) window._lenis.scrollTo(section, { duration: 1.0 });
@@ -1108,12 +1119,22 @@ window._sectionJump = function _sectionJump(target) {
     prevBtn.disabled = idx === 0;
     nextBtn.disabled = idx === lines.length - 1;
     if (nextRow) nextRow.hidden = idx !== lines.length - 1;
+    /* Auto-tour (review round): after the line lands, the agent moves
+       to the next section on its own - no clicks needed. Manual
+       PREV/NEXT re-enters the same flow at that line. */
+    const speakDur = REDUCED_MOTION ? 0 : Math.min(1100, 220 + text.length * 14);
+    const readPause = 1600 + text.length * 30;
+    if (idx < lines.length - 1) {
+      timers.push(setTimeout(() => { if (isOpen) showLine(idx + 1); },
+        (REDUCED_MOTION ? 60 : 1250) + speakDur + readPause));
+    }
   }
 
   function openGuide() {
     if (isOpen) return;
     isOpen = true;
-    fab.classList.remove('is-visible');
+    cancelHold();
+    bar.classList.add('is-hidden');
     window.playTransition(() => {
       panel.classList.add('is-open');
       idx = 0;
@@ -1128,7 +1149,8 @@ window._sectionJump = function _sectionJump(target) {
     clearTimers();
     window.playTransition(() => {
       panel.classList.remove('is-open', 'is-speaking');
-      /* the visitor stays exactly where the guide stopped */
+      bar.classList.remove('is-hidden');
+      /* the visitor stays exactly where the agent stopped */
     }, { mode: 'sides' });
   }
 
