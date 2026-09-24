@@ -9,6 +9,39 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+
+  <!-- Tailwind Play CDN, pinned 3.4.16 (Prompt 27): compiles the utility
+       classes in the browser at runtime, so this page needs internet for
+       Tailwind styling. Preflight is OFF - the site's own reset in
+       style.css stays the only base layer, so nothing global shifts. -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    /* Design tokens as Tailwind theme values: the same colors, fonts and
+       spacing the CSS custom properties define, so utilities like
+       bg-accent / text-ink / border-hairline / font-display match the
+       design system exactly. */
+    tailwind.config = {
+      corePlugins: { preflight: false },
+      theme: {
+        extend: {
+          colors: {
+            accent: '#968ADF',
+            ink: '#1B1B1B',
+            hairline: '#E5E5E5',
+            muted: '#6B6B6B',
+            plate: '#F7F7F7',
+            footerblack: '#000000'
+          },
+          fontFamily: {
+            display: ['"Archivo Black"', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', '"Courier New"', 'monospace'],
+            body: ['Inter', 'system-ui', 'sans-serif']
+          },
+          spacing: { chamfer: '14px' } /* clip-path chamfers stay in CSS; token recorded here too */
+        }
+      }
+    };
+  </script>
 </head>
 <body data-page="beyond">
   <!-- SHARED: keep identical on all 5 pages -->
