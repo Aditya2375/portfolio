@@ -592,39 +592,24 @@ a:focus-visible .roll-stack {
 
 /* ─── 16. FOOTER ────────────────────────────────────────────── */
 
-.footer {
-  background-color: var(--clr-footer); color: var(--clr-bg);
-  padding-top: var(--space-lg);
-}
-.footer__wordmark {
-  font-family: var(--font-display); font-size: clamp(3rem, 15vw, 10rem);
-  font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em;
-  line-height: 0.9; color: var(--clr-bg);
-  padding: 0 clamp(1rem, 5vw, 5rem); padding-bottom: var(--space-md);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-.footer__bottom {
-  padding-top: var(--space-md); padding-bottom: var(--space-lg);
-  display: flex; flex-direction: column; gap: var(--space-md);
-}
-.footer__cols { display: flex; flex-wrap: wrap; gap: var(--space-lg); }
-.footer__col { display: flex; flex-direction: column; gap: var(--space-sm); min-width: 130px; }
-.footer__col ul { display: flex; flex-direction: column; gap: 0.75rem; }
 
+
+
+
+
+/* FOOTER layout/type -> Tailwind utilities (Prompt 27).
+   Concept map: bg-footerblack pt-16 = the black footer with 4rem top air;
+   text-[rgba(255,255,255,0.7)] -> hover:text-white = the link fade-in;
+   the wordmark keeps its clamp() scale. Kept in CSS: custom cursors,
+   .footer .section-label recolors (context overrides), the wordmark
+   letter-drop animation (.footer__letter / is-dropping) and the
+   roll-text hover machinery. */
 .footer .section-label { color: rgba(255, 255, 255, 0.45); }
 .footer .section-label::before { background-color: rgba(255, 255, 255, 0.3); }
 
-.footer__link {
-  font-family: var(--font-mono); font-size: 0.75rem;
-  letter-spacing: 0.05em; text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7); transition: color var(--dur-fast) var(--easing);
-}
-.footer__link:hover { color: var(--clr-bg); }
 
-.footer__legal {
-  color: #545454; margin-top: var(--space-sm);
-  border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: var(--space-sm);
-}
+
+
 .footer__legal::before { background-color: #545454; }
 
 
