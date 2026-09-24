@@ -1725,3 +1725,35 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 @keyframes layer-scroll-back  { from { translate: 0  5px;   } to { translate: 0 -5px;   } }
 @keyframes layer-scroll-mid   { from { translate: 0  7.5px; } to { translate: 0 -7.5px; } }
 @keyframes layer-scroll-front { from { translate: 0 10px;   } to { translate: 0 -10px;  } }
+
+
+/* ─── 33. HOLD-TO-REVEAL STAT CARDS (Prompt 18) ───────────────
+   The hold affordance lives entirely in JS-injected elements
+   (.stat-card__hint, .stat-card__progress) so the no-JS site never
+   shows them; CSS only styles them and runs the progress line. */
+.stat-card { position: relative; user-select: none; -webkit-touch-callout: none; }
+.stat-card:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 3px; }
+
+/* Small mono hint, top-right of the card; gone once revealed */
+.stat-card__hint {
+  position: absolute; top: 0.55rem; right: 0.75rem;
+  font-family: var(--font-mono); font-size: 0.5625rem; letter-spacing: 0.12em;
+  color: var(--clr-muted); opacity: 0.8; pointer-events: none;
+}
+.stat-card.is-revealed .stat-card__hint { display: none; }
+
+/* Thin lavender progress line along the card's bottom edge: CSS runs
+   the fill (scaleX over 600ms while .is-holding), JS only adds the class */
+.stat-card__progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; }
+.stat-card__progress i {
+  display: block; height: 100%; background-color: var(--clr-accent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 180ms ease-out; /* snap back on early release */
+}
+.stat-card.is-holding .stat-card__progress i {
+  transform: scaleX(1);
+  transition: transform 600ms linear; /* the hold duration itself */
+}
+@media (prefers-reduced-motion: reduce) {
+  .stat-card__progress i, .stat-card.is-holding .stat-card__progress i { transition: none; }
+}

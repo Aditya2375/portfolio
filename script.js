@@ -274,6 +274,7 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
   let lastTick = 0;
 
   (function frame(now) {
+    if (!el._scrambling) return; /* cancelled via scrambleText.cancel() */
     const p = Math.min((now - start) / duration, 1);
     const lockCount = Math.floor(p * original.length);
     let out = original.slice(0, lockCount); // locked-in real letters
@@ -293,6 +294,10 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
     else { el.textContent = original; el._scrambling = false; }
   })(performance.now());
 };
+
+/* Stop a running scramble without its final write (Prompt 18 needs to
+   cut one off when a hold ends early or the reveal takes over). */
+window.scrambleText.cancel = function cancelScramble(el) { el._scrambling = false; };
 
 /* First use of the engine: the mono section labels (001 / 002 ...)
    decode once when they first enter the viewport. IntersectionObserver
@@ -632,5 +637,127 @@ window._sectionJump = function _sectionJump(target) {
       kick();
     });
     card.addEventListener('mouseleave', () => { st.tx = 0; st.ty = 0; kick(); });
+  });
+})();
+
+/* ─── PROMPT 18: HOLD-DOWN STAT CARDS ─────────────────────────
+   beyond.html running stats start as a glitching placeholder with a
+   mono HOLD TO REVEAL hint. Press-and-hold for 600ms: the placeholder
+   cycles through the scramble engine (tick sound when sound is on)
+   while a CSS progress line fills; a full hold decodes to the real
+   stat; letting go early resets to the placeholder. The real stat is
+   in the HTML and in aria-label, so no-JS and screen-reader visitors
+   get it without the game. */
+(function initHoldRevealStats() {
+  const cards = document.querySelectorAll('.stat-card');
+  if (!cards.length) return;
+  const HOLD_MS = 600;
+
+  /* Random noise of the same length as a string, keeping its spaces */
+  function noiseLike(str) {
+    let out = '';
+    for (const ch of str) {
+      out += ch === ' ' ? ' ' : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0];
+    }
+    return out;
+  }
+
+  cards.forEach((card) => {
+    const valueEl = card.querySelector('.stat-card__value');
+    if (!valueEl) return;
+    const real = valueEl.textContent.trim();
+    const labelEl = card.querySelector('.stat-card__label');
+    const labelText = labelEl ? labelEl.textContent.trim().toLowerCase() : '';
+
+    /* a11y: the stat reads without the interaction */
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `${real}${labelText ? ', ' + labelText : ''}. Hold to reveal.`);
+    valueEl.setAttribute('aria-hidden', 'true');
+
+    /* hint + progress line, injected so the no-JS page never shows them */
+    const hint = document.createElement('span');
+    hint.className = 'stat-card__hint';
+    hint.textContent = 'HOLD TO REVEAL';
+    hint.setAttribute('aria-hidden', 'true');
+    const progress = document.createElement('span');
+    progress.className = 'stat-card__progress';
+    progress.setAttribute('aria-hidden', 'true');
+    progress.innerHTML = '<i></i>';
+    card.append(hint, progress);
+
+    let holding = false, revealed = false, holdTimer = null, cycleTimer = null;
+
+    /* placeholder state */
+    valueEl.dataset.scrambleText = real; /* engine decodes to THIS on reveal */
+    valueEl.textContent = noiseLike(real);
+
+    /* Idle glitch: re-randomize the placeholder every couple of seconds
+       (skipped under reduced motion - the placeholder just sits still) */
+    let idleTimer = null;
+    if (!REDUCED_MOTION) {
+      idleTimer = setInterval(() => {
+        if (!revealed && !holding) valueEl.textContent = noiseLike(real);
+      }, 2400);
+    }
+
+    /* While held: short engine scrambles into random targets, back to
+       back, so the placeholder churns with the engine's own tick. */
+    function cycle() {
+      if (!holding || revealed || REDUCED_MOTION) return;
+      valueEl.dataset.scrambleText = noiseLike(real);
+      window.scrambleText(valueEl, { duration: 140, tick: true });
+      cycleTimer = setTimeout(cycle, 150); /* 140ms run + 10ms gap: no guard clash */
+    }
+
+    function reveal() {
+      if (revealed) return;
+      revealed = true; holding = false;
+      clearTimeout(cycleTimer);
+      clearInterval(idleTimer);
+      window.scrambleText.cancel(valueEl); /* cut any mid-cycle scramble */
+      card.classList.remove('is-holding');
+      card.classList.add('is-revealed'); /* hides the hint via CSS */
+      card.setAttribute('aria-label', `${real}${labelText ? ', ' + labelText : ''}.`);
+      valueEl.dataset.scrambleText = real;
+      window.scrambleText(valueEl, { duration: 260 }); /* the settle decode */
+      if (REDUCED_MOTION) valueEl.textContent = real;  /* engine no-ops there */
+    }
+
+    function startHold(e) {
+      if (revealed || holding) return;
+      if (e.type === 'keydown') {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault(); /* keep Space from scrolling the page */
+        if (e.repeat) return;
+      }
+      holding = true;
+      card.classList.add('is-holding'); /* CSS fills the progress line */
+      cycle();
+      holdTimer = setTimeout(reveal, HOLD_MS);
+    }
+
+    function endHold() {
+      if (!holding || revealed) return;
+      holding = false;
+      clearTimeout(holdTimer);
+      clearTimeout(cycleTimer);
+      window.scrambleText.cancel(valueEl);
+      card.classList.remove('is-holding'); /* line snaps back via CSS */
+      valueEl.dataset.scrambleText = real;
+      valueEl.textContent = noiseLike(real); /* back to the placeholder */
+    }
+
+    card.addEventListener('mousedown', startHold);
+    card.addEventListener('mouseup', endHold);
+    card.addEventListener('mouseleave', endHold);
+    card.addEventListener('touchstart', startHold, { passive: true });
+    card.addEventListener('touchend', endHold);
+    card.addEventListener('touchcancel', endHold);
+    card.addEventListener('keydown', startHold);
+    card.addEventListener('keyup', endHold);
+    card.addEventListener('blur', endHold);
+    /* long-press on touch would pop the context menu mid-hold */
+    card.addEventListener('contextmenu', (e) => e.preventDefault());
   });
 })();
