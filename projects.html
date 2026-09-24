@@ -23,6 +23,9 @@
     tailwind.config = {
       corePlugins: { preflight: false },
       theme: {
+        /* the site's own breakpoints as md/lg, so responsive utilities
+           match the existing 700px / 1024px media queries exactly */
+        screens: { md: '700px', lg: '1024px' },
         extend: {
           colors: {
             accent: '#968ADF',
@@ -85,17 +88,18 @@
     <span class="menu-trigger__text">MENU</span>
   </label>
   <div class="screen-frame" aria-hidden="true"></div>
-  <header class="navbar" id="navbar">
-    <nav class="navbar__inner" aria-label="Primary navigation">
-      <a href="index.html" class="navbar__logo">AK</a>
-      <ul class="navbar__links" role="list">
-        <li><a href="#portfolio" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">01 Portfolio</span><span class="roll-text roll-text--dup" aria-hidden="true">01 Portfolio</span></span></span></a></li>
-        <li><a href="#omniroute" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">02 OmniRoute</span><span class="roll-text roll-text--dup" aria-hidden="true">02 OmniRoute</span></span></span></a></li>
-        <li><a href="#growth-bot" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">03 Growth Bot</span><span class="roll-text roll-text--dup" aria-hidden="true">03 Growth Bot</span></span></span></a></li>
-        <li><a href="#doubt-platform" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">04 Doubt Platform</span><span class="roll-text roll-text--dup" aria-hidden="true">04 Doubt Platform</span></span></span></a></li>
-        <li><a href="#cp-pipeline" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">05 CP Pipeline</span><span class="roll-text roll-text--dup" aria-hidden="true">05 CP Pipeline</span></span></span></a></li>
+  <!-- fixed top bar: position:fixed + z-index, white bg, hairline bottom border -->
+  <header class="navbar fixed top-0 inset-x-0 z-[800] bg-white border-b border-hairline" id="navbar">
+    <nav class="navbar__inner flex items-center justify-between px-[clamp(1rem,4vw,3rem)] min-h-14 max-w-[1200px] mx-auto" aria-label="Primary navigation">
+      <a href="index.html" class="navbar__logo font-display text-[1.1rem] font-black tracking-[-0.02em] text-ink uppercase">AK</a>
+      <ul class="navbar__links hidden md:flex md:items-center md:gap-4 md:flex-wrap md:justify-center" role="list">
+        <li><a href="#portfolio" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">01 Portfolio</span><span class="roll-text roll-text--dup" aria-hidden="true">01 Portfolio</span></span></span></a></li>
+        <li><a href="#omniroute" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">02 OmniRoute</span><span class="roll-text roll-text--dup" aria-hidden="true">02 OmniRoute</span></span></span></a></li>
+        <li><a href="#growth-bot" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">03 Growth Bot</span><span class="roll-text roll-text--dup" aria-hidden="true">03 Growth Bot</span></span></span></a></li>
+        <li><a href="#doubt-platform" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">04 Doubt Platform</span><span class="roll-text roll-text--dup" aria-hidden="true">04 Doubt Platform</span></span></span></a></li>
+        <li><a href="#cp-pipeline" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">05 CP Pipeline</span><span class="roll-text roll-text--dup" aria-hidden="true">05 CP Pipeline</span></span></span></a></li>
       </ul>
-      <a href="index.html#contact" class="btn btn--outline navbar__cta">Contact</a>
+      <a href="index.html#contact" class="btn btn--outline navbar__cta hidden md:inline-flex">Contact</a>
     </nav>
   </header>
 
