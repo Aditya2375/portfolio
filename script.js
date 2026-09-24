@@ -691,6 +691,28 @@ window._sectionJump = function _sectionJump(target) {
     });
     card.addEventListener('mouseleave', () => { st.tx = 0; st.ty = 0; kick(); });
   });
+
+  /* 3. v3: photo section backgrounds drift opposite the cursor,
+     same depth language as the hero background stack. */
+  document.querySelectorAll('.section-bg img').forEach((img) => {
+    const sec = img.closest('.section--photo');
+    if (!sec) return;
+    img.style.scale = '1.07'; /* overscan so the drift never shows an edge */
+    const st = {
+      cx: 0, cy: 0, tx: 0, ty: 0,
+      apply(x, y) {
+        img.style.translate = `${(-x * 32).toFixed(2)}px ${(-y * 32).toFixed(2)}px`;
+      }
+    };
+    items.push(st);
+    sec.addEventListener('mousemove', (e) => {
+      const r = sec.getBoundingClientRect();
+      st.tx = (e.clientX - r.left) / r.width - 0.5;
+      st.ty = (e.clientY - r.top) / r.height - 0.5;
+      kick();
+    });
+    sec.addEventListener('mouseleave', () => { st.tx = 0; st.ty = 0; kick(); });
+  });
 })();
 
 /* ─── PROMPT 18: HOLD-DOWN STAT CARDS ─────────────────────────
