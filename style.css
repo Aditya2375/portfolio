@@ -1944,3 +1944,24 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
+
+
+/* ─── 37. FOOTER WORDMARK FINALE (Prompt 24) ──────────────────
+   Letters are split by JS (no-JS keeps the plain wordmark, visible).
+   Dropped letters start hidden; .is-dropping runs the staggered
+   drop with a small settle bounce. The A lands in lavender. */
+.footer__letter { display: inline-block; opacity: 0; }
+.footer__letter--first { color: var(--clr-accent); }
+.footer__wordmark.is-dropping .footer__letter {
+  animation: footerLetterDrop 0.55s cubic-bezier(0.25, 0.9, 0.35, 1.15) both;
+}
+@keyframes footerLetterDrop {
+  0%   { opacity: 0; transform: translateY(-0.55em); }
+  60%  { opacity: 1; transform: translateY(0.05em); }  /* overshoot: the settle */
+  80%  { transform: translateY(-0.02em); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer__letter { opacity: 1; }
+  .footer__wordmark.is-dropping .footer__letter { animation: none; }
+}

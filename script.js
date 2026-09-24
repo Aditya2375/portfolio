@@ -1230,3 +1230,50 @@ window._sectionJump = function _sectionJump(target) {
     });
   }
 })();
+
+/* ─── PROMPT 24: FOOTER WORDMARK FINALE ───────────────────────
+   When the footer first scrolls into view, ADITYA assembles letter
+   by letter: the A drops first in lavender, each letter follows with
+   a small settle bounce and a quiet tick, then one last scramble
+   pass runs over the footer mono links. Once, via IO + unobserve. */
+(function initFooterFinale() {
+  const footer = document.querySelector('.footer');
+  const wordmark = document.querySelector('.footer__wordmark');
+  if (!footer || !wordmark) return;
+
+  /* split the wordmark (aria-hidden decor, so spans are safe) */
+  const text = wordmark.textContent;
+  wordmark.textContent = '';
+  const letters = [...text].map((ch, i) => {
+    const s = document.createElement('span');
+    s.className = 'footer__letter' + (i === 0 ? ' footer__letter--first' : '');
+    s.textContent = ch;
+    wordmark.appendChild(s);
+    return s;
+  });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      io.unobserve(footer); /* the ending happens once */
+      wordmark.classList.add('is-dropping');
+      if (!REDUCED_MOTION) {
+        letters.forEach((s, i) => {
+          s.style.animationDelay = (i * 0.09) + 's';
+          setTimeout(() => playSfx('assets/sfx/scramble.mp3', 0.08), i * 90);
+        });
+        /* after the last letter lands: one subtle scramble over the
+           footer mono links (the visible roll-text of each) */
+        setTimeout(() => {
+          document.querySelectorAll('.footer__link .roll-text:not(.roll-text--dup)')
+            .forEach(el => window.scrambleText(el, { duration: 350 }));
+        }, letters.length * 90 + 550);
+      } else {
+        /* reduced motion: letters simply appear, links decode instantly */
+        document.querySelectorAll('.footer__link .roll-text:not(.roll-text--dup)')
+          .forEach(el => window.scrambleText(el, { duration: 0 }));
+      }
+    });
+  }, { threshold: 0.3 });
+  io.observe(footer);
+})();
