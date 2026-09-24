@@ -1563,3 +1563,78 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   margin-right: 4px;
   background-color: var(--clr-text);
 }
+
+
+/* ─── 30. PROJECT CARD GRAPHIC PLATES (completes Prompt 9B) ───
+   Three stacked layers per thumbnail: .layer-back (plate + hairline
+   grid + mono readout, drawn by the inline SVG), .layer-mid (one flat
+   lavender shape, different per card), .layer-front (giant index +
+   mono keyword). Flat colors only - no gradients, no shadows. */
+.project-card__thumb {
+  position: relative;
+  overflow: hidden; /* keep drifting layers inside the chamfer */
+}
+
+.layer-back, .layer-mid, .layer-front {
+  position: absolute;
+  inset: 0;
+}
+
+.layer-back {
+  background-color: #F7F7F7; /* the plate under the SVG hairlines */
+}
+.layer-back svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* One flat accent shape per card - each positioned differently */
+.layer-mid::before {
+  content: '';
+  position: absolute;
+  background-color: var(--clr-accent);
+}
+.plate-01-mid::before { /* vertical block */
+  width: 34px; height: 80px; right: 18%; top: 20%;
+}
+.plate-02-mid::before { /* ring */
+  width: 64px; height: 64px; right: 16%; top: 18%;
+  background-color: transparent;
+  border: 10px solid var(--clr-accent);
+  border-radius: 50%;
+}
+.plate-03-mid::before { /* diagonal band */
+  width: 120px; height: 22px; right: 8%; top: 42%;
+  transform: rotate(-24deg);
+}
+.plate-04-mid::before { /* small square block */
+  width: 44px; height: 44px; right: 20%; top: 28%;
+}
+.plate-05-mid::before { /* horizontal band */
+  width: 96px; height: 18px; right: 12%; top: 46%;
+}
+
+.layer-front {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.6rem 0.8rem;
+}
+.plate-index {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--clr-text);
+}
+.plate-keyword {
+  align-self: flex-end;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--clr-muted);
+}
