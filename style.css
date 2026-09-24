@@ -1725,6 +1725,34 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 .guide-fab.is-visible { display: inline-flex; }
 
+/* Review round: the hold-space bar. Translucent dark pill, bottom
+   center on every page - readable over the light sections and the
+   dark hero alike. The fill sweeps left-to-right across the 900ms
+   hold; complete the hold and the AI agent takes over. */
+.guide-hold {
+  position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
+  z-index: 870; display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.7rem 1.3rem; overflow: hidden; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: #FFF;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+  transition: opacity var(--dur-base) var(--easing);
+}
+.guide-hold.is-hidden { opacity: 0; pointer-events: none; }
+.guide-hold__fill {
+  position: absolute; inset: 0; z-index: 0;
+  background-color: rgba(255, 255, 255, 0.28);
+  transform: scaleX(0); transform-origin: left center;
+}
+.guide-hold.is-holding .guide-hold__fill {
+  transform: scaleX(1);
+  transition: transform 0.9s linear;
+}
+.guide-hold__label, .guide-hold .guide-wave { position: relative; z-index: 1; }
+
 /* The docked guide panel: black slab, bottom-right, chamfered */
 .guide-panel {
   position: fixed; right: 1rem; bottom: 1rem; z-index: 880;
