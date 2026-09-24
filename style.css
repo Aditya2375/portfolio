@@ -1505,3 +1505,46 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   animation-play-state: paused;
   opacity: 0.4;
 }
+
+
+/* ─── 28. CURSOR FOLLOWER (Prompt 14) ─────────────────────────
+   mix-blend-mode: difference inverts the dot/ring over any
+   background (black on white, white on the black footer).
+   Both are hidden on touch via @media (hover: none). */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 980;
+  mix-blend-mode: difference;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px; /* centre on the pointer */
+  background-color: #FFFFFF;
+  border-radius: 50%;
+}
+
+.cursor-ring {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border: 1px solid #FFFFFF;
+  border-radius: 50%;
+  transition: width 0.25s var(--easing), height 0.25s var(--easing),
+              margin 0.25s var(--easing);
+}
+
+/* Ring grows over links and buttons */
+.cursor-ring--hover {
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+}
+
+@media (hover: none) {
+  .cursor-dot, .cursor-ring { display: none; }
+}

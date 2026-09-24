@@ -387,3 +387,46 @@ const FOOTER_TRACK = 'assets/music/footer.mp3';
   sections.forEach(sec => io.observe(sec));
   if (footer) io.observe(footer);
 })();
+
+/* ─── PROMPT 14: CURSOR FOLLOWER ──────────────────────────────
+   A dot that follows the mouse exactly + a ring that lags behind
+   with lerp (each frame the ring closes ~15% of the remaining
+   distance, which gives the smooth elastic feel). Both use
+   mix-blend-mode: difference so they invert over any background.
+   Hidden on touch devices; motion off under reduced motion.
+   The CSS crosshair cursor from Prompt 6 stays underneath. */
+(function initCursorFollower() {
+  // Touch devices and reduced-motion users keep the plain CSS cursor.
+  if (window.matchMedia('(hover: none)').matches || REDUCED_MOTION) return;
+
+  const dot = document.createElement('div');
+  dot.className = 'cursor-dot';
+  const ring = document.createElement('div');
+  ring.className = 'cursor-ring';
+  dot.setAttribute('aria-hidden', 'true');
+  ring.setAttribute('aria-hidden', 'true');
+  document.body.append(dot, ring);
+
+  let mouseX = innerWidth / 2, mouseY = innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
+
+  addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+  });
+
+  (function follow() {
+    // lerp: ring moves 15% of the remaining distance every frame
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
+    requestAnimationFrame(follow);
+  })();
+
+  // The ring grows over anything clickable
+  document.addEventListener('mouseover', (e) => {
+    ring.classList.toggle('cursor-ring--hover',
+      !!e.target.closest('a, button, .btn, label[for]'));
+  });
+})();
