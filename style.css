@@ -1757,3 +1757,67 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 @media (prefers-reduced-motion: reduce) {
   .stat-card__progress i, .stat-card.is-holding .stat-card__progress i { transition: none; }
 }
+
+
+/* ─── 34. BRACKET-FRAME PAGE TRANSITION (Prompt 19) ───────────
+   Full-screen overlay: a flat black veil wipes in with clip-path,
+   four lavender corner brackets + hairline shards fade in at full
+   cover, then the veil wipes out upward. No gradients, no glow.
+   The whole overlay is injected from JS, so the no-JS site never
+   carries it. State machine (driven by script.js):
+   .is-active + .is-covering -> .is-covered -> .is-uncovering */
+.transition-overlay {
+  position: fixed; inset: 0; z-index: 900;
+  visibility: hidden; pointer-events: none;
+}
+.transition-overlay.is-active { visibility: visible; pointer-events: all; }
+
+.transition-overlay__veil {
+  position: absolute; inset: 0;
+  background-color: #000;
+  clip-path: inset(100% 0 0 0); /* parked off-screen below */
+}
+.transition-overlay.is-covering .transition-overlay__veil {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 360ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.transition-overlay.is-covered .transition-overlay__veil {
+  clip-path: inset(0 0 0 0);
+  transition: none; /* full cover is a held state, not an animation */
+}
+.transition-overlay.is-uncovering .transition-overlay__veil {
+  clip-path: inset(0 0 100% 0); /* wipes out toward the top */
+  transition: clip-path 360ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Four corner brackets: L-shaped lavender borders */
+.transition-overlay__bracket {
+  position: absolute; width: 44px; height: 44px;
+  border: 0 solid var(--clr-accent);
+  opacity: 0; transition: opacity 220ms ease;
+}
+.transition-overlay__bracket--tl { top: 24px; left: 24px; border-top-width: 2px; border-left-width: 2px; }
+.transition-overlay__bracket--tr { top: 24px; right: 24px; border-top-width: 2px; border-right-width: 2px; }
+.transition-overlay__bracket--br { bottom: 24px; right: 24px; border-bottom-width: 2px; border-right-width: 2px; }
+.transition-overlay__bracket--bl { bottom: 24px; left: 24px; border-bottom-width: 2px; border-left-width: 2px; }
+
+/* Hairline shards: thin flat lines at angles */
+.transition-overlay__shard {
+  position: absolute; height: 1px;
+  background-color: rgba(150, 138, 223, 0.6);
+  opacity: 0; transition: opacity 220ms ease;
+}
+.transition-overlay__shard--1 { top: 30%; left: 10%; width: 18vw; transform: rotate(-6deg); }
+.transition-overlay__shard--2 { top: 64%; right: 8%; width: 12vw; transform: rotate(4deg); }
+.transition-overlay__shard--3 { top: 48%; left: 44%; width: 6vw; background-color: rgba(255, 255, 255, 0.35); }
+
+.transition-overlay.is-covered .transition-overlay__bracket,
+.transition-overlay.is-covered .transition-overlay__shard { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .transition-overlay__veil,
+  .transition-overlay.is-covering .transition-overlay__veil,
+  .transition-overlay.is-uncovering .transition-overlay__veil,
+  .transition-overlay__bracket,
+  .transition-overlay__shard { transition: none !important; }
+}
