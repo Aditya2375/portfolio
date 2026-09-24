@@ -1188,27 +1188,8 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   color: var(--clr-bg);
 }
 
-/* The small card circling the wordmark: a rotating wrapper carries a
-   lavender chamfered chip at its top edge, so the chip orbits the name. */
-.intro__orbit {
-  position: absolute;
-  inset: -2.5rem;
-  pointer-events: none;
-  animation: introOrbit 3s linear infinite;
-}
-.intro__orbit::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 14px;
-  height: 22px;
-  background-color: var(--clr-accent);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
-}
-@keyframes introOrbit {
-  to { transform: rotate(360deg); }
-}
+/* REVIEW ROUND 2: the rotating orbit chip is removed - the intro keeps
+   only the static hacker look he asked for. */
 
 .intro__readout {
   font-family: var(--font-mono);
@@ -1288,9 +1269,12 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   min-width: 44px;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: none;
-  padding: 0 8px;
+  /* REVIEW ROUND 2: solid white pill + hairline - the bare bars blended
+     into whatever was behind them and read as invisible. */
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-line);
+  border-radius: 999px;
+  padding: 0 12px;
 }
 
 .music-toggle span {
