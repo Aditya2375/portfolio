@@ -339,3 +339,51 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
     render();
   });
 })();
+
+/* ─── PROMPT 13: PER-SECTION SOUNDTRACK ───────────────────────
+   Each section of a page has its own track; when a section crosses
+   the middle of the viewport, the engine crossfades to its track.
+   Only sections that exist on the CURRENT page are watched, and
+   the map is per page. The mountains art break keeps whatever is
+   playing. If the visitor entered without sound or muted, the
+   engine's volume stays at 0 - nothing audible happens. */
+const SECTION_TRACKS = {
+  home: {
+    hero: 'assets/music/hero.mp3',
+    about: 'assets/music/about.mp3',
+    skills: 'assets/music/skills.mp3',
+    projects: 'assets/music/projects.mp3',
+    explore: 'assets/music/about.mp3', // Explore reuses the About track
+    contact: 'assets/music/contact.mp3',
+  },
+  academics: { hero: 'assets/music/education.mp3', now: 'assets/music/education.mp3', exams: 'assets/music/education.mp3', school: 'assets/music/education.mp3', olympiads: 'assets/music/education.mp3', learning: 'assets/music/education.mp3' },
+  projects:  { hero: 'assets/music/projects.mp3', 'projects-section': 'assets/music/projects.mp3' },
+  beyond:    { hero: 'assets/music/about.mp3', trekking: 'assets/music/about.mp3', running: 'assets/music/about.mp3', cycling: 'assets/music/about.mp3', sport: 'assets/music/about.mp3', music: 'assets/music/about.mp3' },
+  community: { hero: 'assets/music/about.mp3', leadership: 'assets/music/about.mp3', clubs: 'assets/music/about.mp3', events: 'assets/music/about.mp3', volunteering: 'assets/music/about.mp3', connect: 'assets/music/about.mp3' },
+};
+const FOOTER_TRACK = 'assets/music/footer.mp3';
+
+(function initSectionSoundtrack() {
+  const map = SECTION_TRACKS[PAGE_ID] || {};
+  const sections = Object.keys(map)
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  const footer = document.querySelector('.footer');
+  if (!sections.length && !footer) return;
+
+  /* rootMargin -50% top/bottom collapses the observation band to the
+     exact middle line of the viewport: a section "owns" the music when
+     it crosses that line. */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const track = entry.target.classList.contains('footer')
+        ? FOOTER_TRACK
+        : map[entry.target.id];
+      if (track) musicEngine.crossfadeTo(track);
+    });
+  }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+
+  sections.forEach(sec => io.observe(sec));
+  if (footer) io.observe(footer);
+})();
