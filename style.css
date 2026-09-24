@@ -574,40 +574,21 @@ a:focus-visible .roll-stack {
 
 /* ─── 15. CONTACT SECTION ───────────────────────────────────── */
 
-.contact__body {
-  display: flex; flex-direction: column; gap: var(--space-md);
-  max-width: 700px;
-}
 
-.contact__links-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
 
-.contact__email, .contact__link {
-  font-family:    var(--font-mono);
-  font-size:      clamp(1rem, 3vw, 1.75rem);
-  font-weight:    500;
-  letter-spacing: -0.01em;
-  color:          var(--clr-text);
-  text-decoration:       underline;
-  text-decoration-color: var(--clr-line);
-  text-underline-offset: 4px;
-  transition: text-decoration-color var(--dur-fast) var(--easing), color var(--dur-fast) var(--easing);
-  width: fit-content;
-}
 
-.contact__link {
-  font-size: clamp(0.875rem, 2vw, 1.25rem);
-  color: var(--clr-muted);
-}
 
-.contact__email:hover, .contact__link:hover {
-  text-decoration-color: var(--clr-text);
-  color: var(--clr-text);
-}
 
+
+
+
+
+
+
+/* CONTACT links -> Tailwind utilities (Prompt 27).
+   Concept map: decoration-hairline -> hover:decoration-ink = the underline
+   that darkens on hover; clamp() type sizes carried over verbatim;
+   w-fit = shrink-to-fit link boxes. */
 
 /* ─── 16. FOOTER ────────────────────────────────────────────── */
 
