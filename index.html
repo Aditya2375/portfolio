@@ -69,15 +69,68 @@
 
   <main>
     <!-- SHARED: keep identical on all 5 pages -->
-    <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 5">
+    <!-- ── HERO: 12-frame face-turn scroll sequence (Prompt 9G) ──
+         300vh scroll stage; a sticky 100svh screen holds 12 stacked frames.
+         <picture> picks the set: wide screens (min-aspect-ratio 1/1) download
+         only the 16:9 landscape set (face right of centre, headline over the
+         dark left half); phones and portrait tablets download only the 4:5 set. -->
+    <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 12">
       <div class="hero-sticky">
-        <div class="hero-bg" role="img" aria-label="AI-generated portrait of Aditya Kulkarni">
-          <img src="assets/frames/frame1.png" alt="" aria-hidden="true" class="portrait-frame portrait-frame--first" style="--i: 1" width="600" height="800" fetchpriority="high">
-          <img src="assets/frames/frame2.png" alt="" aria-hidden="true" class="portrait-frame" style="--i: 2" width="600" height="800" decoding="async">
-          <img src="assets/frames/frame3.png" alt="" aria-hidden="true" class="portrait-frame" style="--i: 3" width="600" height="800" decoding="async">
-          <img src="assets/frames/frame4.png" alt="" aria-hidden="true" class="portrait-frame" style="--i: 4" width="600" height="800" decoding="async">
-          <img src="assets/frames/frame5.png" alt="AI-generated portrait of Aditya Kulkarni" class="portrait-frame portrait-frame--default" style="--i: 5" width="600" height="800" decoding="async">
+        <!-- Frame stack: frame01 (side profile) sits at the bottom, frame12
+             (facing camera) on top. Each frame carries --i; the stage carries
+             --frame-count; the CSS slices the scroll range from those two. -->
+        <div class="hero-bg">
+          <picture class="portrait-frame portrait-frame--first" style="--i: 1">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame01_16x9.jpg">
+            <img src="assets/frames/frame01.jpg" alt="" aria-hidden="true" width="1122" height="1402" fetchpriority="high">
+          </picture>
+          <picture class="portrait-frame" style="--i: 2">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame02_16x9.jpg">
+            <img src="assets/frames/frame02.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 3">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame03_16x9.jpg">
+            <img src="assets/frames/frame03.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 4">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame04_16x9.jpg">
+            <img src="assets/frames/frame04.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 5">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame05_16x9.jpg">
+            <img src="assets/frames/frame05.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 6">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame06_16x9.jpg">
+            <img src="assets/frames/frame06.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 7">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame07_16x9.jpg">
+            <img src="assets/frames/frame07.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 8">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame08_16x9.jpg">
+            <img src="assets/frames/frame08.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 9">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame09_16x9.jpg">
+            <img src="assets/frames/frame09.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 10">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame10_16x9.jpg">
+            <img src="assets/frames/frame10.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame" style="--i: 11">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame11_16x9.jpg">
+            <img src="assets/frames/frame11.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
+          </picture>
+          <picture class="portrait-frame portrait-frame--default" style="--i: 12">
+            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame12_16x9.jpg">
+            <img src="assets/frames/frame12.jpg" alt="AI-generated portrait of Aditya Kulkarni" width="1122" height="1402" decoding="async">
+          </picture>
         </div>
+        <!-- FLAT readability overlay above the frames, below the text.
+             rgba(0,0,0,0.35), no gradient - the design bans gradients. -->
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero__grid-lines" aria-hidden="true"></div>
         <div class="hero__crosshair" aria-hidden="true"></div>
