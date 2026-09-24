@@ -667,10 +667,16 @@ window._sectionJump = function _sectionJump(target) {
     const back = card.querySelector('.layer-back');
     const mid = card.querySelector('.layer-mid');
     const front = card.querySelector('.layer-front');
+    const thumb = card.querySelector('.project-card__thumb');
     if (!back || !mid || !front) return;
     const st = {
       cx: 0, cy: 0, tx: 0, ty: 0,
       apply(x, y) {
+        /* Review round: the whole plate tilts toward the cursor like a
+           physical card (KSR-style 3D), while its layers keep drifting
+           inside for parallax depth. */
+        if (thumb) thumb.style.transform =
+          `perspective(700px) rotateX(${(-y * 9).toFixed(2)}deg) rotateY(${(x * 11).toFixed(2)}deg)`;
         front.style.transform = `translate(${(-x * 40).toFixed(2)}px, ${(-y * 40).toFixed(2)}px)`;
         mid.style.transform   = `translate(${(-x * 20).toFixed(2)}px, ${(-y * 20).toFixed(2)}px)`;
         back.style.transform  = `translate(${(-x * 6).toFixed(2)}px, ${(-y * 6).toFixed(2)}px)`;
@@ -806,6 +812,90 @@ window._sectionJump = function _sectionJump(target) {
     card.addEventListener('blur', endHold);
     /* long-press on touch would pop the context menu mid-hold */
     card.addEventListener('contextmenu', (e) => e.preventDefault());
+  });
+})();
+
+/* ─── REVIEW ROUND: HOLD A PROJECT CARD FOR CONTEXT ───────────
+   Each projects.html card carries a data-context one-liner (the WHY
+   behind the build). Press-and-hold the card for 600ms: a black
+   circle fills out from the press point (same language as the
+   cursor) and the context scrambles in on top. Let go early and the
+   circle shrinks back; leave the card and it resets. The full
+   description stays in the DOM, so the overlay is aria-hidden. */
+(function initCardContextHold() {
+  const cards = document.querySelectorAll('.project-card[data-context]');
+  if (!cards.length) return;
+  const HOLD_MS = 600;
+  cards.forEach(card => {
+    const overlay = document.createElement('div');
+    overlay.className = 'card-context';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML =
+      '<span class="card-context__fill"></span>' +
+      '<div class="card-context__body">' +
+        '<p class="card-context__kicker">//CONTEXT</p>' +
+        '<p class="card-context__text"></p>' +
+      '</div>';
+    card.appendChild(overlay);
+    const hint = document.createElement('span');
+    hint.className = 'card-context-hint';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.textContent = 'HOLD FOR CONTEXT';
+    card.appendChild(hint);
+    const textEl = overlay.querySelector('.card-context__text');
+
+    let holding = false, revealed = false, holdTimer = null;
+    let sx = 0, sy = 0;
+
+    function arm(e) {
+      if (revealed || holding) return;
+      const r = card.getBoundingClientRect();
+      sx = e.clientX - r.left; sy = e.clientY - r.top;
+      /* circle big enough to cover the farthest corner from the press */
+      const far = Math.max(
+        Math.hypot(sx, sy), Math.hypot(r.width - sx, sy),
+        Math.hypot(sx, r.height - sy), Math.hypot(r.width - sx, r.height - sy));
+      overlay.style.setProperty('--cx', sx + 'px');
+      overlay.style.setProperty('--cy', sy + 'px');
+      overlay.style.setProperty('--r', (far / 12 + 1).toFixed(1));
+      holding = true;
+      overlay.classList.add('is-holding');
+      holdTimer = setTimeout(reveal, HOLD_MS);
+    }
+    function disarm(e) {
+      if (!holding || revealed) return;
+      if (e && e.type === 'pointermove') {
+        if (Math.hypot(e.clientX - sx - card.getBoundingClientRect().left + card.getBoundingClientRect().left, 0) < 0) return;
+      }
+      holding = false;
+      clearTimeout(holdTimer);
+      overlay.classList.remove('is-holding');
+    }
+    function reveal() {
+      holding = false; revealed = true;
+      overlay.classList.remove('is-holding');
+      overlay.classList.add('is-revealed');
+      playSfx('assets/sfx/hover.mp3', 0.15);
+      textEl.dataset.scrambleText = card.dataset.context;
+      if (REDUCED_MOTION) textEl.textContent = card.dataset.context;
+      else window.scrambleText(textEl, { duration: 450 });
+    }
+    function reset() {
+      if (!revealed) return;
+      revealed = false;
+      overlay.classList.remove('is-revealed');
+    }
+
+    card.addEventListener('pointerdown', arm);
+    card.addEventListener('pointerup', () => disarm());
+    card.addEventListener('pointercancel', () => disarm());
+    card.addEventListener('pointermove', (e) => {
+      /* a drag means scrolling, not holding - cancel past a small deadzone */
+      if (!holding) return;
+      const r = card.getBoundingClientRect();
+      if (Math.hypot(e.clientX - r.left - sx, e.clientY - r.top - sy) > 14) disarm();
+    });
+    card.addEventListener('pointerleave', () => { disarm(); reset(); });
   });
 })();
 
