@@ -830,21 +830,18 @@ a:focus-visible .roll-stack {
   pointer-events: none;
 }
 
-/* ── Left-Edge MENU Trigger ──
-   Fixed label rotated -90deg so it reads vertically on the left edge.
-   z-index 860 keeps it above the navbar (800) and overlay (850) while closed. */
+/* ── Hamburger MENU Trigger (REVIEW ROUND 2) ──
+   Was a rotated label fixed to the left edge; now a 3-stripe button
+   living inside the navbar at the top-left, next to the AK logo. */
 .menu-trigger {
-  position: fixed;
-  left: 0;
-  top: 50%;
-  /* rotate -90deg so MENU text reads bottom-to-top, standard editorial convention */
-  transform: translateY(-50%) rotate(-90deg) translateX(-50%);
-  transform-origin: center center;
-  z-index: 860;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;  /* comfortable tap target */
+  height: 44px;
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 0v10m0 4v10M0 12h10m4 0h10' stroke='%231B1B1B' stroke-width='1'/%3E%3Crect x='10' y='10' width='4' height='4' fill='%23968ADF'/%3E%3C/svg%3E") 12 12, pointer;
-  padding: 0.5rem 0.85rem;
-  background-color: var(--clr-bg);
   border: 1px solid var(--clr-line);
+  background-color: var(--clr-bg);
   transition:
     opacity var(--dur-base) var(--easing),
     border-color var(--dur-fast) var(--easing);
@@ -853,15 +850,20 @@ a:focus-visible .roll-stack {
 
 .menu-trigger:hover { border-color: var(--clr-text); }
 
-.menu-trigger__text {
-  font-family:    var(--font-mono);
-  font-size:      0.625rem;
-  font-weight:    500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--clr-text);
-  white-space: nowrap;
+/* the three stripes; the middle one shortens on hover, a small wink */
+.menu-trigger__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
+.menu-trigger__bars i {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background-color: var(--clr-text);
+  transition: width var(--dur-fast) var(--easing), background-color var(--dur-fast) var(--easing);
+}
+.menu-trigger:hover .menu-trigger__bars i:nth-child(2) { width: 12px; }
 
 /* Fade the trigger out when the menu is open so it doesn't compete visually */
 body:has(.menu-checkbox:checked) .menu-trigger {
