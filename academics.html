@@ -1,68 +1,24 @@
-<!DOCTYPE html>
-<!-- HTML5 declaration -->
-
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Academics - Aditya Kulkarni</title>
   <meta name="description" content="Aditya Kulkarni's academic journey: JEE Main 97.4%, MHT-CET 98.4%, JEE Advanced AIR 21,300, and now at Scaler School of Technology.">
-
-  <!-- Three Google Fonts loaded in one request:
-       Archivo Black — display headlines: a single-weight slab, always bold, editorial look
-       IBM Plex Mono — labels, nav links, buttons, micro-copy: monospace precision
-       Inter          — body copy: humanist sans-serif, very readable at small sizes
-       display=swap   — shows fallback text immediately; swaps to the real font once loaded -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
   <!-- SHARED: keep identical on all 5 pages -->
-  <!-- ══════════════════════════════════════════════════
-       SCROLL PROGRESS BAR
-  ══════════════════════════════════════════════════ -->
   <div class="scroll-progress" aria-hidden="true"></div>
-
-  <!-- SHARED: keep identical on all 5 pages -->
-  <!-- ══════════════════════════════════════════════════
-       SIDE MENU: CHECKBOX STATE MACHINE
-       A hidden <input type="checkbox"> is the pure-CSS state machine for the menu.
-       Its :checked / :not(:checked) state is read by body:has() selectors in CSS.
-       No JavaScript needed — the linked <label> elements toggle it.
-       aria-hidden = true because it's a visual-only control; screen readers
-       use the links inside the overlay directly.
-  ══════════════════════════════════════════════════ -->
-  <input
-    type="checkbox"
-    id="menu-toggle"
-    class="menu-checkbox"
-    aria-hidden="true"
-  >
-
-  <!-- SHARED: keep identical on all 5 pages -->
-  <!-- ══════════════════════════════════════════════════
-       SIDE MENU: FULL-SCREEN OVERLAY
-       Slides in from left via clip-path transition driven by :has().
-       z-index 850 = above navbar (800) but below screen-frame (900).
-       This page is 02 Academics — marked as current.
-  ══════════════════════════════════════════════════ -->
+  <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true">
   <div class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
     <div class="nav-overlay__inner">
-
-      <!-- Close control: a <label> that toggles the checkbox off when clicked -->
       <label for="menu-toggle" class="nav-overlay__close" aria-label="Close navigation menu">
         <span class="section-label">✕ CLOSE</span>
       </label>
-
-      <!-- Big uppercase Archivo Black nav links.
-           Each link is nested inside a <label for="menu-toggle"> so clicking
-           a link also unchecks the checkbox, closing the menu. -->
       <nav class="nav-overlay__nav" aria-label="Overlay navigation">
         <ul role="list">
           <li class="nav-overlay__item">
@@ -70,332 +26,179 @@
           </li>
           <li class="nav-overlay__item nav-overlay__item--current">
             <label for="menu-toggle"><a href="academics.html" class="nav-overlay__link" aria-current="page">02 Academics</a></label>
-            <!-- Sub-links for sections on this page -->
             <ul class="nav-overlay__sub" role="list">
-              <li><label for="menu-toggle"><a href="#now"       class="nav-overlay__sub-link">Now</a></label></li>
-              <li><label for="menu-toggle"><a href="#exams"     class="nav-overlay__sub-link">Exams</a></label></li>
-              <li><label for="menu-toggle"><a href="#school"    class="nav-overlay__sub-link">School</a></label></li>
+              <li><label for="menu-toggle"><a href="#now" class="nav-overlay__sub-link">Now</a></label></li>
+              <li><label for="menu-toggle"><a href="#exams" class="nav-overlay__sub-link">Exams</a></label></li>
+              <li><label for="menu-toggle"><a href="#school" class="nav-overlay__sub-link">School</a></label></li>
               <li><label for="menu-toggle"><a href="#olympiads" class="nav-overlay__sub-link">Olympiads</a></label></li>
-              <li><label for="menu-toggle"><a href="#learning"  class="nav-overlay__sub-link">Learning</a></label></li>
+              <li><label for="menu-toggle"><a href="#learning" class="nav-overlay__sub-link">Learning</a></label></li>
             </ul>
           </li>
           <li class="nav-overlay__item">
-            <label for="menu-toggle"><a href="projects.html"  class="nav-overlay__link">03 Projects</a></label>
+            <label for="menu-toggle"><a href="projects.html" class="nav-overlay__link">03 Projects</a></label>
           </li>
           <li class="nav-overlay__item">
-            <label for="menu-toggle"><a href="beyond.html"    class="nav-overlay__link">04 Beyond The Terminal</a></label>
+            <label for="menu-toggle"><a href="beyond.html" class="nav-overlay__link">04 Beyond The Terminal</a></label>
           </li>
           <li class="nav-overlay__item">
             <label for="menu-toggle"><a href="community.html" class="nav-overlay__link">05 Community</a></label>
           </li>
         </ul>
       </nav>
-
-      <!-- Tiny mono caption anchored to the overlay's bottom-left -->
       <p class="nav-overlay__footer section-label" aria-hidden="true">ADITYA KULKARNI — PORTFOLIO</p>
-
     </div>
   </div>
-
-  <!-- SHARED: keep identical on all 5 pages -->
-  <!-- ══════════════════════════════════════════════════
-       SIDE MENU: LEFT-EDGE TRIGGER
-       A <label> for the checkbox, rotated -90deg and fixed to the left edge.
-       Writing-mode keeps it vertical. z-index 860 so it sits above the overlay
-       when the overlay is closed, but we also hide it when it opens.
-  ══════════════════════════════════════════════════ -->
   <label for="menu-toggle" class="menu-trigger" aria-label="Open navigation menu">
     <span class="menu-trigger__text">MENU</span>
   </label>
-
-  <!-- SHARED: keep identical on all 5 pages -->
-  <!-- ══════════════════════════════════════════════════
-       SCREEN FRAME
-       Fixed 1px decorative border around the viewport.
-       pointer-events:none = won't intercept clicks.
-       aria-hidden = decorative, ignored by screen readers.
-  ══════════════════════════════════════════════════ -->
   <div class="screen-frame" aria-hidden="true"></div>
-
-
-  <!-- SHARED: keep identical on all 5 pages -->
-  <!-- ══════════════════════════════════════════════════
-       NAVBAR
-       Logo links back to index.html.
-       Links are anchor links to sections on this page.
-       CTA routes to index.html#contact.
-  ══════════════════════════════════════════════════ -->
   <header class="navbar" id="navbar">
     <nav class="navbar__inner" aria-label="Primary navigation">
-
-      <!-- Wordmark / logo — left side of the bar -->
       <a href="index.html" class="navbar__logo">AK</a>
-
-      <!-- Hamburger button — visible on mobile only. -->
       <button class="navbar__toggle" aria-label="Open navigation menu" aria-expanded="false">
         <span class="navbar__toggle-bar"></span>
         <span class="navbar__toggle-bar"></span>
         <span class="navbar__toggle-bar"></span>
       </button>
-
-      <!-- Nav links — hidden on mobile, shown on desktop via media query -->
-      <!-- Each link uses the roll-mask + roll-stack pattern for the KPR hover effect -->
       <ul class="navbar__links" role="list">
-        <li><a href="#now"       class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">NOW</span><span class="roll-text roll-text--dup" aria-hidden="true">NOW</span></span></span></a></li>
-        <li><a href="#exams"     class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">EXAMS</span><span class="roll-text roll-text--dup" aria-hidden="true">EXAMS</span></span></span></a></li>
-        <li><a href="#school"    class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">SCHOOL</span><span class="roll-text roll-text--dup" aria-hidden="true">SCHOOL</span></span></span></a></li>
-        <li><a href="#olympiads" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">OLYMPIADS</span><span class="roll-text roll-text--dup" aria-hidden="true">OLYMPIADS</span></span></span></a></li>
-        <li><a href="#learning"  class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">LEARNING</span><span class="roll-text roll-text--dup" aria-hidden="true">LEARNING</span></span></span></a></li>
+        <li><a href="#now" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Now</span><span class="roll-text roll-text--dup" aria-hidden="true">Now</span></span></span></a></li>
+        <li><a href="#exams" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Exams</span><span class="roll-text roll-text--dup" aria-hidden="true">Exams</span></span></span></a></li>
+        <li><a href="#school" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">School</span><span class="roll-text roll-text--dup" aria-hidden="true">School</span></span></span></a></li>
+        <li><a href="#olympiads" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Olympiads</span><span class="roll-text roll-text--dup" aria-hidden="true">Olympiads</span></span></span></a></li>
+        <li><a href="#learning" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Learning</span><span class="roll-text roll-text--dup" aria-hidden="true">Learning</span></span></span></a></li>
       </ul>
-
-      <!-- Chamfered CTA at the right end of the navbar — desktop only. -->
-      <a href="index.html#contact" class="btn btn--outline navbar__cta">CONTACT</a>
-
+      <a href="index.html#contact" class="btn btn--outline navbar__cta">Contact</a>
     </nav>
   </header>
 
-
-  <!-- ══════════════════════════════════════════════════
-       MAIN
-  ══════════════════════════════════════════════════ -->
   <main>
-
-    <!-- ── PAGE HEADER ──────────────────────────────── -->
-    <!-- Replaces the hero on non-home pages.
-         Decorative vertical grid lines mirror the hero__grid-lines pattern.
-         reveal-text spans animate in via the same IntersectionObserver in script.js. -->
-    <section class="page-header" aria-labelledby="page-header-heading">
-
-      <!-- Decorative vertical grid lines -->
-      <div class="hero__grid-lines" aria-hidden="true"></div>
-
+    <header class="page-header section" id="hero">
+      <div class="page-header__grid" aria-hidden="true"></div>
       <div class="container page-header__inner">
-
-        <!-- Mono page label -->
         <p class="section-label page-header__label">PAGE 02 / 05 — ACADEMICS</p>
-
-        <!-- Giant Archivo Black headline with staggered reveal -->
-        <h1 class="page-header__title" id="page-header-heading">
-          <span class="page-header__line">
-            <span class="reveal-text">ACADEMICS.</span>
-          </span>
+        <h1 class="page-header__title">
+          <span class="page-header__line"><span class="reveal-text">ACADEMICS.</span></span>
         </h1>
-
-        <!-- Inter subtitle -->
-        <p class="page-header__sub">
-          Entrance exams, every school from EuroKids to SST, olympiads, and what I'm currently studying.
-        </p>
-
+        <p class="page-header__sub">Entrance exams, every school from EuroKids to SST, olympiads, and what I'm currently studying.</p>
       </div>
-    </section>
+    </header>
 
-
-    <!-- ── 001 NOW ───────────────────────────────────── -->
-    <section class="section academics-now" id="now" aria-labelledby="now-heading">
+    <section class="section" id="now" aria-labelledby="now-heading">
       <div class="container">
-
         <div class="section__header">
           <p class="section-label">001 NOW</p>
-          <h2 class="section-title" id="now-heading"><span class="reveal-text">Where I Am</span></h2>
         </div>
-
-        <ol class="education__timeline" role="list">
-
-          <!-- Current institution: Scaler School of Technology + BITS Pilani -->
+        <ul class="fact-list" role="list">
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Now</span>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Now</span></div>
             <div class="fact-row__body">
               <h3 class="fact-row__title">BSc Computer Science</h3>
-              <p class="fact-row__desc">
-                Scaler School of Technology, Bengaluru (first year, admits about 3.4% of applicants).
-                Parallelly pursuing BSc Computer Science from BITS Pilani.
-              </p>
+              <p class="fact-row__desc">Scaler School of Technology, Bengaluru (first year, admits about 3.4% of applicants). Parallelly pursuing BSc Computer Science from BITS Pilani.</p>
             </div>
           </li>
-
-        </ol>
+        </ul>
       </div>
     </section>
 
-
-    <!-- ── 002 EXAMS ─────────────────────────────────── -->
-    <section class="section academics-exams" id="exams" aria-labelledby="exams-heading">
+    <section class="section" id="exams" aria-labelledby="exams-heading">
       <div class="container">
-
         <div class="section__header">
           <p class="section-label">002 EXAMS</p>
           <h2 class="section-title" id="exams-heading"><span class="reveal-text">Entrance Exams</span></h2>
         </div>
-
-        <ol class="education__timeline" role="list">
-
-          <!-- JEE Main -->
+        <ul class="fact-list" role="list">
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">JEE Main</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">97.4 percentile</h3>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">JEE Main</span></div>
+            <div class="fact-row__body"><h3 class="fact-row__title">97.4 percentile</h3></div>
           </li>
-
-          <!-- MHT-CET -->
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">MHT-CET</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">98.4 percentile</h3>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">MHT-CET</span></div>
+            <div class="fact-row__body"><h3 class="fact-row__title">98.4 percentile</h3></div>
           </li>
-
-          <!-- JEE Advanced -->
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">JEE Advanced</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">AIR 21,300</h3>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">JEE Advanced</span></div>
+            <div class="fact-row__body"><h3 class="fact-row__title">AIR 21,300</h3></div>
           </li>
-
-          <!-- Coaching -->
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Coaching</span>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Coaching</span></div>
             <div class="fact-row__body">
               <h3 class="fact-row__title">Shiksha Guru</h3>
               <p class="fact-row__desc">JEE coaching.</p>
             </div>
           </li>
-
-        </ol>
+        </ul>
       </div>
     </section>
 
-
-    <!-- ── 003 SCHOOL ────────────────────────────────── -->
-    <section class="section academics-school" id="school" aria-labelledby="school-heading">
+    <section class="section" id="school" aria-labelledby="school-heading">
       <div class="container">
-
         <div class="section__header">
           <p class="section-label">003 SCHOOL</p>
           <h2 class="section-title" id="school-heading"><span class="reveal-text">School History</span></h2>
         </div>
-
-        <!-- Timeline ordered oldest → newest reading chronologically top-to-bottom -->
-        <ol class="education__timeline" role="list">
-
-          <!-- Pre-primary -->
+        <ul class="fact-list" role="list">
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Pre-primary</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">EuroKids</h3>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Pre-primary</span></div>
+            <div class="fact-row__body"><h3 class="fact-row__title">EuroKids</h3></div>
           </li>
-
-          <!-- Jr KG – Grade 3 -->
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Jr KG – Grade 3</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Symbiosis</h3>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Jr KG – Grade 3</span></div>
+            <div class="fact-row__body"><h3 class="fact-row__title">Symbiosis</h3></div>
           </li>
-
-          <!-- Grade 3–10 -->
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Grade 3–10</span>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Grade 3–10</span></div>
             <div class="fact-row__body">
               <h3 class="fact-row__title">Vikhe Patil Memorial School (CBSE)</h3>
               <p class="fact-row__desc">Grade 10: 94%</p>
             </div>
           </li>
-
-          <!-- Grade 11–12 -->
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Grade 11–12</span>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Grade 11–12</span></div>
             <div class="fact-row__body">
               <h3 class="fact-row__title">Lokseva E School and College (CBSE)</h3>
               <p class="fact-row__desc">Grade 12: 89%</p>
             </div>
           </li>
-
-        </ol>
+        </ul>
       </div>
     </section>
 
-
-    <!-- ── 004 OLYMPIADS ─────────────────────────────── -->
-    <section class="section academics-olympiads" id="olympiads" aria-labelledby="olympiads-heading">
+    <section class="section" id="olympiads" aria-labelledby="olympiads-heading">
       <div class="container">
-
         <div class="section__header">
           <p class="section-label">004 OLYMPIADS</p>
           <h2 class="section-title" id="olympiads-heading"><span class="reveal-text">Olympiads</span></h2>
         </div>
-
-        <ol class="education__timeline" role="list">
-
-          <!-- Olympiad participation -->
+        <ul class="fact-list" role="list">
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Academics Extras</span>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Academics Extras</span></div>
             <div class="fact-row__body">
               <h3 class="fact-row__title">Olympiads</h3>
-              <p class="fact-row__desc">
-                Olympiad participation in various competitive academic exams.
-              </p>
+              <p class="fact-row__desc">Olympiad participation in various competitive academic exams.</p>
             </div>
           </li>
-
-        </ol>
+        </ul>
       </div>
     </section>
 
-
-    <!-- ── 005 LEARNING ──────────────────────────────── -->
-    <section class="section academics-learning" id="learning" aria-labelledby="learning-heading">
+    <section class="section" id="learning" aria-labelledby="learning-heading">
       <div class="container">
-
         <div class="section__header">
           <p class="section-label">005 LEARNING</p>
           <h2 class="section-title" id="learning-heading"><span class="reveal-text">Currently Learning</span></h2>
         </div>
-
-        <ol class="education__timeline" role="list">
-
-          <!-- Active learning topics -->
+        <ul class="fact-list" role="list">
           <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Active Topics</span>
-            </div>
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Active Topics</span></div>
             <div class="fact-row__body">
               <h3 class="fact-row__title">Data Structures + Algorithms</h3>
-              <p class="fact-row__desc">
-                Backend development / JavaScript / C / Competitive programming / Open source contribution
-              </p>
+              <p class="fact-row__desc">Backend development / JavaScript / C / Competitive programming / Open source contribution</p>
             </div>
           </li>
-
-        </ol>
+        </ul>
       </div>
     </section>
 
-
-    <!-- ── NEXT PAGE ─────────────────────────────────── -->
-    <!-- Transition row linking to the next page in the site sequence -->
     <section class="next-page" aria-label="Next page">
       <div class="container">
         <p class="section-label">NEXT</p>
@@ -405,37 +208,22 @@
         </a>
       </div>
     </section>
-
   </main>
 
-
-  <!-- SHARED: keep identical on all 5 pages -->
-  <!-- ══════════════════════════════════════════════════
-       FOOTER
-       Navigation column lists all 5 pages.
-       Socials column links to email, LinkedIn, GitHub, Instagram.
-  ══════════════════════════════════════════════════ -->
   <footer class="footer">
-
     <div class="footer__wordmark" aria-hidden="true">ADITYA</div>
-
     <div class="container footer__bottom">
-
       <div class="footer__cols">
-
-        <!-- Navigation column: 5-page site map -->
         <nav class="footer__col" aria-label="Footer site navigation">
           <p class="footer__col-label section-label">Navigation</p>
           <ul role="list">
-            <li><a href="index.html"     class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Home</span><span class="roll-text roll-text--dup" aria-hidden="true">Home</span></span></span></a></li>
-            <li><a href="academics.html" class="footer__link" aria-current="page"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Academics</span><span class="roll-text roll-text--dup" aria-hidden="true">Academics</span></span></span></a></li>
-            <li><a href="projects.html"  class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
-            <li><a href="beyond.html"    class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Beyond</span><span class="roll-text roll-text--dup" aria-hidden="true">Beyond</span></span></span></a></li>
+            <li><a href="index.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Home</span><span class="roll-text roll-text--dup" aria-hidden="true">Home</span></span></span></a></li>
+            <li><a href="academics.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Academics</span><span class="roll-text roll-text--dup" aria-hidden="true">Academics</span></span></span></a></li>
+            <li><a href="projects.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
+            <li><a href="beyond.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Beyond</span><span class="roll-text roll-text--dup" aria-hidden="true">Beyond</span></span></span></a></li>
             <li><a href="community.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Community</span><span class="roll-text roll-text--dup" aria-hidden="true">Community</span></span></span></a></li>
           </ul>
         </nav>
-
-        <!-- Socials column -->
         <nav class="footer__col" aria-label="Social links">
           <p class="footer__col-label section-label">Connect</p>
           <ul role="list">
@@ -445,19 +233,13 @@
             <li><a href="https://www.instagram.com/adityaa_kulkarni_" class="footer__link" target="_blank" rel="noopener noreferrer"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Instagram</span><span class="roll-text roll-text--dup" aria-hidden="true">Instagram</span></span></span></a></li>
           </ul>
         </nav>
-
       </div>
-
       <p class="footer__legal section-label">
-        &copy; <span id="footer-year">2025</span> Aditya Kulkarni
-        &mdash; Hand-built with HTML, CSS &amp; JS
+        &copy; <span id="footer-year">2025</span> Aditya Kulkarni &mdash; Hand-built with HTML, CSS &amp; JS
       </p>
-
     </div>
   </footer>
 
-  <!-- SHARED: keep identical on all 5 pages -->
   <script src="script.js"></script>
-
 </body>
 </html>

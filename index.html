@@ -1,222 +1,115 @@
-<!DOCTYPE html>
-<!-- HTML5 declaration -->
-
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Aditya Kulkarni | Portfolio</title>
-
-  <!-- Three Google Fonts loaded in one request:
-       Archivo Black — display headlines: a single-weight slab, always bold, editorial look
-       IBM Plex Mono — labels, nav links, buttons, micro-copy: monospace precision
-       Inter          — body copy: humanist sans-serif, very readable at small sizes
-       display=swap   — shows fallback text immediately; swaps to the real font once loaded -->
+  <meta name="description" content="Aditya Kulkarni — first-year CS student at Scaler School of Technology, builder, runner, and competitive programmer.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-  <!-- ══════════════════════════════════════════════════
-       SCROLL PROGRESS BAR
-  ══════════════════════════════════════════════════ -->
+  <!-- SHARED: keep identical on all 5 pages -->
   <div class="scroll-progress" aria-hidden="true"></div>
-
-  <!-- ══════════════════════════════════════════════════
-       SIDE MENU: CHECKBOX STATE MACHINE
-       A hidden <input type="checkbox"> is the pure-CSS state machine for the menu.
-       Its :checked / :not(:checked) state is read by body:has() selectors in CSS.
-       No JavaScript needed — the linked <label> elements toggle it.
-       aria-hidden = true because it's a visual-only control; screen readers
-       use the links inside the overlay directly.
-  ══════════════════════════════════════════════════ -->
-  <input
-    type="checkbox"
-    id="menu-toggle"
-    class="menu-checkbox"
-    aria-hidden="true"
-  >
-
-  <!-- ══════════════════════════════════════════════════
-       SIDE MENU: FULL-SCREEN OVERLAY
-       Slides in from left via clip-path transition driven by :has().
-       z-index 850 = above navbar (800) but below screen-frame (900).
-  ══════════════════════════════════════════════════ -->
+  <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true">
   <div class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
     <div class="nav-overlay__inner">
-
-      <!-- Close control: a <label> that toggles the checkbox off when clicked -->
       <label for="menu-toggle" class="nav-overlay__close" aria-label="Close navigation menu">
         <span class="section-label">✕ CLOSE</span>
       </label>
-
-      <!-- Big uppercase Archivo Black nav links.
-           Each link is nested inside a <label for="menu-toggle"> so clicking
-           a link also unchecks the checkbox, closing the menu. -->
       <nav class="nav-overlay__nav" aria-label="Overlay navigation">
         <ul role="list">
-          <li class="nav-overlay__item">
-            <label for="menu-toggle"><a href="#about"     class="nav-overlay__link">About</a></label>
+          <li class="nav-overlay__item nav-overlay__item--current">
+            <label for="menu-toggle"><a href="index.html" class="nav-overlay__link" aria-current="page">01 Home</a></label>
+            <ul class="nav-overlay__sub" role="list">
+              <li><label for="menu-toggle"><a href="#about" class="nav-overlay__sub-link">About</a></label></li>
+              <li><label for="menu-toggle"><a href="#skills" class="nav-overlay__sub-link">Skills</a></label></li>
+              <li><label for="menu-toggle"><a href="#projects" class="nav-overlay__sub-link">Projects</a></label></li>
+              <li><label for="menu-toggle"><a href="#explore" class="nav-overlay__sub-link">Explore</a></label></li>
+              <li><label for="menu-toggle"><a href="#contact" class="nav-overlay__sub-link">Contact</a></label></li>
+            </ul>
           </li>
           <li class="nav-overlay__item">
-            <label for="menu-toggle"><a href="#skills"    class="nav-overlay__link">Skills</a></label>
+            <label for="menu-toggle"><a href="academics.html" class="nav-overlay__link">02 Academics</a></label>
           </li>
           <li class="nav-overlay__item">
-            <label for="menu-toggle"><a href="#projects"  class="nav-overlay__link">Projects</a></label>
+            <label for="menu-toggle"><a href="projects.html" class="nav-overlay__link">03 Projects</a></label>
           </li>
           <li class="nav-overlay__item">
-            <label for="menu-toggle"><a href="#education" class="nav-overlay__link">Education</a></label>
+            <label for="menu-toggle"><a href="beyond.html" class="nav-overlay__link">04 Beyond The Terminal</a></label>
           </li>
           <li class="nav-overlay__item">
-            <label for="menu-toggle"><a href="#beyond"    class="nav-overlay__link">Beyond</a></label>
-          </li>
-          <li class="nav-overlay__item">
-            <label for="menu-toggle"><a href="#contact"   class="nav-overlay__link">Contact</a></label>
+            <label for="menu-toggle"><a href="community.html" class="nav-overlay__link">05 Community</a></label>
           </li>
         </ul>
       </nav>
-
-      <!-- Tiny mono caption anchored to the overlay's bottom-left -->
       <p class="nav-overlay__footer section-label" aria-hidden="true">ADITYA KULKARNI — PORTFOLIO</p>
-
     </div>
   </div>
-
-  <!-- ══════════════════════════════════════════════════
-       SIDE MENU: LEFT-EDGE TRIGGER
-       A <label> for the checkbox, rotated -90deg and fixed to the left edge.
-       Writing-mode keeps it vertical. z-index 860 so it sits above the overlay
-       when the overlay is closed, but we also hide it when it opens.
-  ══════════════════════════════════════════════════ -->
   <label for="menu-toggle" class="menu-trigger" aria-label="Open navigation menu">
     <span class="menu-trigger__text">MENU</span>
   </label>
-
-  <!-- ══════════════════════════════════════════════════
-       SCREEN FRAME
-       Fixed 1px decorative border around the viewport.
-       pointer-events:none = won't intercept clicks.
-       aria-hidden = decorative, ignored by screen readers.
-  ══════════════════════════════════════════════════ -->
   <div class="screen-frame" aria-hidden="true"></div>
-
-
-  <!-- ══════════════════════════════════════════════════
-       NAVBAR
-  ══════════════════════════════════════════════════ -->
   <header class="navbar" id="navbar">
     <nav class="navbar__inner" aria-label="Primary navigation">
-
-      <!-- Wordmark / logo — left side of the bar -->
-      <a href="#hero" class="navbar__logo">AK</a>
-
-      <!-- Hamburger button — visible on mobile only. -->
+      <a href="index.html" class="navbar__logo">AK</a>
       <button class="navbar__toggle" aria-label="Open navigation menu" aria-expanded="false">
         <span class="navbar__toggle-bar"></span>
         <span class="navbar__toggle-bar"></span>
         <span class="navbar__toggle-bar"></span>
       </button>
-
-      <!-- Nav links — hidden on mobile, shown on desktop via media query -->
-      <!-- Each link uses the roll-mask + roll-stack pattern for the KPR hover effect -->
       <ul class="navbar__links" role="list">
-        <li><a href="#about"     class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">About</span><span class="roll-text roll-text--dup" aria-hidden="true">About</span></span></span></a></li>
-        <li><a href="#skills"    class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Skills</span><span class="roll-text roll-text--dup" aria-hidden="true">Skills</span></span></span></a></li>
-        <li><a href="#projects"  class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
-        <li><a href="#education" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Education</span><span class="roll-text roll-text--dup" aria-hidden="true">Education</span></span></span></a></li>
-        <li><a href="#beyond"    class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Beyond</span><span class="roll-text roll-text--dup" aria-hidden="true">Beyond</span></span></span></a></li>
-        <li><a href="#contact"   class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Contact</span><span class="roll-text roll-text--dup" aria-hidden="true">Contact</span></span></span></a></li>
+        <li><a href="#about" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">About</span><span class="roll-text roll-text--dup" aria-hidden="true">About</span></span></span></a></li>
+        <li><a href="#skills" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Skills</span><span class="roll-text roll-text--dup" aria-hidden="true">Skills</span></span></span></a></li>
+        <li><a href="#projects" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
+        <li><a href="#explore" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Explore</span><span class="roll-text roll-text--dup" aria-hidden="true">Explore</span></span></span></a></li>
+        <li><a href="#contact" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Contact</span><span class="roll-text roll-text--dup" aria-hidden="true">Contact</span></span></span></a></li>
       </ul>
-
-      <!-- Chamfered CTA at the right end of the navbar — desktop only. -->
-      <a href="#contact" class="btn btn--outline navbar__cta">Contact</a>
-
+      <a href="index.html#contact" class="btn btn--outline navbar__cta">Contact</a>
     </nav>
   </header>
 
-
-  <!-- ══════════════════════════════════════════════════
-       MAIN
-  ══════════════════════════════════════════════════ -->
   <main>
-
-    <!-- ── HERO ──────────────────────────────────────── -->
-    <!-- The hero becomes a tall scroll stage. The content inside is sticky. -->
+    <!-- SHARED: keep identical on all 5 pages -->
     <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 5">
       <div class="hero-sticky">
-        
-        <!-- Background frames.
-             HOW --i AND --frame-count WORK TOGETHER:
-             Each frame carries --i: N. The stage carries --frame-count: 5.
-             The CSS uses calc() with these two variables to compute exactly what
-             slice of the scroll timeline each frame belongs to, crossfading them. -->
         <div class="hero-bg" role="img" aria-label="AI-generated portrait of Aditya Kulkarni">
-          <!-- frame1 is fully visible on load -->
           <img src="assets/frames/frame1.png" alt="" aria-hidden="true" class="portrait-frame portrait-frame--first" style="--i: 1" width="600" height="800" fetchpriority="high">
-          <!-- frames 2-4 crossfade as you scroll -->
           <img src="assets/frames/frame2.png" alt="" aria-hidden="true" class="portrait-frame" style="--i: 2" width="600" height="800" decoding="async">
           <img src="assets/frames/frame3.png" alt="" aria-hidden="true" class="portrait-frame" style="--i: 3" width="600" height="800" decoding="async">
           <img src="assets/frames/frame4.png" alt="" aria-hidden="true" class="portrait-frame" style="--i: 4" width="600" height="800" decoding="async">
-          <!-- frame5 is the final frame and the fallback for unsupported browsers -->
           <img src="assets/frames/frame5.png" alt="AI-generated portrait of Aditya Kulkarni" class="portrait-frame portrait-frame--default" style="--i: 5" width="600" height="800" decoding="async">
         </div>
-
-        <!-- Flat translucent overlay to ensure text readability -->
         <div class="hero-overlay" aria-hidden="true"></div>
-
-        <!-- Original Hero Content -->
-        <!-- Decorative vertical grid lines -->
         <div class="hero__grid-lines" aria-hidden="true"></div>
-
-        <!-- Crosshair / HUD mark -->
         <div class="hero__crosshair" aria-hidden="true"></div>
-
         <div class="hero__content">
-
           <p class="section-label">000 HELLO</p>
-
           <h1 class="hero__name" id="hero-heading">
             <span class="hero__line"><span class="reveal-text">ADITYA</span></span>
             <span class="hero__line"><span class="reveal-text">KULKARNI.</span></span>
           </h1>
-
-          <p class="hero__sub">
-            First-year CS at Scaler School of Technology, Bengaluru. I build tools, break them, and fix them in public.
-          </p>
-
+          <p class="hero__sub">First-year CS at Scaler School of Technology, Bengaluru. I build tools, break them, and fix them in public.</p>
           <div class="hero__ctas">
             <a href="#projects" class="btn btn--primary">View Projects</a>
-            <a href="#contact"  class="btn btn--outline">Get In Touch</a>
+            <a href="#contact" class="btn btn--outline">Get In Touch</a>
           </div>
-
         </div>
-
-        <!-- Scroll hint -->
-        <div class="hero__scroll-hint" aria-hidden="true">
-          <span class="section-label">SCROLL ↓</span>
-        </div>
-
+        <div class="hero__scroll-hint" aria-hidden="true"><span class="section-label">SCROLL ↓</span></div>
       </div>
     </section>
-
 
     <!-- ── ABOUT ──────────────────────────────────────── -->
     <section class="section about" id="about" aria-labelledby="about-heading">
       <div class="container">
-
         <div class="section__header">
           <p class="section-label">001 ABOUT</p>
           <h2 class="section-title" id="about-heading"><span class="reveal-text">Who I Am</span></h2>
         </div>
-
-        <!-- Two-column layout: bio text left, mono readout right -->
         <div class="about__grid">
-
           <div class="about__text">
             <p>
               I'm Aditya Kulkarni, 18, from Pune — now in Bengaluru studying CS and AI at Scaler School of Technology, and parallelly pursuing a BSc Computer Science from BITS Pilani. I scored a 97.4 percentile in JEE Main, a 98.4 in MHT-CET, and AIR 21,300 in JEE Advanced, and I picked SST because it lets me build from day one. Right now that means AI tooling, web projects, and competitive programming in C++.
@@ -225,9 +118,7 @@
               Outside the compiler, I run and cycle, and I have been trekking with GGIM Pune for the past seven years — monthly Sahyadri climbs, five Himalayan summits, and the first to summit Thorate Lake. I play the guitar and piano and sing too, led my school's debate club, was the school captain, and organized all of the school and society events. I post what I'm learning on LinkedIn as I go.
             </p>
           </div>
-
           <div class="about__readout-col">
-            <!-- Decorative HUD readout lines -->
             <div class="about__readout" aria-hidden="true">
               <p class="section-label">FILE_01 / NAME - ADITYA KULKARNI</p>
               <p class="section-label">FILE_02 / BASE - BENGALURU</p>
@@ -235,83 +126,62 @@
               <p class="section-label">FILE_04 / LANGUAGES - HINDI / MARATHI / ENGLISH / KANNADA (UNDERSTAND + SOME SPOKEN)</p>
             </div>
           </div>
-
         </div>
       </div>
     </section>
 
-
     <!-- ── SKILLS ─────────────────────────────────────── -->
     <section class="section skills" id="skills" aria-labelledby="skills-heading">
       <div class="container">
-
         <div class="section__header">
           <p class="section-label">002 SKILLS</p>
           <h2 class="section-title" id="skills-heading"><span class="reveal-text">What I Know</span></h2>
         </div>
-
         <ul class="skills__list" role="list">
-
           <li class="skill-row">
             <span class="skill-row__index section-label">01</span>
             <span class="skill-row__name">Languages</span>
             <span class="skill-row__items">HTML / CSS / Java / C / C++ (competitive programming) / JavaScript (learning)</span>
             <span class="skill-row__plus" aria-hidden="true">+</span>
           </li>
-
           <li class="skill-row">
             <span class="skill-row__index section-label">02</span>
             <span class="skill-row__name">Frontend</span>
             <span class="skill-row__items">responsive layouts / Flexbox + Grid / CSS animation / this site, hand-built</span>
             <span class="skill-row__plus" aria-hidden="true">+</span>
           </li>
-
           <li class="skill-row">
             <span class="skill-row__index section-label">03</span>
             <span class="skill-row__name">Tools</span>
             <span class="skill-row__items">Git / GitHub / PowerShell / Node.js + npm / REST APIs (curl) / Claude Code / Antigravity</span>
             <span class="skill-row__plus" aria-hidden="true">+</span>
           </li>
-
           <li class="skill-row">
             <span class="skill-row__index section-label">04</span>
             <span class="skill-row__name">Learning</span>
             <span class="skill-row__items">data structures + algorithms / backend / JavaScript / C / competitive programming / open source contribution</span>
             <span class="skill-row__plus" aria-hidden="true">+</span>
           </li>
-          
           <li class="skill-row">
             <span class="skill-row__index section-label">05</span>
             <span class="skill-row__name">Off Keyboard</span>
             <span class="skill-row__items">communication + articulation (debate club lead, Orators SST) / decision-making under pressure / critical thinking / participated in 6 hackathons with multiple podium finishes / gym 5 days a week</span>
             <span class="skill-row__plus" aria-hidden="true">+</span>
           </li>
-
         </ul>
       </div>
     </section>
 
-
-    <!-- ── PROJECTS ────────────────────────────────────── -->
+    <!-- ── FEATURED PROJECTS ────────────────────────────────────── -->
     <section class="section projects" id="projects" aria-labelledby="projects-heading">
       <div class="container">
-
         <div class="section__header">
-          <p class="section-label">003 PROJECTS</p>
+          <p class="section-label">003 FEATURED PROJECTS</p>
           <h2 class="section-title" id="projects-heading"><span class="reveal-text">Things I've Built</span></h2>
         </div>
-
         <div class="projects__grid">
-
-          <!-- ═══════════════════════════════════════════
-               PROJECT 01 — PORTFOLIO WORKFLOW
-               Plate: vertical hairline columns + lavender left-third band
-          ═══════════════════════════════════════════ -->
           <article class="project-card">
-            <!-- aria-hidden: plate is decorative; card title and text carry all meaning -->
             <div class="project-card__thumb" aria-hidden="true">
-
-              <!-- .layer-back: white field with 1px hairline grid + coordinate readout -->
               <div class="layer-back">
                 <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
                   <line x1="75"  y1="0" x2="75"  y2="200" stroke="#E5E5E5" stroke-width="1"/>
@@ -320,14 +190,11 @@
                   <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:001 / Y:001</text>
                 </svg>
               </div>
-              <!-- .layer-mid: lavender vertical band, left third of the thumbnail -->
               <div class="layer-mid plate-01-mid"></div>
-              <!-- .layer-front: giant index number + one keyword -->
               <div class="layer-front">
                 <span class="plate-index">01</span>
                 <span class="plate-keyword">PIPELINE</span>
               </div>
-
             </div>
             <header class="project-card__header">
               <span class="project-card__number section-label">PROJECT #01</span>
@@ -345,14 +212,8 @@
             </footer>
           </article>
 
-
-          <!-- ═══════════════════════════════════════════
-               PROJECT 02 — OMNI ROUTE
-               Plate: horizontal hairlines + lavender diagonal band
-          ═══════════════════════════════════════════ -->
           <article class="project-card">
             <div class="project-card__thumb" aria-hidden="true">
-
               <div class="layer-back">
                 <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
                   <line x1="0" y1="66"  x2="300" y2="66"  stroke="#E5E5E5" stroke-width="1"/>
@@ -360,13 +221,11 @@
                   <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:002 / Y:001</text>
                 </svg>
               </div>
-              <!-- clip-path diagonal band across the middle of the plate -->
               <div class="layer-mid plate-02-mid"></div>
               <div class="layer-front">
                 <span class="plate-index">02</span>
                 <span class="plate-keyword">GATEWAY</span>
               </div>
-
             </div>
             <header class="project-card__header">
               <span class="project-card__number section-label">PROJECT #02</span>
@@ -384,95 +243,10 @@
             </footer>
           </article>
 
-
-          <!-- ═══════════════════════════════════════════
-               PROJECT 03 — INSTAGRAM GROWTH BOT
-               Plate: square grid cells + lavender bottom-right cell fill
-          ═══════════════════════════════════════════ -->
           <article class="project-card">
             <div class="project-card__thumb" aria-hidden="true">
-
               <div class="layer-back">
                 <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
-                  <line x1="100" y1="0"   x2="100" y2="200" stroke="#E5E5E5" stroke-width="1"/>
-                  <line x1="200" y1="0"   x2="200" y2="200" stroke="#E5E5E5" stroke-width="1"/>
-                  <line x1="0"   y1="100" x2="300" y2="100" stroke="#E5E5E5" stroke-width="1"/>
-                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:003 / Y:001</text>
-                </svg>
-              </div>
-              <!-- Lavender filled square in the bottom-right grid cell -->
-              <div class="layer-mid plate-03-mid"></div>
-              <div class="layer-front">
-                <span class="plate-index">03</span>
-                <span class="plate-keyword">AUTOMATION</span>
-              </div>
-
-            </div>
-            <header class="project-card__header">
-              <span class="project-card__number section-label">PROJECT #03</span>
-              <h3 class="project-card__title">Instagram Growth Bot</h3>
-            </header>
-            <p class="project-card__desc">
-              Follower-growth automation linked to my Instagram account. It walks the Discover People feed and scores every account it surfaces — mutual count, follow-back ratio and other signals consolidated into a single score. Over a set threshold, it sends a follow request, waits a set window, and unfollows accounts that don't follow back. Hit Instagram's rate limits; experiment concluded.
-            </p>
-            <p class="project-card__tech section-label">AUTOMATION / SCORING ENGINE</p>
-            <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">Automation</li><li class="tag">Scoring Engine</li>
-            </ul>
-            <footer class="project-card__footer">
-              <span class="project-card__no-link section-label">NO PUBLIC LINK</span>
-            </footer>
-          </article>
-
-          <!-- ═══════════════════════════════════════════
-               PROJECT 04 — JUNIOR-SENIOR DOUBT PLATFORM
-               Plate: concentric SVG rings + lavender top bar
-          ═══════════════════════════════════════════ -->
-          <article class="project-card">
-            <div class="project-card__thumb" aria-hidden="true">
-
-              <div class="layer-back">
-                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
-                  <circle cx="150" cy="100" r="50"  fill="none" stroke="#E5E5E5" stroke-width="1"/>
-                  <circle cx="150" cy="100" r="90"  fill="none" stroke="#E5E5E5" stroke-width="1"/>
-                  <circle cx="150" cy="100" r="130" fill="none" stroke="#E5E5E5" stroke-width="1"/>
-                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:004 / Y:001</text>
-                </svg>
-              </div>
-              <!-- Lavender horizontal bar across the top quarter -->
-              <div class="layer-mid plate-04-mid"></div>
-              <div class="layer-front">
-                <span class="plate-index">04</span>
-                <span class="plate-keyword">COMMUNITY</span>
-              </div>
-
-            </div>
-            <header class="project-card__header">
-              <span class="project-card__number section-label">PROJECT #04</span>
-              <h3 class="project-card__title">Junior-Senior Doubt Platform</h3>
-            </header>
-            <p class="project-card__desc">
-              A doubt-solving platform where seniors and juniors connect. Anyone posts a doubt freely; answers are rated on helpfulness and practicality and earn a score; askers carry a score too, and sorting is score-based, so the best answers and the best askers rise to the top. An anonymous mode lets people ask without being shamed.
-            </p>
-            <p class="project-card__tech section-label">PLATFORM DESIGN / RANKING ALGORITHM</p>
-            <ul class="project-card__tags" role="list" aria-label="Technologies used">
-              <li class="tag">Platform Design</li><li class="tag">Ranking Algorithm</li>
-            </ul>
-            <footer class="project-card__footer">
-              <span class="project-card__no-link section-label">NO PUBLIC LINK</span>
-            </footer>
-          </article>
-
-          <!-- ═══════════════════════════════════════════
-               PROJECT 05 — CP PRACTICE PIPELINE
-               Plate: diagonal crosshatch lines + lavender corner bracket (top-right)
-          ═══════════════════════════════════════════ -->
-          <article class="project-card">
-            <div class="project-card__thumb" aria-hidden="true">
-
-              <div class="layer-back">
-                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
-                  <!-- 45° diagonal hairlines sweeping across the plate -->
                   <line x1="-50" y1="100" x2="100" y2="-50"  stroke="#E5E5E5" stroke-width="1"/>
                   <line x1="0"   y1="200" x2="200" y2="0"    stroke="#E5E5E5" stroke-width="1"/>
                   <line x1="100" y1="200" x2="300" y2="0"    stroke="#E5E5E5" stroke-width="1"/>
@@ -480,13 +254,11 @@
                   <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:005 / Y:001</text>
                 </svg>
               </div>
-              <!-- Lavender right-angle bracket in the top-right corner, drawn as two thin rects via CSS -->
               <div class="layer-mid plate-05-mid"></div>
               <div class="layer-front">
                 <span class="plate-index">05</span>
                 <span class="plate-keyword">PRACTICE</span>
               </div>
-
             </div>
             <header class="project-card__header">
               <span class="project-card__number section-label">PROJECT #05</span>
@@ -503,191 +275,57 @@
               <a href="https://github.com/Aditya2375/Competitive_Programming_Practice" class="btn btn--outline btn--sm" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
             </footer>
           </article>
-
+        </div>
+        <div class="projects__all-link">
+          <a href="projects.html" class="btn btn--primary">ALL PROJECTS →</a>
         </div>
       </div>
     </section>
 
-
-    <!-- ── EDUCATION ──────────────────────────────────── -->
-    <section class="section education" id="education" aria-labelledby="education-heading">
+    <!-- ── EXPLORE ────────────────────────────────────── -->
+    <section class="section explore" id="explore" aria-labelledby="explore-heading">
       <div class="container">
-
         <div class="section__header">
-          <p class="section-label">004 EDUCATION</p>
-          <h2 class="section-title" id="education-heading"><span class="reveal-text">Where I Studied</span></h2>
+          <p class="section-label">004 EXPLORE</p>
+          <h2 class="section-title" id="explore-heading"><span class="reveal-text">Explore</span></h2>
         </div>
-
-        <ol class="education__timeline" role="list">
-          
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Now</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">BSc Computer Science</h3>
-              <p class="fact-row__desc">Scaler School of Technology, Bengaluru (first year, admits about 3.4% of applicants)</p>
-            </div>
-          </li>
-
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Entrance Exams</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">JEE Main 97.4% / MHT-CET 98.4% / JEE Advanced AIR 21,300</h3>
-              <p class="fact-row__desc">JEE coaching at Shiksha Guru.</p>
-            </div>
-          </li>
-
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Grade 11-12</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Lokseva E School and College (CBSE)</h3>
-              <p class="fact-row__desc">Grade 12: 89%</p>
-            </div>
-          </li>
-
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Grade 3-10</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Vikhe Patil Memorial School (CBSE)</h3>
-              <p class="fact-row__desc">Grade 10: 94%</p>
-            </div>
-          </li>
-          
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Jr KG - Grade 3</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Symbiosis</h3>
-            </div>
-          </li>
-          
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Pre-primary</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">EuroKids</h3>
-            </div>
-          </li>
-
-        </ol>
+        <div class="explore__grid">
+          <article class="explore-card chamfer">
+            <p class="explore-card__index section-label">02</p>
+            <h3 class="explore-card__title">ACADEMICS</h3>
+            <p class="explore-card__desc">Entrance exams, school history, olympiads, and what I'm learning now.</p>
+            <a href="academics.html" class="explore-card__link btn btn--outline btn--sm">View Page →</a>
+          </article>
+          <article class="explore-card chamfer">
+            <p class="explore-card__index section-label">03</p>
+            <h3 class="explore-card__title">PROJECTS</h3>
+            <p class="explore-card__desc">Five projects built: AI tooling, LLM routing, automation, a community platform, and CP.</p>
+            <a href="projects.html" class="explore-card__link btn btn--outline btn--sm">View Page →</a>
+          </article>
+          <article class="explore-card chamfer">
+            <p class="explore-card__index section-label">04</p>
+            <h3 class="explore-card__title">BEYOND THE TERMINAL</h3>
+            <p class="explore-card__desc">Seven years of trekking, daily running, sport, and music.</p>
+            <a href="beyond.html" class="explore-card__link btn btn--outline btn--sm">View Page →</a>
+          </article>
+          <article class="explore-card chamfer">
+            <p class="explore-card__index section-label">05</p>
+            <h3 class="explore-card__title">COMMUNITY</h3>
+            <p class="explore-card__desc">Leadership, clubs, events, volunteering, and how to reach me.</p>
+            <a href="community.html" class="explore-card__link btn btn--outline btn--sm">View Page →</a>
+          </article>
+        </div>
       </div>
     </section>
-
-    <!-- ── BEYOND THE CLASSROOM ───────────────────────── -->
-    <section class="section beyond" id="beyond" aria-labelledby="beyond-heading">
-      <div class="container">
-
-        <div class="section__header">
-          <p class="section-label">005 EXTRAS</p>
-          <h2 class="section-title" id="beyond-heading"><span class="reveal-text">Beyond The Classroom</span></h2>
-        </div>
-
-        <ul class="fact-list" role="list">
-          
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Running</span>
-            </div>
-            <div class="fact-row__body">
-              <!-- Grid of plain stat cards for running metrics -->
-              <div class="stat-grid">
-                <div class="stat-card">
-                  <span class="stat-card__value">5 AM</span>
-                  <span class="stat-card__label">WHEN MOST OF MY RUNS START</span>
-                </div>
-                <div class="stat-card">
-                  <span class="stat-card__value">~7 KM</span>
-                  <span class="stat-card__label">MY WEEKDAY LOOP</span>
-                </div>
-                <div class="stat-card">
-                  <span class="stat-card__value">~15 KM</span>
-                  <span class="stat-card__label">THE WEEKEND LONG RUN</span>
-                </div>
-                <div class="stat-card">
-                  <span class="stat-card__value">~45 KM</span>
-                  <span class="stat-card__label">A NORMAL WEEK</span>
-                </div>
-              </div>
-            </div>
-          </li>
-
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Leadership</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">School Captain & House Captain</h3>
-              <p class="fact-row__desc">Organized every school cultural fest and society event (Ganpati, Diwali, Christmas, sports day, annual day).</p>
-              
-              <h3 class="fact-row__title" style="margin-top: 1rem;">Debate Club</h3>
-              <p class="fact-row__desc">Led my school's debate club.</p>
-
-              <h3 class="fact-row__title" style="margin-top: 1rem;">SST Gym Petition</h3>
-              <p class="fact-row__desc">Started a student petition for gym access that got 800+ responses, and the new campus gym opened earlier than planned after it.</p>
-
-              <h3 class="fact-row__title" style="margin-top: 1rem;">BITS Pilani Group at SST</h3>
-              <p class="fact-row__desc">Created the group, brought everyone into it and run it as admin, got it added to the SST student community, which also put me in the community's separate Admins group.</p>
-            </div>
-          </li>
-
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Stage & Art</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Orators Club, SST</h3>
-              <p class="fact-row__desc">Member, my team placed 1st at WTFQ (an Orators Club event).</p>
-
-              <h3 class="fact-row__title" style="margin-top: 1rem;">Rangoli Competition</h3>
-              <p class="fact-row__desc">1st place (team).</p>
-            </div>
-          </li>
-          
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Music</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Guitar, Piano, Singing</h3>
-              <p class="fact-row__desc">Played guitar at the seniors' icebreaker talent show at SST.</p>
-            </div>
-          </li>
-
-          <li class="fact-row">
-            <div class="fact-row__meta">
-              <span class="section-label fact-row__year">Community</span>
-            </div>
-            <div class="fact-row__body">
-              <h3 class="fact-row__title">Open Source Club, SST</h3>
-              <p class="fact-row__desc">Member.</p>
-            </div>
-          </li>
-
-        </ul>
-      </div>
-    </section>
-
 
     <!-- ── CONTACT ────────────────────────────────────── -->
     <section class="section contact" id="contact" aria-labelledby="contact-heading">
       <div class="container">
-
         <div class="section__header">
-          <p class="section-label">006 CONTACT</p>
+          <p class="section-label">005 CONTACT</p>
           <h2 class="section-title" id="contact-heading"><span class="reveal-text">Get In Touch.</span></h2>
         </div>
-
         <div class="contact__body">
-          <!-- Row of mono links representing contact nodes -->
           <div class="contact__links-grid">
             <a href="mailto:adityakulkarni2708@gmail.com" class="contact__email">adityakulkarni2708@gmail.com</a>
             <a href="tel:+918010187326" class="contact__link">+91 80101 87326</a>
@@ -697,8 +335,6 @@
             <a href="https://www.threads.com/@adityaa_kulkarni_" class="contact__link" target="_blank" rel="noopener noreferrer">Threads</a>
             <a href="https://x.com/Adityaa_Kulkarn" class="contact__link" target="_blank" rel="noopener noreferrer">X / Twitter</a>
           </div>
-
-          <!-- Contact Form -->
           <form class="contact__form" action="mailto:adityakulkarni2708@gmail.com" method="post" enctype="text/plain">
             <div class="form-group">
               <label for="name" class="section-label">NAME</label>
@@ -716,36 +352,35 @@
             <p class="section-label form-note">OPENS YOUR EMAIL APP - NOTHING IS STORED.</p>
           </form>
         </div>
-
       </div>
     </section>
-
+    
+    <section class="next-page" aria-label="Next page">
+      <div class="container">
+        <p class="section-label">NEXT</p>
+        <a href="academics.html" class="next-page__link">
+          <span class="next-page__name">Academics</span>
+          <span class="next-page__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
   </main>
 
-
-  <!-- ══════════════════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════════════════ -->
+  <!-- SHARED: keep identical on all 5 pages -->
   <footer class="footer">
-
     <div class="footer__wordmark" aria-hidden="true">ADITYA</div>
-
     <div class="container footer__bottom">
-
       <div class="footer__cols">
-
         <nav class="footer__col" aria-label="Footer site navigation">
           <p class="footer__col-label section-label">Navigation</p>
           <ul role="list">
-            <li><a href="#about"     class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">About</span><span class="roll-text roll-text--dup" aria-hidden="true">About</span></span></span></a></li>
-            <li><a href="#skills"    class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Skills</span><span class="roll-text roll-text--dup" aria-hidden="true">Skills</span></span></span></a></li>
-            <li><a href="#projects"  class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
-            <li><a href="#education" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Education</span><span class="roll-text roll-text--dup" aria-hidden="true">Education</span></span></span></a></li>
-            <li><a href="#beyond"    class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Beyond</span><span class="roll-text roll-text--dup" aria-hidden="true">Beyond</span></span></span></a></li>
-            <li><a href="#contact"   class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Contact</span><span class="roll-text roll-text--dup" aria-hidden="true">Contact</span></span></span></a></li>
+            <li><a href="index.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Home</span><span class="roll-text roll-text--dup" aria-hidden="true">Home</span></span></span></a></li>
+            <li><a href="academics.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Academics</span><span class="roll-text roll-text--dup" aria-hidden="true">Academics</span></span></span></a></li>
+            <li><a href="projects.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
+            <li><a href="beyond.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Beyond</span><span class="roll-text roll-text--dup" aria-hidden="true">Beyond</span></span></span></a></li>
+            <li><a href="community.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Community</span><span class="roll-text roll-text--dup" aria-hidden="true">Community</span></span></span></a></li>
           </ul>
         </nav>
-
         <nav class="footer__col" aria-label="Social links">
           <p class="footer__col-label section-label">Connect</p>
           <ul role="list">
@@ -755,18 +390,14 @@
             <li><a href="https://www.instagram.com/adityaa_kulkarni_" class="footer__link" target="_blank" rel="noopener noreferrer"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Instagram</span><span class="roll-text roll-text--dup" aria-hidden="true">Instagram</span></span></span></a></li>
           </ul>
         </nav>
-
       </div>
-
       <p class="footer__legal section-label">
         &copy; <span id="footer-year">2025</span> Aditya Kulkarni
         &mdash; Hand-built with HTML, CSS &amp; JS
       </p>
-
     </div>
   </footer>
 
   <script src="script.js"></script>
-
 </body>
 </html>
