@@ -466,7 +466,7 @@ a:focus-visible .roll-stack {
 /* The chamfered frame container.
    position:sticky keeps it in the viewport; top centres it below the navbar.
    overflow:hidden is required for clip-path to work correctly. */
-.about__photo-frame {
+.hero-bg {
   position: sticky;
   top: calc(var(--nav-height) + 2rem);
   width:  100%;
@@ -581,31 +581,13 @@ a:focus-visible .roll-stack {
   height: 130%;
 }
 
-.art-layer--sky {
-  background: repeating-linear-gradient(
-    0deg, transparent 0px, transparent 29px,
-    var(--clr-line) 29px, var(--clr-line) 30px
-  );
-  bottom: 0;
-  height: 100%;
-}
 
-.art-layer--back {
-  background-color: var(--clr-line);
-  clip-path: polygon(0 100%, 0 45%, 15% 25%, 35% 55%, 60% 15%, 80% 45%, 100% 25%, 100% 100%);
-}
 
-.art-layer--mid {
-  background-color: var(--clr-accent);
-  clip-path: polygon(0 100%, 0 65%, 25% 40%, 45% 60%, 70% 30%, 85% 50%, 100% 35%, 100% 100%);
-}
 
-.art-layer--front {
-  background-color: var(--clr-text);
-  clip-path: polygon(0 100%, 0 80%, 20% 60%, 45% 85%, 65% 55%, 90% 75%, 100% 65%, 100% 100%);
-  bottom: -5%; /* Just enough to cover the bottom safely */
-  height: 110%;
-}
+
+
+
+
 
 .art-frame__caption {
   position: absolute;
@@ -735,7 +717,7 @@ a:focus-visible .roll-stack {
 /* ─── 17. MEDIA QUERIES ─────────────────────────────────────── */
 
 @media (min-width: 700px) {
-  .navbar__links { display: flex; align-items: center; gap: var(--space-sm); }
+  .navbar__links { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; justify-content: center; }
   .navbar__toggle { display: none; }
   .navbar__cta { display: inline-flex; }
 
@@ -812,19 +794,19 @@ a:focus-visible .roll-stack {
        The about section is the scroll subject; its entry through the viewport
        drives the animation from 0% (frame1 at top of section entering viewport)
        to 100% (frame5 when section is near exit). */
-    .about {
+    .hero-stage {
       /* Declare a named timeline on this element's scroll intersection.
          Any child can reference this by name instead of creating its own view(). */
-      view-timeline-name: --about-scroll;
+      view-timeline-name: --hero-scroll;
       view-timeline-axis: block;
     }
 
     /* The whole photo frame scales from 1 → 1.06 across the full about scroll,
        giving a slow "coming forward / zooming toward camera" feel.
        animation-range: cover = entire time the element is crossing the viewport. */
-    .about__photo-frame {
+    .hero-bg {
       animation: portraitZoom linear both;
-      animation-timeline: --about-scroll;
+      animation-timeline: --hero-scroll;
       animation-range: entry 0% exit 100%;
     }
 
@@ -845,7 +827,7 @@ a:focus-visible .roll-stack {
        The 'cover' keyword maps 0% = element enters viewport, 100% = exits. */
     .portrait-frame {
       animation: portraitCrossfade linear both;
-      animation-timeline: --about-scroll;
+      animation-timeline: --hero-scroll;
       /* Start of this frame's fade window: (--i - 1) / --frame-count of the range */
       animation-range-start: calc(
         (var(--i) - 1) / var(--frame-count) * 100%
@@ -1344,4 +1326,5 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   left: clamp(1rem, 5vw, 3rem);
   opacity: 0.6;
 }
+
 

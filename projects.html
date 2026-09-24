@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects - Aditya Kulkarni</title>
+  <meta name="description" content="Five projects by Aditya Kulkarni: a portfolio workflow, LLM gateway routing, Instagram automation, a doubt platform, and a CP practice pipeline.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- SHARED: keep identical on all 5 pages -->
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true">
+  <div class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
+    <div class="nav-overlay__inner">
+      <label for="menu-toggle" class="nav-overlay__close" aria-label="Close navigation menu">
+        <span class="section-label">✕ CLOSE</span>
+      </label>
+      <nav class="nav-overlay__nav" aria-label="Overlay navigation">
+        <ul role="list">
+          <li class="nav-overlay__item">
+            <label for="menu-toggle"><a href="index.html" class="nav-overlay__link">01 Home</a></label>
+          </li>
+          <li class="nav-overlay__item">
+            <label for="menu-toggle"><a href="academics.html" class="nav-overlay__link">02 Academics</a></label>
+          </li>
+          <li class="nav-overlay__item nav-overlay__item--current">
+            <label for="menu-toggle"><a href="projects.html" class="nav-overlay__link" aria-current="page">03 Projects</a></label>
+            <ul class="nav-overlay__sub" role="list">
+              <li><label for="menu-toggle"><a href="#portfolio" class="nav-overlay__sub-link">01 Portfolio</a></label></li>
+              <li><label for="menu-toggle"><a href="#omniroute" class="nav-overlay__sub-link">02 OmniRoute</a></label></li>
+              <li><label for="menu-toggle"><a href="#growth-bot" class="nav-overlay__sub-link">03 Growth Bot</a></label></li>
+              <li><label for="menu-toggle"><a href="#doubt-platform" class="nav-overlay__sub-link">04 Doubt Platform</a></label></li>
+              <li><label for="menu-toggle"><a href="#cp-pipeline" class="nav-overlay__sub-link">05 CP Pipeline</a></label></li>
+            </ul>
+          </li>
+          <li class="nav-overlay__item">
+            <label for="menu-toggle"><a href="beyond.html" class="nav-overlay__link">04 Beyond The Terminal</a></label>
+          </li>
+          <li class="nav-overlay__item">
+            <label for="menu-toggle"><a href="community.html" class="nav-overlay__link">05 Community</a></label>
+          </li>
+        </ul>
+      </nav>
+      <p class="nav-overlay__footer section-label" aria-hidden="true">ADITYA KULKARNI — PORTFOLIO</p>
+    </div>
+  </div>
+  <label for="menu-toggle" class="menu-trigger" aria-label="Open navigation menu">
+    <span class="menu-trigger__text">MENU</span>
+  </label>
+  <div class="screen-frame" aria-hidden="true"></div>
+  <header class="navbar" id="navbar">
+    <nav class="navbar__inner" aria-label="Primary navigation">
+      <a href="index.html" class="navbar__logo">AK</a>
+      <button class="navbar__toggle" aria-label="Open navigation menu" aria-expanded="false">
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+      </button>
+      <ul class="navbar__links" role="list">
+        <li><a href="#portfolio" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">01 Portfolio</span><span class="roll-text roll-text--dup" aria-hidden="true">01 Portfolio</span></span></span></a></li>
+        <li><a href="#omniroute" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">02 OmniRoute</span><span class="roll-text roll-text--dup" aria-hidden="true">02 OmniRoute</span></span></span></a></li>
+        <li><a href="#growth-bot" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">03 Growth Bot</span><span class="roll-text roll-text--dup" aria-hidden="true">03 Growth Bot</span></span></span></a></li>
+        <li><a href="#doubt-platform" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">04 Doubt Platform</span><span class="roll-text roll-text--dup" aria-hidden="true">04 Doubt Platform</span></span></span></a></li>
+        <li><a href="#cp-pipeline" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">05 CP Pipeline</span><span class="roll-text roll-text--dup" aria-hidden="true">05 CP Pipeline</span></span></span></a></li>
+      </ul>
+      <a href="index.html#contact" class="btn btn--outline navbar__cta">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="page-header section" id="hero">
+      <div class="page-header__grid" aria-hidden="true"></div>
+      <div class="container page-header__inner">
+        <p class="section-label page-header__label">PAGE 03 / 05 — PROJECTS</p>
+        <h1 class="page-header__title">
+          <span class="page-header__line"><span class="reveal-text">PROJECTS.</span></span>
+        </h1>
+        <p class="page-header__sub">Five things built: from AI routing and automation to a community platform and competitive programming.</p>
+      </div>
+    </header>
+
+    <section class="section projects" id="projects-section" aria-labelledby="projects-heading">
+      <div class="container">
+        <div class="section__header">
+          <p class="section-label">001 PROJECTS</p>
+        </div>
+        
+        <div class="projects__grid">
+          <article class="project-card" id="portfolio">
+            <div class="project-card__thumb" aria-hidden="true">
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="75" y1="0" x2="75" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="150" y1="0" x2="150" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="225" y1="0" x2="225" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:001 / Y:001</text>
+                </svg>
+              </div>
+              <div class="layer-mid plate-01-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">01</span>
+                <span class="plate-keyword">PIPELINE</span>
+              </div>
+            </div>
+            <header class="project-card__header">
+              <span class="project-card__number section-label">PROJECT #01</span>
+              <h3 class="project-card__title">Portfolio Workflow</h3>
+            </header>
+            <p class="project-card__desc">
+              Designed and built with an AI-assisted workflow: a custom prompt system driving the whole build, AI-generated scroll-animation assets, and a sectioned music engine.
+            </p>
+            <p class="project-card__tech section-label">HTML / CSS / PROMPT ENGINEERING</p>
+            <ul class="project-card__tags" role="list" aria-label="Technologies used">
+              <li class="tag">HTML</li><li class="tag">CSS</li><li class="tag">Prompt Engineering</li>
+            </ul>
+            <footer class="project-card__footer">
+              <span class="project-card__no-link section-label">LINK PENDING DEPLOY</span>
+            </footer>
+          </article>
+
+          <article class="project-card" id="omniroute">
+            <div class="project-card__thumb" aria-hidden="true">
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="0" y1="66"  x2="300" y2="66"  stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="0" y1="133" x2="300" y2="133" stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:002 / Y:001</text>
+                </svg>
+              </div>
+              <div class="layer-mid plate-02-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">02</span>
+                <span class="plate-keyword">GATEWAY</span>
+              </div>
+            </div>
+            <header class="project-card__header">
+              <span class="project-card__number section-label">PROJECT #02</span>
+              <h3 class="project-card__title">OmniRoute</h3>
+            </header>
+            <p class="project-card__desc">
+              Local AI coding setup: Claude Code routed through OmniRoute, an open-source local LLM gateway, so it runs on Google's free Gemini API tier instead of a paid plan. Configured the gateway endpoint, provider keys and environment variables on Windows, then debugged it over two days with an AI assistant: traced an HTTP 400 schema error to a known upstream bug and fixed it by patching compiled JavaScript runtime chunks. Local setup, not a repo.
+            </p>
+            <p class="project-card__tech section-label">POWERSHELL / NODE.JS / REST APIS</p>
+            <ul class="project-card__tags" role="list" aria-label="Technologies used">
+              <li class="tag">PowerShell</li><li class="tag">Node.js/npm</li><li class="tag">REST APIs</li>
+            </ul>
+            <footer class="project-card__footer">
+              <span class="project-card__no-link section-label">NO PUBLIC LINK — LOCAL SETUP</span>
+            </footer>
+          </article>
+
+          <article class="project-card" id="growth-bot">
+            <div class="project-card__thumb" aria-hidden="true">
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="100" y1="0" x2="100" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="200" y1="0" x2="200" y2="200" stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="0" y1="100" x2="300" y2="100" stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:003 / Y:001</text>
+                </svg>
+              </div>
+              <div class="layer-mid plate-03-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">03</span>
+                <span class="plate-keyword">AUTOMATION</span>
+              </div>
+            </div>
+            <header class="project-card__header">
+              <span class="project-card__number section-label">PROJECT #03</span>
+              <h3 class="project-card__title">Instagram Growth Bot</h3>
+            </header>
+            <p class="project-card__desc">
+              Follower-growth automation linked to my Instagram account. It walks the Discover People feed and scores every account it surfaces — mutual count, follow-back ratio and other signals consolidated into a single score. Over a set threshold, it sends a follow request, waits a set window, and unfollows accounts that don't follow back. Hit Instagram's rate limits; experiment concluded.
+            </p>
+            <p class="project-card__tech section-label">AUTOMATION / SCORING ENGINE</p>
+            <ul class="project-card__tags" role="list" aria-label="Technologies used">
+              <li class="tag">Automation</li><li class="tag">Scoring Engine</li>
+            </ul>
+            <footer class="project-card__footer">
+              <span class="project-card__no-link section-label">NO PUBLIC LINK</span>
+            </footer>
+          </article>
+
+          <article class="project-card" id="doubt-platform">
+            <div class="project-card__thumb" aria-hidden="true">
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <circle cx="150" cy="100" r="50" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <circle cx="150" cy="100" r="90" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <circle cx="150" cy="100" r="130" fill="none" stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:004 / Y:001</text>
+                </svg>
+              </div>
+              <div class="layer-mid plate-04-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">04</span>
+                <span class="plate-keyword">COMMUNITY</span>
+              </div>
+            </div>
+            <header class="project-card__header">
+              <span class="project-card__number section-label">PROJECT #04</span>
+              <h3 class="project-card__title">Junior-Senior Doubt Platform</h3>
+            </header>
+            <p class="project-card__desc">
+              A doubt-solving platform where seniors and juniors connect. Anyone posts a doubt freely; answers are rated on helpfulness and practicality and earn a score; askers carry a score too, and sorting is score-based, so the best answers and the best askers rise to the top. An anonymous mode lets people ask without being shamed.
+            </p>
+            <p class="project-card__tech section-label">PLATFORM DESIGN / RANKING ALGORITHM</p>
+            <ul class="project-card__tags" role="list" aria-label="Technologies used">
+              <li class="tag">Platform Design</li><li class="tag">Ranking Algorithm</li>
+            </ul>
+            <footer class="project-card__footer">
+              <span class="project-card__no-link section-label">NO PUBLIC LINK</span>
+            </footer>
+          </article>
+
+          <article class="project-card" id="cp-pipeline">
+            <div class="project-card__thumb" aria-hidden="true">
+              <div class="layer-back">
+                <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="-50" y1="100" x2="100" y2="-50"  stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="0"   y1="200" x2="200" y2="0"    stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="100" y1="200" x2="300" y2="0"    stroke="#E5E5E5" stroke-width="1"/>
+                  <line x1="200" y1="200" x2="400" y2="0"    stroke="#E5E5E5" stroke-width="1"/>
+                  <text x="8" y="192" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#BBBBBB" letter-spacing="0.05em">X:005 / Y:001</text>
+                </svg>
+              </div>
+              <div class="layer-mid plate-05-mid"></div>
+              <div class="layer-front">
+                <span class="plate-index">05</span>
+                <span class="plate-keyword">PRACTICE</span>
+              </div>
+            </div>
+            <header class="project-card__header">
+              <span class="project-card__number section-label">PROJECT #05</span>
+              <h3 class="project-card__title">CP Practice Pipeline</h3>
+            </header>
+            <p class="project-card__desc">
+              Competitive programming practice with a pipeline behind it: Codeforces solutions auto-pushed to GitHub via the CFPusher extension, plus a daily streak system.
+            </p>
+            <p class="project-card__tech section-label">C++ / CODEFORCES / GITHUB ACTIONS</p>
+            <ul class="project-card__tags" role="list" aria-label="Technologies used">
+              <li class="tag">C++</li><li class="tag">Codeforces</li><li class="tag">GitHub Actions</li>
+            </ul>
+            <footer class="project-card__footer">
+              <a href="https://github.com/Aditya2375/Competitive_Programming_Practice" class="btn btn--outline btn--sm" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
+            </footer>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="next-page" aria-label="Next page">
+      <div class="container">
+        <p class="section-label">NEXT</p>
+        <a href="beyond.html" class="next-page__link">
+          <span class="next-page__name">Beyond The Terminal</span>
+          <span class="next-page__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__wordmark" aria-hidden="true">ADITYA</div>
+    <div class="container footer__bottom">
+      <div class="footer__cols">
+        <nav class="footer__col" aria-label="Footer site navigation">
+          <p class="footer__col-label section-label">Navigation</p>
+          <ul role="list">
+            <li><a href="index.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Home</span><span class="roll-text roll-text--dup" aria-hidden="true">Home</span></span></span></a></li>
+            <li><a href="academics.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Academics</span><span class="roll-text roll-text--dup" aria-hidden="true">Academics</span></span></span></a></li>
+            <li><a href="projects.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
+            <li><a href="beyond.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Beyond</span><span class="roll-text roll-text--dup" aria-hidden="true">Beyond</span></span></span></a></li>
+            <li><a href="community.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Community</span><span class="roll-text roll-text--dup" aria-hidden="true">Community</span></span></span></a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Social links">
+          <p class="footer__col-label section-label">Connect</p>
+          <ul role="list">
+            <li><a href="mailto:adityakulkarni2708@gmail.com" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Email</span><span class="roll-text roll-text--dup" aria-hidden="true">Email</span></span></span></a></li>
+            <li><a href="https://www.linkedin.com/in/adityaaakulkarni" class="footer__link" target="_blank" rel="noopener noreferrer"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">LinkedIn</span><span class="roll-text roll-text--dup" aria-hidden="true">LinkedIn</span></span></span></a></li>
+            <li><a href="https://github.com/Aditya2375" class="footer__link" target="_blank" rel="noopener noreferrer"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">GitHub</span><span class="roll-text roll-text--dup" aria-hidden="true">GitHub</span></span></span></a></li>
+            <li><a href="https://www.instagram.com/adityaa_kulkarni_" class="footer__link" target="_blank" rel="noopener noreferrer"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Instagram</span><span class="roll-text roll-text--dup" aria-hidden="true">Instagram</span></span></span></a></li>
+          </ul>
+        </nav>
+      </div>
+      <p class="footer__legal section-label">
+        &copy; <span id="footer-year">2025</span> Aditya Kulkarni &mdash; Hand-built with HTML, CSS &amp; JS
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

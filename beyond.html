@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beyond The Terminal - Aditya Kulkarni</title>
+  <meta name="description" content="Seven years of Himalayan trekking with GGIM Pune, daily running, sport, and music — Aditya Kulkarni's life outside the keyboard.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- SHARED: keep identical on all 5 pages -->
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true">
+  <div class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
+    <div class="nav-overlay__inner">
+      <label for="menu-toggle" class="nav-overlay__close" aria-label="Close navigation menu">
+        <span class="section-label">✕ CLOSE</span>
+      </label>
+      <nav class="nav-overlay__nav" aria-label="Overlay navigation">
+        <ul role="list">
+          <li class="nav-overlay__item">
+            <label for="menu-toggle"><a href="index.html" class="nav-overlay__link">01 Home</a></label>
+          </li>
+          <li class="nav-overlay__item">
+            <label for="menu-toggle"><a href="academics.html" class="nav-overlay__link">02 Academics</a></label>
+          </li>
+          <li class="nav-overlay__item">
+            <label for="menu-toggle"><a href="projects.html" class="nav-overlay__link">03 Projects</a></label>
+          </li>
+          <li class="nav-overlay__item nav-overlay__item--current">
+            <label for="menu-toggle"><a href="beyond.html" class="nav-overlay__link" aria-current="page">04 Beyond The Terminal</a></label>
+            <ul class="nav-overlay__sub" role="list">
+              <li><label for="menu-toggle"><a href="#trekking" class="nav-overlay__sub-link">Trekking</a></label></li>
+              <li><label for="menu-toggle"><a href="#running" class="nav-overlay__sub-link">Running</a></label></li>
+              <li><label for="menu-toggle"><a href="#cycling" class="nav-overlay__sub-link">Cycling</a></label></li>
+              <li><label for="menu-toggle"><a href="#sport" class="nav-overlay__sub-link">Sport</a></label></li>
+              <li><label for="menu-toggle"><a href="#music" class="nav-overlay__sub-link">Music</a></label></li>
+            </ul>
+          </li>
+          <li class="nav-overlay__item">
+            <label for="menu-toggle"><a href="community.html" class="nav-overlay__link">05 Community</a></label>
+          </li>
+        </ul>
+      </nav>
+      <p class="nav-overlay__footer section-label" aria-hidden="true">ADITYA KULKARNI — PORTFOLIO</p>
+    </div>
+  </div>
+  <label for="menu-toggle" class="menu-trigger" aria-label="Open navigation menu">
+    <span class="menu-trigger__text">MENU</span>
+  </label>
+  <div class="screen-frame" aria-hidden="true"></div>
+  <header class="navbar" id="navbar">
+    <nav class="navbar__inner" aria-label="Primary navigation">
+      <a href="index.html" class="navbar__logo">AK</a>
+      <button class="navbar__toggle" aria-label="Open navigation menu" aria-expanded="false">
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+      </button>
+      <ul class="navbar__links" role="list">
+        <li><a href="#trekking" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Trekking</span><span class="roll-text roll-text--dup" aria-hidden="true">Trekking</span></span></span></a></li>
+        <li><a href="#running" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Running</span><span class="roll-text roll-text--dup" aria-hidden="true">Running</span></span></span></a></li>
+        <li><a href="#cycling" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Cycling</span><span class="roll-text roll-text--dup" aria-hidden="true">Cycling</span></span></span></a></li>
+        <li><a href="#sport" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Sport</span><span class="roll-text roll-text--dup" aria-hidden="true">Sport</span></span></span></a></li>
+        <li><a href="#music" class="navbar__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Music</span><span class="roll-text roll-text--dup" aria-hidden="true">Music</span></span></span></a></li>
+      </ul>
+      <a href="index.html#contact" class="btn btn--outline navbar__cta">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="page-header section" id="hero">
+      <div class="page-header__grid" aria-hidden="true"></div>
+      <div class="container page-header__inner">
+        <p class="section-label page-header__label">PAGE 04 / 05 — BEYOND THE TERMINAL</p>
+        <h1 class="page-header__title">
+          <span class="page-header__line"><span class="reveal-text">BEYOND THE TERMINAL.</span></span>
+        </h1>
+        <p class="page-header__sub">Seven years of trekking, running every morning, sport, and music.</p>
+      </div>
+    </header>
+
+    <section class="section" id="trekking" aria-labelledby="trekking-heading">
+      <div class="container">
+        <div class="section__header">
+          <p class="section-label">001 TREKKING</p>
+          <h2 class="section-title" id="trekking-heading"><span class="reveal-text">Trekking</span></h2>
+        </div>
+        <ul class="fact-list" role="list">
+          <li class="fact-row">
+            <div class="fact-row__meta"><span class="section-label fact-row__year">7 Years</span></div>
+            <div class="fact-row__body">
+              <h3 class="fact-row__title">GGIM Pune</h3>
+              <p class="fact-row__desc">Monthly Sahyadri treks and 5 Himalayan summits from age 11 to 18. Most recently: Thorate Lake Trek (Rohru, Shimla district, Himachal Pradesh). First to summit Thorate Lake.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── MOUNTAINS ART BREAK ── -->
+    <!-- Pure CSS/SVG decorative section. 4 layered silhouette ridges. -->
+    <!-- Scroll-driven parallax inside @supports; static fallback where unsupported. -->
+    <div class="art-break" aria-hidden="true">
+      <div class="art-frame">
+        <!-- Layer 1 — farthest, lightest grey -->
+        <div class="art-layer art-layer--back" style="--layer: 1">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,220 C120,180 240,140 360,160 C480,180 600,120 720,100 C840,80 960,140 1080,160 C1200,180 1320,140 1440,120 L1440,320 L0,320 Z" fill="#D0D0D0"/>
+          </svg>
+        </div>
+        <!-- Layer 2 — mid, lavender accent -->
+        <div class="art-layer art-layer--mid" style="--layer: 2">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,240 C180,200 360,160 540,180 C720,200 900,140 1080,160 C1260,180 1350,200 1440,180 L1440,320 L0,320 Z" fill="#968ADF"/>
+          </svg>
+        </div>
+        <!-- Layer 3 — closer, dark grey -->
+        <div class="art-layer" style="--layer: 3">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,260 C200,220 400,200 600,210 C800,220 1000,190 1200,200 C1300,205 1380,220 1440,210 L1440,320 L0,320 Z" fill="#4A4A4A"/>
+          </svg>
+        </div>
+        <!-- Layer 4 — foreground, black -->
+        <div class="art-layer" style="--layer: 4">
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,280 C240,260 480,250 720,255 C960,260 1200,250 1440,245 L1440,320 L0,320 Z" fill="#1B1B1B"/>
+          </svg>
+        </div>
+        <!-- Tiny mono caption -->
+        <p class="art-break__caption section-label">SAHYADRI / HIMALAYA</p>
+      </div>
+    </div>
+
+    <section class="section" id="running" aria-labelledby="running-heading">
+      <div class="container">
+        <div class="section__header">
+          <p class="section-label">002 RUNNING</p>
+          <h2 class="section-title" id="running-heading"><span class="reveal-text">Running</span></h2>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card chamfer">
+            <p class="stat-card__value">5 AM</p>
+            <p class="stat-card__label section-label">WHEN MOST OF MY RUNS START</p>
+          </div>
+          <div class="stat-card chamfer">
+            <p class="stat-card__value">~7 KM</p>
+            <p class="stat-card__label section-label">MY WEEKDAY LOOP</p>
+          </div>
+          <div class="stat-card chamfer">
+            <p class="stat-card__value">~15 KM</p>
+            <p class="stat-card__label section-label">THE WEEKEND LONG RUN</p>
+          </div>
+          <div class="stat-card chamfer">
+            <p class="stat-card__value">~45 KM</p>
+            <p class="stat-card__label section-label">A NORMAL WEEK</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cycling" aria-labelledby="cycling-heading">
+      <div class="container">
+        <div class="section__header">
+          <p class="section-label">003 CYCLING</p>
+          <h2 class="section-title" id="cycling-heading"><span class="reveal-text">Cycling</span></h2>
+        </div>
+        <ul class="fact-list" role="list">
+          <li class="fact-row">
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Daily</span></div>
+            <div class="fact-row__body">
+              <h3 class="fact-row__title">Daily Commute</h3>
+              <p class="fact-row__desc">Commute to college by cycle every day.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="sport" aria-labelledby="sport-heading">
+      <div class="container">
+        <div class="section__header">
+          <p class="section-label">004 SPORT</p>
+          <h2 class="section-title" id="sport-heading"><span class="reveal-text">Sport</span></h2>
+        </div>
+        <ul class="fact-list" role="list">
+          <li class="fact-row">
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Football</span></div>
+            <div class="fact-row__body">
+              <h3 class="fact-row__title">Inter-school</h3>
+              <p class="fact-row__desc">Inter-school football competition, near state level.</p>
+            </div>
+          </li>
+          <li class="fact-row">
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Basketball</span></div>
+            <div class="fact-row__body">
+              <h3 class="fact-row__title">Inter-school</h3>
+              <p class="fact-row__desc">Inter-school basketball competition, city level.</p>
+            </div>
+          </li>
+          <li class="fact-row">
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Swimming</span></div>
+            <div class="fact-row__body">
+              <h3 class="fact-row__title">Inter-school + Inter-club</h3>
+              <p class="fact-row__desc">Multiple inter-club and inter-school championship wins.</p>
+            </div>
+          </li>
+          <li class="fact-row">
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Chess</span></div>
+            <div class="fact-row__body"><h3 class="fact-row__title">Some chess.</h3></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="music" aria-labelledby="music-heading">
+      <div class="container">
+        <div class="section__header">
+          <p class="section-label">005 MUSIC</p>
+          <h2 class="section-title" id="music-heading"><span class="reveal-text">Music</span></h2>
+        </div>
+        <ul class="fact-list" role="list">
+          <li class="fact-row">
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Instruments</span></div>
+            <div class="fact-row__body"><h3 class="fact-row__title">Guitar, Piano, Singing</h3></div>
+          </li>
+          <li class="fact-row">
+            <div class="fact-row__meta"><span class="section-label fact-row__year">Performance</span></div>
+            <div class="fact-row__body">
+              <h3 class="fact-row__title">Seniors' Icebreaker, SST</h3>
+              <p class="fact-row__desc">Played guitar at the seniors' icebreaker talent show at SST.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="next-page" aria-label="Next page">
+      <div class="container">
+        <p class="section-label">NEXT</p>
+        <a href="community.html" class="next-page__link">
+          <span class="next-page__name">Community</span>
+          <span class="next-page__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__wordmark" aria-hidden="true">ADITYA</div>
+    <div class="container footer__bottom">
+      <div class="footer__cols">
+        <nav class="footer__col" aria-label="Footer site navigation">
+          <p class="footer__col-label section-label">Navigation</p>
+          <ul role="list">
+            <li><a href="index.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Home</span><span class="roll-text roll-text--dup" aria-hidden="true">Home</span></span></span></a></li>
+            <li><a href="academics.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Academics</span><span class="roll-text roll-text--dup" aria-hidden="true">Academics</span></span></span></a></li>
+            <li><a href="projects.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
+            <li><a href="beyond.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Beyond</span><span class="roll-text roll-text--dup" aria-hidden="true">Beyond</span></span></span></a></li>
+            <li><a href="community.html" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Community</span><span class="roll-text roll-text--dup" aria-hidden="true">Community</span></span></span></a></li>
+          </ul>
+        </nav>
+        <nav class="footer__col" aria-label="Social links">
+          <p class="footer__col-label section-label">Connect</p>
+          <ul role="list">
+            <li><a href="mailto:adityakulkarni2708@gmail.com" class="footer__link"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Email</span><span class="roll-text roll-text--dup" aria-hidden="true">Email</span></span></span></a></li>
+            <li><a href="https://www.linkedin.com/in/adityaaakulkarni" class="footer__link" target="_blank" rel="noopener noreferrer"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">LinkedIn</span><span class="roll-text roll-text--dup" aria-hidden="true">LinkedIn</span></span></span></a></li>
+            <li><a href="https://github.com/Aditya2375" class="footer__link" target="_blank" rel="noopener noreferrer"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">GitHub</span><span class="roll-text roll-text--dup" aria-hidden="true">GitHub</span></span></span></a></li>
+            <li><a href="https://www.instagram.com/adityaa_kulkarni_" class="footer__link" target="_blank" rel="noopener noreferrer"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Instagram</span><span class="roll-text roll-text--dup" aria-hidden="true">Instagram</span></span></span></a></li>
+          </ul>
+        </nav>
+      </div>
+      <p class="footer__legal section-label">
+        &copy; <span id="footer-year">2025</span> Aditya Kulkarni &mdash; Hand-built with HTML, CSS &amp; JS
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
