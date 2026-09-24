@@ -1934,3 +1934,13 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 
 /* the flex display above would otherwise defeat the hidden attribute */
 .guide-panel__nextpage[hidden] { display: none; }
+
+
+/* ─── 36. LENIS SMOOTH SCROLL (Prompt 22) ─────────────────────
+   Lenis' recommended companion CSS: while it runs it owns scrolling,
+   so CSS smooth scroll stands down (it remains the no-JS and
+   CDN-failure fallback). */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }

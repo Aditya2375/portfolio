@@ -830,6 +830,11 @@ window._sectionJump = function _sectionJump(target) {
      navbar: now the jump happens instantly under full cover. */
   window._sectionJump = function _sectionJump(target) {
     window.playTransition(() => {
+      if (window._lenis) {
+        /* Prompt 22: Lenis owns scrolling - jump instantly under the cover */
+        window._lenis.scrollTo(target, { immediate: true });
+        return;
+      }
       const root = document.documentElement;
       const prev = root.style.scrollBehavior;
       root.style.scrollBehavior = 'auto'; /* beat the CSS smooth scroll */
@@ -1049,7 +1054,9 @@ window._sectionJump = function _sectionJump(target) {
     const { sel, text } = lines[idx];
     const section = document.querySelector(sel);
     if (section) {
-      section.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
+      /* Prompt 22: eased through Lenis when it runs, native otherwise */
+      if (window._lenis) window._lenis.scrollTo(section, { duration: 1.0 });
+      else section.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
       timers.push(setTimeout(() => decodeSection(section), REDUCED_MOTION ? 0 : 550));
       timers.push(setTimeout(() => speak(text), REDUCED_MOTION ? 60 : 1250));
     } else {
@@ -1107,4 +1114,20 @@ window._sectionJump = function _sectionJump(target) {
     });
   }, { threshold: 0.6 });
   targets.forEach(el => io.observe(el));
+})();
+
+/* ─── PROMPT 22: LENIS SMOOTH SCROLL ──────────────────────────
+   Loaded from the jsDelivr CDN in each page's <head>. If the CDN
+   fails (no window.Lenis) or reduced motion is on, the site simply
+   keeps native scrolling - CSS scroll-behavior stays the fallback. */
+(function initLenis() {
+  if (REDUCED_MOTION) return;          /* reduced motion: native scrolling */
+  if (typeof Lenis === 'undefined') return; /* CDN unreachable: native stays */
+  const lenis = new Lenis({
+    duration: 1.1,        /* seconds of glide per wheel gesture - weighty, not twitchy */
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), /* exponential-out: fast start, soft landing */
+    smoothWheel: true,    /* smooth the mouse wheel (trackpads already glide) */
+    autoRaf: true         /* Lenis runs its own requestAnimationFrame loop */
+  });
+  window._lenis = lenis;  /* the transition jump and the guide reach it here */
 })();
