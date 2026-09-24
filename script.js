@@ -1086,3 +1086,25 @@ window._sectionJump = function _sectionJump(target) {
   nextBtn.addEventListener('click', () => showLine(idx + 1));
   panel.querySelector('[data-guide="close"]').addEventListener('click', closeGuide);
 })();
+
+/* ─── PROMPT 21: SCRAMBLE-ON-SCROLL EVERYWHERE ────────────────
+   Section headlines and project card titles decode once when they
+   first enter the viewport (the mono labels already do - Prompt 11).
+   One pass per element: IntersectionObserver + unobserve. Body
+   paragraphs and long text are deliberately excluded. The guide's
+   section decode (Prompt 20) may still replay a section by calling
+   scrambleText() directly. Reduced-motion: the engine no-ops, so
+   text simply appears. */
+(function initScrollScramble() {
+  const targets = [...document.querySelectorAll('.section h2, .project-card__title')]
+    .filter(el => el.children.length === 0 && el.textContent.trim());
+  if (!targets.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      window.scrambleText(entry.target, { tick: true });
+      io.unobserve(entry.target); /* exactly one pass per element */
+    });
+  }, { threshold: 0.6 });
+  targets.forEach(el => io.observe(el));
+})();
