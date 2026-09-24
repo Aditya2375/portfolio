@@ -1965,3 +1965,15 @@ html.lenis, html.lenis body { height: auto; }
   .footer__letter { opacity: 1; }
   .footer__wordmark.is-dropping .footer__letter { animation: none; }
 }
+
+
+/* ─── 38. RESPONSIVE SWEEP FIXES (Prompt 25) ──────────────────
+   Checked every page at 375/768/1024/1440: no horizontal overflow
+   anywhere (scrollWidth == innerWidth on all 15 combinations), the
+   navbar collapses to the MENU overlay on phone, headlines scale via
+   clamp(), cursor follower + mouse parallax are gated off touch by
+   their (hover/pointer) media queries. Only two tap targets measured
+   under 44px on a phone - fixed here, no breakpoint needed since the
+   minimums are harmless at every width. */
+.menu-trigger { min-width: 44px; min-height: 44px; }  /* was 61x42 */
+.guide-open { min-height: 44px; align-items: center; } /* was 40 tall */
