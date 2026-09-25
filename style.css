@@ -2046,6 +2046,11 @@ html.lenis, html.lenis body { height: auto; }
    itself drifts opposite the cursor - same 3D-depth language as
    the hero background. */
 .section--photo { position: relative; overflow: hidden; }
+/* V7 items 4+6: combined backgrounds - one photo spans 2-3 sections via a
+   .bgspan wrapper; the sections inside go transparent so the single image
+   carries through (his fix for gaudy: shared, not per-section). */
+.bgspan { position: relative; overflow: hidden; }
+.bgspan .section { background-color: transparent; border-top-color: rgba(255, 255, 255, 0.22); }
 .section-bg { position: absolute; inset: 0; }
 .section-bg img { width: 100%; height: 100%; object-fit: cover; }
 .section-bg::after {

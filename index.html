@@ -52,7 +52,7 @@
   <!-- SHARED: keep identical on all 5 pages -->
   <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true">
   <div class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
-    <div class="nav-overlay__photo" aria-hidden="true"><img src="assets/bg/beyond-sport.jpg" alt="" loading="lazy"></div>
+    <div class="nav-overlay__photo" aria-hidden="true"><img src="assets/bg/menu-waterfall.jpg" alt="" loading="lazy"></div>
     <div class="nav-overlay__inner">
       <label for="menu-toggle" class="nav-overlay__close" aria-label="Close navigation menu">
         <span class="section-label">✕ CLOSE</span>
@@ -214,7 +214,7 @@
     </section>
 
     <!-- ── SKILLS ─────────────────────────────────────── -->
-    <section class="section skills border-t-[rgba(0,0,0,0.12)]" id="skills" aria-labelledby="skills-heading">
+    <section class="section skills bg-accent border-t-[rgba(0,0,0,0.12)]" id="skills" aria-labelledby="skills-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">002 SKILLS</p>
@@ -261,7 +261,9 @@
     </section>
 
     <!-- ── FEATURED PROJECTS ────────────────────────────────────── -->
-    <section class="section projects" id="projects" aria-labelledby="projects-heading">
+    <div class="bgspan section--photo">
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/home-projects.jpg" alt="" loading="lazy"></div>
+<section class="section projects" id="projects" aria-labelledby="projects-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">003 FEATURED PROJECTS</p>
@@ -314,7 +316,10 @@
     </section>
 
     <!-- ── CONTACT ────────────────────────────────────── -->
-    <section class="section contact" id="contact" aria-labelledby="contact-heading">
+    </div>
+
+    <section class="section contact section--photo" id="contact" aria-labelledby="contact-heading">
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/home-contact.jpg" alt="" loading="lazy"></div>
       <div class="container">
         <div class="section__header">
           <p class="section-label">005 CONTACT</p>
