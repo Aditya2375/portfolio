@@ -1335,11 +1335,16 @@ window._sectionJump = function _sectionJump(target) {
     targets.forEach(el => window.scrambleText(el, { duration: 450 }));
   }
 
-  /* (c) the line itself: robot sting, waveform on, scramble in, vibrate */
-  function speak(text) {
-    /* v3/v4: the agent READS the line aloud - browser speech synthesis,
-       female voice (V4), only with sound on. No on-screen transcript:
-       the section's own decode is the visual. */
+  /* V6 item 10: speech SYNCS the tour. speakAndThen() chains the next
+     step off the utterance's real onend - never an estimate - so the
+     agent can neither skip ahead mid-sentence nor start late. Some
+     engines drop onend; a generous fallback timer keeps the tour
+     moving without ever cutting a line short. */
+  function speakAndThen(text, onDone) {
+    let done = false;
+    const finish = () => { if (!done) { done = true; onDone(); } };
+    const estimateMs = 1200 + text.length * 85; /* ceiling, not a schedule */
+    timers.push(setTimeout(finish, estimateMs * 2));
     if (window.SOUND_ON && 'speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
@@ -1347,15 +1352,17 @@ window._sectionJump = function _sectionJump(target) {
         const v = pickVoice();
         if (v) u.voice = v;
         u.rate = 1.04;
-        u.pitch = v ? 1.0 : 1.25; /* unknown default voice: pitch reads feminine */
+        u.pitch = v ? 1.0 : 1.25;
         u.volume = 0.9;
-        /* Chrome drops an utterance spoken in the same tick as cancel();
-           the tiny delay (tracked in timers, so stop can kill it)
-           makes every line actually sound. */
+        u.onend = finish;
+        u.onerror = finish;
         timers.push(setTimeout(() => {
-          try { speechSynthesis.speak(u); } catch (err) { /* no-op */ }
+          try { speechSynthesis.speak(u); } catch (err) { finish(); }
         }, 60));
-      } catch (err) { /* speech unavailable: the tour still runs */ }
+      } catch (err) { finish(); }
+    } else {
+      /* sound off: keep the old estimated reading beat */
+      timers.push(setTimeout(finish, REDUCED_MOTION ? 60 : estimateMs));
     }
     try { if ('vibrate' in navigator) navigator.vibrate(25); } catch (err) { /* no-op */ }
     bar.classList.add('is-speaking');
@@ -1366,25 +1373,26 @@ window._sectionJump = function _sectionJump(target) {
   /* V5: the agent SCROLLS the page slowly at its own reading pace - a
      steady linear drive matched to the line length, never a jump-cut.
      Lenis gets a linear easing; without it a rAF drive does the same. */
-  function guidedScroll(section, ms) {
-    if (REDUCED_MOTION) { section.scrollIntoView({ block: 'start' }); return; }
-    if (window._lenis) {
-      try {
-        window._lenis.scrollTo(section, { duration: ms / 1000, easing: t => t });
-        return;
-      } catch (err) { /* fall through to the rAF drive */ }
+  function guidedScroll(section, ms, onComplete) {
+    if (REDUCED_MOTION) {
+      section.scrollIntoView({ block: 'start' });
+      if (onComplete) onComplete();
+      return;
     }
+    /* V6 item 10: the rAF drive is authoritative (Lenis is parked while
+       the tour runs) so the landing is PIXEL-EXACT and onComplete fires
+       the moment the section top reaches the viewport top - speech
+       starts on the landing, never before, never after. */
     const startY = window.scrollY;
     const targetY = startY + section.getBoundingClientRect().top;
     const t0 = performance.now();
     (function step(now) {
       if (!isOpen) return; /* a stop mid-drive freezes the page where it is */
       const p = Math.min((now - t0) / ms, 1);
-      /* behavior:'instant' beats the page's CSS scroll-behavior:smooth -
-         without it every frame's scrollTo restarts a smooth animation
-         toward a moving target and the drive never actually moves. */
       window.scrollTo({ left: 0, top: startY + (targetY - startY) * p, behavior: 'instant' });
-      if (p < 1) requestAnimationFrame(step);
+      if (p < 1) { requestAnimationFrame(step); return; }
+      window.scrollTo({ left: 0, top: targetY, behavior: 'instant' }); /* pixel-aligned */
+      if (onComplete) onComplete();
     })(t0);
   }
 
@@ -1398,24 +1406,28 @@ window._sectionJump = function _sectionJump(target) {
     clearTimers();
     const { sel, text } = lines[idx];
     const section = sel ? document.querySelector(sel) : null;
-    if (section) {
-      /* slow enough to read the page going past; longer lines, longer rides */
-      const scrollMs = Math.min(6000, 1800 + text.length * 40);
-      guidedScroll(section, scrollMs);
-      timers.push(setTimeout(() => decodeSection(section), REDUCED_MOTION ? 0 : Math.round(scrollMs * 0.55)));
-      timers.push(setTimeout(() => speak(text), REDUCED_MOTION ? 60 : Math.round(scrollMs * 0.8)));
-    } else {
-      timers.push(setTimeout(() => speak(text), 300));
-    }
-    /* Auto-tour: after each line lands the agent moves on by itself;
-       after the LAST line it closes itself with the blackout out. */
-    const speakDur = REDUCED_MOTION ? 0 : Math.min(1100, 220 + text.length * 14);
-    const readPause = 2200 + text.length * 35;
-    timers.push(setTimeout(() => {
+    const advance = () => {
       if (!isOpen) return;
       if (idx < lines.length - 1) showLine(idx + 1);
       else closeGuide();
-    }, (REDUCED_MOTION ? 60 : 1250) + speakDur + readPause));
+    };
+    if (section) {
+      /* slow enough to read the page going past; longer lines, longer rides */
+      const scrollMs = Math.min(6000, 1800 + text.length * 40);
+      guidedScroll(section, scrollMs, () => {
+        /* landed pixel-exact: decode the section, THEN speak - the line
+           starts on the landing, and the next section only scrolls once
+           this line has fully sounded. */
+        decodeSection(section);
+        timers.push(setTimeout(() => {
+          speakAndThen(text, () => timers.push(setTimeout(advance, 1400)));
+        }, REDUCED_MOTION ? 60 : 350));
+      });
+    } else {
+      timers.push(setTimeout(() => {
+        speakAndThen(text, () => timers.push(setTimeout(advance, 1400)));
+      }, 300));
+    }
   }
 
   function openGuide() {
@@ -1426,6 +1438,7 @@ window._sectionJump = function _sectionJump(target) {
     barLabel.textContent = 'AI AGENT SPEAKING — ESC TO STOP';
     window.playTransition(() => {
       idx = 0;
+      if (window._lenis) try { window._lenis.stop(); } catch (err) {} /* V6: rAF drive owns the tour */
       /* first line after the panels open back out */
       setTimeout(() => showLine(0), REDUCED_MOTION ? 60 : 500);
     }, { mode: 'sides' });
@@ -1436,7 +1449,7 @@ window._sectionJump = function _sectionJump(target) {
     isOpen = false;
     clearTimers();
     if ('speechSynthesis' in window) try { speechSynthesis.cancel(); } catch (err) {}
-    if (window._lenis) try { window._lenis.scrollTo(window.scrollY, { immediate: true }); } catch (err) {}
+    if (window._lenis) try { window._lenis.start(); window._lenis.scrollTo(window.scrollY, { immediate: true }); } catch (err) {}
     bar.classList.remove('is-live', 'is-speaking');
     barLabel.textContent = 'HOLD SPACE FOR AI AGENT';
     window.playTransition(() => {
