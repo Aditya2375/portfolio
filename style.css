@@ -2509,3 +2509,27 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 .footer { position: relative; overflow: hidden; }
 .footer .footer__wordmark, .footer .footer__bottom { position: relative; z-index: 1; }
 .footer .section-bg::after { background-color: rgba(0, 0, 0, 0.62); }
+
+/* ─── V20: PERMANENT WHITE GLYPHS ON MENU + MUSIC ─────────────
+   His call (explicit reversal of the V9 adaptive buttons): the
+   hamburger lines and the equalizer bars are PURE WHITE, always,
+   every page, every state - no more flipping with the background.
+   The button bodies stay dark ink permanently too, so the white
+   glyphs are always readable (white on white would vanish). The
+   adaptive .ui-on-dark rules are overridden below and the JS that
+   toggles them is disabled. */
+.menu-trigger, .menu-trigger.ui-on-dark {
+  background-color: var(--clr-text) !important;
+  border-color: var(--clr-text) !important;
+}
+.menu-trigger__bars i, .menu-trigger.ui-on-dark .menu-trigger__bars i {
+  background-color: #FFF !important;
+}
+.music-toggle, .music-toggle.ui-on-dark {
+  background: var(--clr-text) !important;
+  border-color: var(--clr-text) !important;
+}
+.music-toggle span, .music-toggle.ui-on-dark span {
+  background-color: #FFF !important;
+}
+.music-toggle--muted span { opacity: 1 !important; } /* white even when frozen; pause alone signals mute */
