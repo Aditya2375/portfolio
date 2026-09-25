@@ -335,7 +335,23 @@ function showTapForSound() {
    Exposed on window so every later feature can call it.
    The original text is kept in data-scramble-text, so it is
    never lost no matter how often the effect runs. */
-const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&@$';
+/* V19: class-matched glyph sets. His note: the decode must randomize
+   exactly the letters the word has, in place - never a longer or
+   wider string. Random glyphs now come from the same class as the
+   character they stand in for (upper for upper, lower for lower,
+   digit for digit), and every space, newline and punctuation mark
+   stays put. No wide symbols, so the rendered width can never
+   balloon past the real text while it decodes. */
+const SCRAMBLE_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const SCRAMBLE_LOWER = 'abcdefghijklmnopqrstuvwxyz';
+const SCRAMBLE_DIGIT = '0123456789';
+
+function scrambleCharFor(ch) {
+  if (ch >= 'A' && ch <= 'Z') return SCRAMBLE_UPPER[(Math.random() * SCRAMBLE_UPPER.length) | 0];
+  if (ch >= 'a' && ch <= 'z') return SCRAMBLE_LOWER[(Math.random() * SCRAMBLE_LOWER.length) | 0];
+  if (ch >= '0' && ch <= '9') return SCRAMBLE_DIGIT[(Math.random() * SCRAMBLE_DIGIT.length) | 0];
+  return ch; /* spaces, newlines, punctuation: untouched - length and layout locked */
+}
 
 window.scrambleText = function scrambleText(el, { duration = 400, tick = false } = {}) {
   if (REDUCED_MOTION) return; // reduced motion: text simply appears
@@ -351,11 +367,7 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
     const p = Math.min((now - start) / duration, 1);
     const lockCount = Math.floor(p * original.length);
     let out = original.slice(0, lockCount); // locked-in real letters
-    for (let i = lockCount; i < original.length; i++) {
-      out += original[i] === ' '
-        ? ' '
-        : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0];
-    }
+    for (let i = lockCount; i < original.length; i++) out += scrambleCharFor(original[i]);
     el.textContent = out;
     /* V7 hotfix: the scramble TICK sound is gone for good - it fired on
        every section reveal as he scrolled and he wants it off the whole
@@ -819,9 +831,7 @@ window._sectionJump = function _sectionJump(target) {
   /* Random noise of the same length as a string, keeping its spaces */
   function noiseLike(str) {
     let out = '';
-    for (const ch of str) {
-      out += ch === ' ' ? ' ' : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0];
-    }
+    for (const ch of str) out += scrambleCharFor(ch);
     return out;
   }
 
