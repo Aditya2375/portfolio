@@ -2018,15 +2018,10 @@ html.lenis, html.lenis body { height: auto; }
 .hero-seq.seq-sub .hero__sub { opacity: 1; transform: none; }
 .hero-seq.seq-cta .hero__ctas { opacity: 1; transform: none; }
 
-/* V4 exit beat: as About arrives the whole hero text block lifts up and
-   away - he asked for the name to "go up" as About comes in - while the
-   face holds centre-frame underneath. Scrolling back up reverses it. */
+/* V15: exit beat removed - the hero text stays pinned through the whole
+   scrub and scrolls away with the hero itself when the stage ends. */
 .hero-seq .hero__content {
   transition: transform 0.7s var(--easing), opacity 0.7s var(--easing);
-}
-.hero-seq.seq-exit .hero__content {
-  transform: translateY(-32vh);
-  opacity: 0;
 }
 
 
