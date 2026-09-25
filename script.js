@@ -203,7 +203,7 @@ function showTapForSound() {
      and frame01. The other hero frames and section tracks load later. */
   const toPreload = [
     'assets/music/intro.mp3', 'assets/music/hero.mp3',
-    'assets/sfx/hover.mp3', 'assets/sfx/scramble.mp3', 'assets/sfx/transition.mp3',
+    'assets/sfx/hover.mp3', 'assets/sfx/transition.mp3',
     'assets/sfx/robot-1.mp3', 'assets/sfx/robot-2.mp3',
     'assets/frames/frame01.jpg',
   ];
@@ -347,12 +347,9 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
         : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0];
     }
     el.textContent = out;
-    /* The tick is throttled to one every ~90ms (a few frames), so rapid
-       scrambles never overlap ticks into a buzz - and only with sound on. */
-    if (tick && p < 1 && now - lastTick > 90) {
-      lastTick = now;
-      playSfx('assets/sfx/scramble.mp3', 0.12);
-    }
+    /* V7 hotfix: the scramble TICK sound is gone for good - it fired on
+       every section reveal as he scrolled and he wants it off the whole
+       site. The animation stays visual-only; the tick flag is inert. */
     if (p < 1) requestAnimationFrame(frame);
     else { el.textContent = original; el._scrambling = false; }
   })(performance.now());
@@ -1785,7 +1782,8 @@ window._sectionJump = function _sectionJump(target) {
     if (!REDUCED_MOTION) {
       letters.forEach((s, i) => {
         s.style.animationDelay = (i * 0.09) + 's';
-        finaleTimers.push(setTimeout(() => playSfx('assets/sfx/scramble.mp3', 0.08), i * 90));
+        /* V7 hotfix: no per-letter tick - the scramble sound is removed
+           site-wide; the wordmark drop stays purely visual. */
       });
       /* after the last letter lands: one subtle scramble over the
          footer mono links */
