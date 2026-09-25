@@ -2067,6 +2067,10 @@ window._sectionJump = function _sectionJump(target) {
    samples the content right under the translucent navbar, which is
    what shows through its blur. */
 (function initAdaptiveUi() {
+  /* V20: disabled. He wants the menu lines and music bars pure white
+     permanently (explicit reversal of this adaptive system), so nothing
+     may tag .ui-on-dark anymore. The CSS overrides above enforce it. */
+  return;
   const menu = document.querySelector('.menu-trigger');
   const music = document.querySelector('.music-toggle');
   if (!menu && !music) return;
