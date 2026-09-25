@@ -11,7 +11,7 @@
    The sound choice lives on window (window.SOUND_ON) so every
    feature can read it, and in sessionStorage so it survives
    page changes within one visit — the intro only shows once. */
-window.SOUND_ON = sessionStorage.getItem('soundChoice') === 'on';
+window.SOUND_ON = sessionStorage.getItem('soundChoice') !== 'off'; /* V4: audio defaults ON; the bottom-left toggle is the off switch */
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.body.classList.add(window.SOUND_ON ? 'sound-on' : 'sound-off');
 
@@ -138,6 +138,23 @@ function startPageMusic() {
   if (p && p.catch) p.catch(() => showTapForSound());
 }
 
+/* V4: audio defaults to on, but Chrome still demands one gesture per
+   document before sound may start. Arm a one-time unlock: the first
+   tap or keypress anywhere starts this page's track and clears the
+   TAP FOR SOUND chip if it had appeared. */
+function armGestureUnlock() {
+  const retry = () => {
+    removeEventListener('pointerdown', retry);
+    removeEventListener('keydown', retry);
+    if (!window.SOUND_ON || musicEngine.currentTrack) return;
+    const chip = document.querySelector('.tap-sound');
+    if (chip) chip.remove();
+    startPageMusic();
+  };
+  addEventListener('pointerdown', retry);
+  addEventListener('keydown', retry);
+}
+
 function showTapForSound() {
   if (document.querySelector('.tap-sound')) return;
   const chip = document.createElement('button');
@@ -158,13 +175,15 @@ function showTapForSound() {
    It shows only on the FIRST page of a visit: the ENTER choice
    goes to sessionStorage and every later page skips straight in. */
 (function initIntro() {
+  /* Later page of the visit: the stored choice rules - start the music,
+     and if Chrome blocks autoplay without a fresh gesture the one-time
+     unlock starts it on the first tap or keypress instead. */
   if (sessionStorage.getItem('soundChoice')) {
-    // A later page of the visit: restore the choice, start the music.
-    if (window.SOUND_ON) startPageMusic();
+    if (window.SOUND_ON) { startPageMusic(); armGestureUnlock(); }
     return;
   }
 
-  // Pause the hero load-in animations until the visitor enters (CSS rule).
+  // Pause the hero load-in animations until the site opens (CSS rule).
   document.documentElement.classList.add('intro-gated');
 
   const overlay = document.createElement('div');
@@ -173,37 +192,32 @@ function showTapForSound() {
   overlay.setAttribute('aria-label', 'Enter the portfolio');
   overlay.innerHTML = `
     <div class="intro__stage">
-      <p class="intro__word" aria-hidden="true">ADITYA</p>
+      <p class="intro__word" aria-hidden="true">A<span class="intro__d">D</span>ITYA</p>
     </div>
-    <p class="intro__readout" role="status">//INITIALIZING PORTFOLIO... [0%]</p>
-    <div class="intro__actions">
-      <button type="button" class="btn intro__btn" data-sound="on">ENTER WITH SOUND</button>
-      <button type="button" class="btn intro__btn" data-sound="off">ENTER WITHOUT SOUND</button>
-    </div>`;
+    <p class="intro__readout" role="status">//INITIALIZING PORTFOLIO... [0%]</p>`;
   document.body.appendChild(overlay);
   document.body.style.overflow = 'hidden'; // the overlay gates the site
 
   /* REAL preload progress, not a fake timer: we count only what the
-     first seconds need — the intro + hero tracks, the sound effects,
-     and frame01 from whichever frame set this screen actually uses.
-     The other hero frames and section tracks load on their own later. */
-  const frameSrc = window.matchMedia('(min-aspect-ratio: 1/1)').matches
-    ? 'assets/frames/landscape/frame01_16x9.jpg'
-    : 'assets/frames/frame01.jpg';
+     first seconds need - the intro + hero tracks, the sound effects,
+     and frame01. The other hero frames and section tracks load later. */
   const toPreload = [
     'assets/music/intro.mp3', 'assets/music/hero.mp3',
     'assets/sfx/hover.mp3', 'assets/sfx/scramble.mp3', 'assets/sfx/transition.mp3',
     'assets/sfx/robot-1.mp3', 'assets/sfx/robot-2.mp3',
-    frameSrc,
+    'assets/frames/frame01.jpg',
   ];
-  let done = 0;
+  let done = 0, entered = false, enterTimer = null;
   const readout = overlay.querySelector('.intro__readout');
-  const showEnter = () => overlay.classList.add('intro--ready');
+  const scheduleEnter = () => {
+    if (entered || enterTimer) return;
+    enterTimer = setTimeout(enter, REDUCED_MOTION ? 150 : 700);
+  };
   const countOne = () => {
     done++;
     const pct = Math.round((done / toPreload.length) * 100);
     readout.textContent = `//INITIALIZING PORTFOLIO... [${pct}%]`;
-    if (done >= toPreload.length) showEnter();
+    if (done >= toPreload.length) scheduleEnter();
   };
   toPreload.forEach(src => {
     if (src.endsWith('.mp3')) {
@@ -219,39 +233,89 @@ function showTapForSound() {
       im.src = src;
     }
   });
-  /* Safety net: on slow mobile data the loader can never get stuck —
-     the ENTER buttons appear after ~6s no matter what, and anything
-     still loading simply continues in the background. */
-  setTimeout(showEnter, 6000);
+  /* Safety net: on slow mobile data the loader never gets stuck - the
+     site opens after ~6s no matter what, and anything still loading
+     simply continues in the background. */
+  setTimeout(scheduleEnter, 6000);
 
-  function enter(withSound) {
-    window.SOUND_ON = withSound;
-    sessionStorage.setItem('soundChoice', withSound ? 'on' : 'off');
-    document.body.classList.toggle('sound-on', withSound);
-    document.body.classList.toggle('sound-off', !withSound);
-    document.body.style.overflow = '';
+  /* AUDIO DEFAULT ON (V4): no ENTER buttons - the site opens with sound
+     and the bottom-left toggle is where a visitor turns it off. Chrome
+     still demands one user gesture before audio may start, so the first
+     tap/keypress anywhere unlocks the soundtrack; the TAP FOR SOUND
+     chip stays as the visible fallback. */
+  let gestureSeen = false;
+  const onFirstGesture = () => {
+    gestureSeen = true;
+    removeEventListener('pointerdown', onFirstGesture);
+    removeEventListener('keydown', onFirstGesture);
+    if (entered && window.SOUND_ON && !musicEngine.currentTrack) startSoundtrack();
+  };
+  addEventListener('pointerdown', onFirstGesture);
+  addEventListener('keydown', onFirstGesture);
 
-    /* Browser autoplay rules: audio may only start inside a user
-       gesture. That is why the intro track starts on THIS click and
-       could not start while the loader was still preloading. */
-    if (withSound) {
-      musicEngine.ensureContext();
-      musicEngine.playTrack('assets/music/intro.mp3', { loop: false });
-      playSfx('assets/sfx/transition.mp3', 0.3);
-    }
-
-    overlay.classList.add('intro--leaving'); // clip-path wipe (CSS)
-    document.documentElement.classList.remove('intro-gated'); // hero slide-in runs now
-
+  function startSoundtrack() {
+    musicEngine.ensureContext();
+    const p = musicEngine.playTrack('assets/music/intro.mp3', { loop: false });
+    if (p && p.catch) p.catch(() => showTapForSound());
+    playSfx('assets/sfx/transition.mp3', 0.3);
+    // crossfade intro -> this page's own track over the next beats
     setTimeout(() => {
-      overlay.remove();
-      // crossfade intro -> this page's own track over the next beats
-      if (withSound) musicEngine.crossfadeTo(PAGE_TRACKS[PAGE_ID] || PAGE_TRACKS.home);
-    }, REDUCED_MOTION ? 0 : 700);
+      if (window.SOUND_ON) musicEngine.crossfadeTo(PAGE_TRACKS[PAGE_ID] || PAGE_TRACKS.home);
+    }, 700);
   }
 
-  overlay.querySelector('[data-sound="on"]').addEventListener('click', () => enter(true));
-  overlay.querySelector('[data-sound="off"]').addEventListener('click', () => enter(false));
+  function enter() {
+    if (entered) return;
+    entered = true;
+    window.SOUND_ON = true;
+    sessionStorage.setItem('soundChoice', 'on');
+    document.body.classList.add('sound-on');
+    document.body.classList.remove('sound-off');
+    document.body.style.overflow = '';
+
+    if (REDUCED_MOTION) {
+      overlay.remove();
+      document.documentElement.classList.remove('intro-gated');
+      if (gestureSeen) startSoundtrack();
+      return;
+    }
+
+    /* THE D-SWOOP (V4): the camera dollies into the counter of the D in
+       ADITYA - the word flies at the camera from the D's centre while a
+       hard-edged hole opens there and reveals the site underneath. */
+    const word = overlay.querySelector('.intro__word');
+    const dSpan = overlay.querySelector('.intro__d');
+    const r = dSpan.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    readout.style.transition = 'opacity 0.25s linear';
+    readout.style.opacity = '0';
+    word.style.transformOrigin = cx + 'px ' + cy + 'px';
+    word.style.willChange = 'transform, opacity';
+    const DUR = 1150;
+    const t0 = performance.now();
+    const maxR = Math.hypot(innerWidth, innerHeight) * 0.75;
+    let gateOpened = false;
+    function frame(t) {
+      const p = Math.min(1, (t - t0) / DUR);
+      const zoom = p * p * p;               // ease-in: accelerate into the letter
+      const hole = p * p * (3 - 2 * p);     // smoothstep: the opening breathes
+      word.style.transform = 'scale(' + (1 + zoom * 34) + ')';
+      word.style.opacity = String(1 - Math.min(1, Math.max(0, (p - 0.55) / 0.35)));
+      const rad = (hole * maxR).toFixed(1);
+      overlay.style.webkitMaskImage = overlay.style.maskImage =
+        'radial-gradient(circle ' + rad + 'px at ' + cx.toFixed(1) + 'px ' + cy.toFixed(1) +
+        'px, transparent 97%, #000 100%)';
+      if (!gateOpened && p >= 0.45) {
+        gateOpened = true;
+        document.documentElement.classList.remove('intro-gated'); // hero slide-in runs now
+      }
+      if (p < 1) { requestAnimationFrame(frame); return; }
+      overlay.remove();
+      if (gestureSeen) startSoundtrack();
+    }
+    requestAnimationFrame(frame);
+  }
 })();
 
 /* ─── PROMPT 11: SCRAMBLE ENGINE ─────────────────────────────
@@ -496,7 +560,7 @@ window._sectionJump = function _sectionJump(target) {
      text stays safe in the data attribute; a running scramble is
      never restarted (the engine guards it). With script.js deleted,
      the CSS roll hover still works on its own. */
-  document.querySelectorAll('.navbar__link, .footer__link').forEach(a => {
+  document.querySelectorAll('.navbar__link, .footer__link, .contact__email, .contact__link').forEach(a => {
     const dup = a.querySelector('.roll-text--dup') || a;
     a.addEventListener('mouseenter', () => {
       window.scrambleText(dup, { duration: 300 });
@@ -1150,16 +1214,18 @@ window._sectionJump = function _sectionJump(target) {
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev =>
     bar.addEventListener(ev, cancelHold));
   bar.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && !e.repeat) { e.preventDefault(); startHold(); }
+    if (e.code === 'Space') { e.preventDefault(); if (!e.repeat) startHold(); }
   });
   bar.addEventListener('keyup', (e) => { if (e.code === 'Space') cancelHold(); });
   addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isOpen) { closeGuide(); return; }
-    if (e.code !== 'Space' || e.repeat || isOpen) return;
+    if (e.code !== 'Space' || isOpen) return;
     const t = e.target;
     if (t && t.closest && t.closest('input, textarea, select, [contenteditable], a, button')) return;
-    e.preventDefault(); /* space scrolls by default - the hold owns it here */
-    startHold();
+    e.preventDefault(); /* space scrolls by default - the hold owns it here,
+                           auto-repeat keydowns included (V4: holding space
+                           used to scroll the page before the agent opened) */
+    if (!e.repeat) startHold();
   });
   addEventListener('keyup', (e) => { if (e.code === 'Space') cancelHold(); });
 
@@ -1403,8 +1469,8 @@ window._sectionJump = function _sectionJump(target) {
         const q = self.progress * 100;
         frames.forEach((f, i) => {
           if (i === 0) return; /* the base frame stays on */
-          const start = (i - 2.5) / (count - 1) * 77;
-          const end = i / (count - 1) * 77;
+          const start = Math.max(0, (i + 1 - 2.5) / (count - 1) * 77);
+          const end = (i + 1) / (count - 1) * 77;
           f.style.opacity = Math.min(1, Math.max(0, (q - start) / (end - start))).toFixed(3);
         });
         if (bg) bg.style.transform = `scale(${(1 + 0.06 * Math.min(1, q / 84)).toFixed(4)})`;
@@ -1445,6 +1511,48 @@ window._sectionJump = function _sectionJump(target) {
   setInterval(tick, 30000);
 })();
 
+/* ─── V4: FACE-CLIP HERO (drop-in hook for the AI video) ─────
+   When Aditya's generated face clip lands, set ONE attribute on the
+   hero stage - data-face-clip="assets/video/face-turn.mp4" - and this
+   swaps the 12-frame crossfade stack for the video, scrubbing its
+   playhead with scroll progress (the smooth turn he wants, zero
+   stepped frames). With the attribute absent everything stays as-is.
+   The video is decorative: muted, playsinline, preload auto. */
+(function initFaceClip() {
+  const stage = document.querySelector('.hero-stage');
+  if (!stage || !stage.dataset.faceClip) return;
+  const bg = stage.querySelector('.hero-bg');
+  if (!bg) return;
+  const video = document.createElement('video');
+  video.muted = true;
+  video.playsInline = true;
+  video.preload = 'auto';
+  video.src = stage.dataset.faceClip;
+  video.setAttribute('aria-hidden', 'true');
+  video.className = 'hero-clip';
+  bg.appendChild(video);
+  stage.classList.add('hero--clip'); /* CSS hides the frame stack */
+  let ticking = false;
+  function scrub() {
+    ticking = false;
+    if (!video.duration) return;
+    const r = stage.getBoundingClientRect();
+    const range = r.height - innerHeight;
+    if (range <= 0) return;
+    const p = Math.min(1, Math.max(0, -r.top / range));
+    /* frames hold through the first 77% in the image version; the clip
+       maps the whole turn onto the same window, then holds its last
+       frame while About scrolls in. */
+    const t = Math.min(1, p / 0.77) * video.duration;
+    if (Math.abs(video.currentTime - t) > 0.04) video.currentTime = t;
+  }
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(scrub); }
+  }, { passive: true });
+  video.addEventListener('loadedmetadata', scrub);
+  scrub();
+})();
+
 /* ─── V3: SCROLL-STAGED HERO SEQUENCE ────────────────────────
    Progress over the (now 380vh) hero stage flips three beat classes
    on the stage: the name swings in first, the tagline follows, the
@@ -1463,8 +1571,8 @@ window._sectionJump = function _sectionJump(target) {
     const range = r.height - innerHeight;
     if (range <= 0) return;
     const p = Math.min(1, Math.max(0, -r.top / range));
-    const beats = { name: p >= 0.05, sub: p >= 0.28, cta: p >= 0.46 };
-    for (const k of ['name', 'sub', 'cta']) {
+    const beats = { name: p >= 0.05, sub: p >= 0.28, cta: p >= 0.46, exit: p >= 0.90 };
+    for (const k of ['name', 'sub', 'cta', 'exit']) {
       if (beats[k] === state[k]) continue;
       if (k === 'name' && beats.name && state.name !== null) {
         playSfx('assets/sfx/hover.mp3', 0.12); /* a soft stamp as the name lands */
