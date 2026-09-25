@@ -914,41 +914,8 @@ body:has(.menu-checkbox:checked) .nav-overlay {
   pointer-events: auto;
 }
 
-/* V4: 3D moving backdrop for the side menu ("make it impressive").
-   Two flat hairline layers - a slow-drifting wall and a perspective
-   floor driving toward the viewer - low-alpha lavender over black.
-   Hairlines only, per the no-visual-gradients design rule. JS adds
-   cursor parallax on top (desktop pointer, motion-safe only). */
-.nav-overlay__bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+/* V6: the 3D wall/floor grid is gone - the sports photo carries the menu backdrop alone. */
 .nav-overlay__inner { position: relative; z-index: 1; }
-.nav-overlay__bg-wall {
-  position: absolute; inset: -60px;
-  background: repeating-linear-gradient(90deg,
-    transparent 0px, transparent 159px,
-    rgba(255, 255, 255, 0.09) 159px, rgba(255, 255, 255, 0.09) 160px);
-}
-.nav-overlay__bg-floor {
-  position: absolute; left: -60%; right: -60%; bottom: -10%; height: 88%;
-  transform: perspective(620px) rotateX(56deg);
-  transform-origin: 50% 100%;
-  background:
-    repeating-linear-gradient(90deg, transparent 0px, transparent 109px,
-      rgba(150, 138, 223, 0.42) 109px, rgba(150, 138, 223, 0.42) 110px),
-    repeating-linear-gradient(0deg, transparent 0px, transparent 109px,
-      rgba(150, 138, 223, 0.42) 109px, rgba(150, 138, 223, 0.42) 110px);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .nav-overlay__bg-wall  { animation: navWallDrift 24s ease-in-out infinite alternate; }
-  .nav-overlay__bg-floor { animation: navGridDrive 2.8s linear infinite; }
-}
-@keyframes navWallDrift {
-  from { transform: translateX(-50px); }
-  to   { transform: translateX(50px); }
-}
-@keyframes navGridDrive {
-  from { background-position: 0 0, 0 0; }
-  to   { background-position: 0 0, 0 110px; }
-}
 
 /* Inner flex layout: CLOSE top-right, links centred, caption bottom-left */
 .nav-overlay__inner {
@@ -2228,8 +2195,8 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 /* side menu finally gets its photo backdrop (the sports shot,
    kept low under the 3D wall + floor so links stay readable) */
 .nav-overlay__photo { position: absolute; inset: 0; }
-.nav-overlay__photo img { width: 100%; height: 100%; object-fit: cover; opacity: 0.28; }
-.nav-overlay__photo::after { content: ''; position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.55); }
+.nav-overlay__photo img { width: 100%; height: 100%; object-fit: cover; opacity: 0.45; }
+.nav-overlay__photo::after { content: ''; position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.42); }
 
 /* ─── V5: KPR-STYLE 3D HUD PROJECT ROWS ─────────────────────
    The projects page takes the kprverse format: HUD corner
@@ -2322,4 +2289,22 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
   .prow__artifact { width: 64px; height: 64px; right: 5%; }
   .prow__core { width: 18px; height: 18px; }
   .prow__hud { font-size: 0.52rem; top: 12px; right: 14px; }
+}
+
+
+/* V6 item 9: footer columns must hold one row - 5 columns, no wrap at
+   desktop. Doubled selector beats Tailwind's .flex (CDN lands last). */
+.footer .footer__cols.footer__cols {
+  display: grid;
+  grid-template-columns: repeat(5, max-content);
+  justify-content: space-between;
+  column-gap: clamp(1.5rem, 3vw, 3rem);
+  row-gap: 2rem;
+  width: 100%;
+}
+@media (max-width: 1100px) {
+  .footer .footer__cols.footer__cols { grid-template-columns: repeat(3, max-content); }
+}
+@media (max-width: 640px) {
+  .footer .footer__cols.footer__cols { grid-template-columns: repeat(2, max-content); column-gap: 2.5rem; }
 }
