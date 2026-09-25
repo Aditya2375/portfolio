@@ -560,20 +560,7 @@ window._sectionJump = function _sectionJump(target) {
     });
   });
 
-  /* 4. Progress-bar fallback: where CSS scroll-timeline is unsupported
-     the @supports block never renders the bar, so JS drives scaleX. */
-  if (!CSS.supports('animation-timeline: scroll()')) {
-    const bar = document.querySelector('.scroll-progress');
-    if (bar) {
-      bar.style.display = 'block';
-      const update = () => {
-        const max = document.documentElement.scrollHeight - innerHeight;
-        bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
-      };
-      addEventListener('scroll', update, { passive: true });
-      update();
-    }
-  }
+  /* V7 item 12: scroll-progress bar removed - no fallback needed. */
 })();
 
 /* ─── V4: SIDE MENU BACKDROP CURSOR PARALLAX ────────────────
@@ -1344,7 +1331,7 @@ window._sectionJump = function _sectionJump(target) {
     let done = false;
     const finish = () => { if (!done) { done = true; onDone(); } };
     const estimateMs = 1200 + text.length * 85; /* ceiling, not a schedule */
-    timers.push(setTimeout(finish, estimateMs * 2));
+    timers.push(setTimeout(finish, estimateMs * 1.15)); /* V7: ceiling already generous; 2x was the dead gap */
     if (window.SOUND_ON && 'speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
@@ -1379,6 +1366,10 @@ window._sectionJump = function _sectionJump(target) {
       if (onComplete) onComplete();
       return;
     }
+    /* V7 item 3: the ride FILLS the pause between lines - its length comes
+       from the distance to the section (~455px/s), so a short hop never
+       sits frozen for seconds and a long ride is a real interlude. */
+    const rideMs = Math.min(9000, Math.max(1400, Math.abs(ms) * 2.2));
     /* V6 item 10: the rAF drive is authoritative (Lenis is parked while
        the tour runs) so the landing is PIXEL-EXACT and onComplete fires
        the moment the section top reaches the viewport top - speech
@@ -1388,7 +1379,7 @@ window._sectionJump = function _sectionJump(target) {
     const t0 = performance.now();
     (function step(now) {
       if (!isOpen) return; /* a stop mid-drive freezes the page where it is */
-      const p = Math.min((now - t0) / ms, 1);
+      const p = Math.min((now - t0) / rideMs, 1);
       window.scrollTo({ left: 0, top: startY + (targetY - startY) * p, behavior: 'instant' });
       if (p < 1) { requestAnimationFrame(step); return; }
       window.scrollTo({ left: 0, top: targetY, behavior: 'instant' }); /* pixel-aligned */
@@ -1412,20 +1403,20 @@ window._sectionJump = function _sectionJump(target) {
       else closeGuide();
     };
     if (section) {
-      /* slow enough to read the page going past; longer lines, longer rides */
-      const scrollMs = Math.min(6000, 1800 + text.length * 40);
-      guidedScroll(section, scrollMs, () => {
+      /* V7 item 3: no fixed timer - the scroll ride IS the gap between
+         lines. Distance in, duration derived inside guidedScroll. */
+      guidedScroll(section, section.getBoundingClientRect().top, () => {
         /* landed pixel-exact: decode the section, THEN speak - the line
            starts on the landing, and the next section only scrolls once
            this line has fully sounded. */
         decodeSection(section);
         timers.push(setTimeout(() => {
-          speakAndThen(text, () => timers.push(setTimeout(advance, 1400)));
+          speakAndThen(text, () => timers.push(setTimeout(advance, 250)));
         }, REDUCED_MOTION ? 60 : 350));
       });
     } else {
       timers.push(setTimeout(() => {
-        speakAndThen(text, () => timers.push(setTimeout(advance, 1400)));
+        speakAndThen(text, () => timers.push(setTimeout(advance, 250)));
       }, 300));
     }
   }
