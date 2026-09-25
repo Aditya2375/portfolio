@@ -1685,7 +1685,7 @@ window._sectionJump = function _sectionJump(target) {
      orientation, swapped on rotate. */
   function portrait() { return innerWidth < innerHeight && stage.dataset.faceClipPortrait; }
   function src() { return portrait() ? stage.dataset.faceClipPortrait : stage.dataset.faceClip; }
-  function poster() { return portrait() ? 'assets/video/face-turn-poster-portrait.jpg?v=13' : 'assets/video/face-turn-poster.jpg?v=13'; }
+  function poster() { return portrait() ? 'assets/video/face-turn-poster-portrait.jpg?v=14' : 'assets/video/face-turn-poster.jpg?v=14'; }
   let mode = null;
   function applySource() {
     const m = portrait() ? 'p' : 'l';
