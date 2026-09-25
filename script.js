@@ -1491,9 +1491,10 @@ window._sectionJump = function _sectionJump(target) {
   if (REDUCED_MOTION) return;          /* reduced motion: native scrolling */
   if (typeof Lenis === 'undefined') return; /* CDN unreachable: native stays */
   const lenis = new Lenis({
-    duration: 1.55,       /* REVIEW ROUND 2: heavier, KSR-style scroll weight (was 1.1) */
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), /* exponential-out: fast start, soft landing */
+    duration: 1.7,        /* V7 item 13: safarnamma-style weight - scroll takes its time */
+    easing: (t) => 1 - Math.pow(1 - t, 4), /* their exact curve (1-(1-t)^4): hard start, long heavy glide tail */
     smoothWheel: true,    /* smooth the mouse wheel (trackpads already glide) */
+    wheelMultiplier: 0.85, /* V7 item 13: each wheel tick travels less - deliberate, heavy */
     autoRaf: typeof gsap === 'undefined'
     /* One rAF authority only: when GSAP is present its ticker drives
        lenis.raf (Prompt 23), so autoRaf must stand down; when GSAP is
