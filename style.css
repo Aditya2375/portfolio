@@ -5,7 +5,6 @@
     3.  prefers-reduced-motion
     4.  Base & Typography
     5.  Utilities: .section-label, .container, .section-title,
-                   .section__header, .chamfer, .roll-mask
     6.  Screen Frame
     7.  Buttons (chamfered 18px, flat — no shadows)
     8.  Navbar (white bar, hairline border)
@@ -198,36 +197,6 @@ a, button, .btn {
     0 100%
   );
 }
-
-/* ── KPR Roll-up Hover Effect for Links ── */
-
-.roll-mask {
-  display: inline-flex;
-  overflow: hidden;
-  /* text-bottom keeps the inline-flex container cleanly aligned on the text baseline */
-  vertical-align: text-bottom;
-}
-
-.roll-stack {
-  display: inline-flex;
-  position: relative;
-  transition: transform var(--dur-base) var(--easing);
-}
-
-.roll-text--dup {
-  position: absolute;
-  top: 100%; /* Position the duplicate text exactly below the original */
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* Hover or focus on the parent link translates the stack up, revealing the duplicate */
-a:hover .roll-stack,
-a:focus-visible .roll-stack {
-  transform: translateY(-100%);
-}
-
 
 /* ─── 6. SCREEN FRAME ───────────────────────────────────────── */
 
@@ -623,7 +592,7 @@ a:focus-visible .roll-stack {
    the wordmark keeps its clamp() scale. Kept in CSS: custom cursors,
    .footer .section-label recolors (context overrides), the wordmark
    letter-drop animation (.footer__letter / is-dropping) and the
-   roll-text hover machinery. */
+   hover machinery. */
 .footer .section-label { color: rgba(255, 255, 255, 0.45); }
 .footer .section-label::before { background-color: rgba(255, 255, 255, 0.3); }
 
@@ -867,15 +836,15 @@ a:focus-visible .roll-stack {
   width: 44px;  /* comfortable tap target */
   height: 44px;
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 0v10m0 4v10M0 12h10m4 0h10' stroke='%231B1B1B' stroke-width='1'/%3E%3Crect x='10' y='10' width='4' height='4' fill='%23968ADF'/%3E%3C/svg%3E") 12 12, pointer;
-  border: 1px solid var(--clr-line);
-  background-color: var(--clr-bg);
+  border: 1px solid var(--clr-text);
+  background-color: var(--clr-text);
   transition:
     opacity var(--dur-base) var(--easing),
     border-color var(--dur-fast) var(--easing);
   user-select: none;
 }
 
-.menu-trigger:hover { border-color: var(--clr-text); }
+.menu-trigger:hover { border-color: var(--clr-accent); }
 
 /* REVIEW ROUND 2: once the page scrolls, the whole navbar box fills with a
    translucent gray (with a soft blur behind it) instead of staying flat
@@ -914,7 +883,7 @@ a:focus-visible .roll-stack {
   display: block;
   width: 18px;
   height: 2px;
-  background-color: var(--clr-text);
+  background-color: var(--clr-bg);
   transition: width var(--dur-fast) var(--easing), background-color var(--dur-fast) var(--easing);
 }
 .menu-trigger:hover .menu-trigger__bars i:nth-child(2) { width: 12px; }
@@ -1354,10 +1323,9 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   min-width: 44px;
   align-items: center;
   justify-content: center;
-  /* REVIEW ROUND 2: solid white pill + hairline - the bare bars blended
-     into whatever was behind them and read as invisible. */
-  background: var(--clr-bg);
-  border: 1px solid var(--clr-line);
+  /* V5: dark pill - the white one camouflaged into light sections. */
+  background: var(--clr-text);
+  border: 1px solid var(--clr-text);
   border-radius: 999px;
   padding: 0 12px;
 }
@@ -1366,7 +1334,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   display: block;
   width: 2px;
   height: 14px;
-  background-color: var(--clr-text);
+  background-color: var(--clr-bg);
   transform-origin: bottom;
   animation: eqBar 0.9s ease-in-out infinite;
 }
@@ -1657,22 +1625,67 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 .transition-overlay.is-active { visibility: visible; pointer-events: all; }
 
-.transition-overlay__veil {
-  position: absolute; inset: 0;
+.transition-overlay__veil { display: none; /* V5: replaced by the slices */ }
+
+/* V5: five vertical slices stagger-drop from the top, a lavender blade
+   riding the leading edge, hold at full cover, then peel back up in
+   the same left-to-right order. Flat colour only - cooler than the
+   old single square wipe, and more mechanical. */
+.transition-overlay__slice {
+  position: absolute; top: 0; bottom: 0;
+  width: 20.5%;
   background-color: #000;
-  clip-path: inset(100% 0 0 0); /* parked off-screen below */
+  transform: scaleY(0);
+  transform-origin: top;
 }
-.transition-overlay.is-covering .transition-overlay__veil {
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 360ms cubic-bezier(0.65, 0, 0.35, 1);
+.transition-overlay__slice--1 { left: 0; }
+.transition-overlay__slice--2 { left: 20%; }
+.transition-overlay__slice--3 { left: 40%; }
+.transition-overlay__slice--4 { left: 60%; }
+.transition-overlay__slice--5 { left: 80%; }
+.transition-overlay.is-covering .transition-overlay__slice {
+  transform: scaleY(1);
+  transition: transform 380ms cubic-bezier(0.65, 0, 0.35, 1);
 }
-.transition-overlay.is-covered .transition-overlay__veil {
-  clip-path: inset(0 0 0 0);
-  transition: none; /* full cover is a held state, not an animation */
+.transition-overlay.is-covering .transition-overlay__slice--1 { transition-delay: 0ms; }
+.transition-overlay.is-covering .transition-overlay__slice--2 { transition-delay: 55ms; }
+.transition-overlay.is-covering .transition-overlay__slice--3 { transition-delay: 110ms; }
+.transition-overlay.is-covering .transition-overlay__slice--4 { transition-delay: 165ms; }
+.transition-overlay.is-covering .transition-overlay__slice--5 { transition-delay: 220ms; }
+.transition-overlay.is-covered .transition-overlay__slice {
+  transform: scaleY(1);
+  transition: none;
+  transform-origin: bottom; /* the peel leaves upward on uncover */
 }
-.transition-overlay.is-uncovering .transition-overlay__veil {
-  clip-path: inset(0 0 100% 0); /* wipes out toward the top */
-  transition: clip-path 360ms cubic-bezier(0.65, 0, 0.35, 1);
+.transition-overlay.is-uncovering .transition-overlay__slice {
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 380ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.transition-overlay.is-uncovering .transition-overlay__slice--1 { transition-delay: 0ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--2 { transition-delay: 55ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--3 { transition-delay: 110ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--4 { transition-delay: 165ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--5 { transition-delay: 220ms; }
+
+/* the lavender blade sweeping with the cover edge */
+.transition-overlay__blade {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 2px;
+  background-color: var(--clr-accent);
+  opacity: 0;
+  transform: translateX(0);
+}
+.transition-overlay.is-covering .transition-overlay__blade {
+  opacity: 1;
+  transform: translateX(100vw);
+  transition: transform 600ms linear, opacity 0ms 600ms;
+}
+.transition-overlay.is-covered .transition-overlay__blade { opacity: 0; transform: translateX(100vw); }
+.transition-overlay.is-uncovering .transition-overlay__blade {
+  opacity: 1;
+  transform: translateX(0);
+  transition: transform 600ms linear, opacity 0ms 600ms;
 }
 
 /* Four corner brackets: L-shaped lavender borders */
@@ -1703,6 +1716,12 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   .transition-overlay__veil,
   .transition-overlay.is-covering .transition-overlay__veil,
   .transition-overlay.is-uncovering .transition-overlay__veil,
+  .transition-overlay__slice,
+  .transition-overlay.is-covering .transition-overlay__slice,
+  .transition-overlay.is-uncovering .transition-overlay__slice,
+  .transition-overlay__blade,
+  .transition-overlay.is-covering .transition-overlay__blade,
+  .transition-overlay.is-uncovering .transition-overlay__blade,
   .transition-overlay__bracket,
   .transition-overlay__shard { transition: none !important; }
 }
@@ -2179,3 +2198,18 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 }
 .prow-overlay__hint { color: rgba(255, 255, 255, 0.45); margin-top: var(--space-xs); }
 .prow-overlay__hint::before { background-color: rgba(255, 255, 255, 0.25); }
+
+/* ─── V5 ITEM 5: CONTACT FILLS THE ROW ────────────────────────
+   The links used to stack in a narrow left column with a blank
+   right half. Now the row splits: direct lines (email, phone) on
+   the left, the social set on the right. Mobile keeps the stack. */
+@media (min-width: 900px) {
+  .contact .contact__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: clamp(2rem, 6vw, 6rem);
+    align-items: start;
+    max-width: none;
+  }
+  .contact .contact__links-grid { padding-top: 0.35rem; }
+}
