@@ -2500,3 +2500,12 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
   user-select: none;
 }
 .scroll-pct::after { content: '%'; }
+
+/* ─── V19: FOOTER PHOTO BACKGROUND ────────────────────────────
+   His note: the very end of the home page felt bland. The footer now
+   shares the contact section's photo (one image spanning sections -
+   the bgspan language) with the same flat scrim and the same
+   cursor-drift motion every other .section--photo background gets. */
+.footer { position: relative; overflow: hidden; }
+.footer .footer__wordmark, .footer .footer__bottom { position: relative; z-index: 1; }
+.footer .section-bg::after { background-color: rgba(0, 0, 0, 0.62); }
