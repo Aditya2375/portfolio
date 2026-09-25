@@ -2213,3 +2213,20 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
   }
   .contact .contact__links-grid { padding-top: 0.35rem; }
 }
+
+/* ─── V5 BACKGROUNDS ROUND ────────────────────────────────────
+   New photo sections (about, skills, projects teaser, contact,
+   exams, olympiads, learning, volunteering) ride the existing
+   .section--photo system; the extras below are the misses. */
+
+/* skills rows were bordered for the old lavender bg */
+.section--photo .skill-row { border-color: rgba(255, 255, 255, 0.28) !important; }
+
+/* he said the project rows read too bright - deepen their scrim */
+.prow .section-bg::after { background-color: rgba(0, 0, 0, 0.68); }
+
+/* side menu finally gets its photo backdrop (the sports shot,
+   kept low under the 3D wall + floor so links stay readable) */
+.nav-overlay__photo { position: absolute; inset: 0; }
+.nav-overlay__photo img { width: 100%; height: 100%; object-fit: cover; opacity: 0.28; }
+.nav-overlay__photo::after { content: ''; position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.55); }
