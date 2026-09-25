@@ -1685,7 +1685,7 @@ window._sectionJump = function _sectionJump(target) {
      orientation, swapped on rotate. */
   function portrait() { return innerWidth < innerHeight && stage.dataset.faceClipPortrait; }
   function src() { return portrait() ? stage.dataset.faceClipPortrait : stage.dataset.faceClip; }
-  function poster() { return portrait() ? 'assets/video/face-turn-poster-portrait.jpg?v=14' : 'assets/video/face-turn-poster.jpg?v=14'; }
+  function poster() { return portrait() ? 'assets/video/face-turn-poster-portrait.jpg?v=15' : 'assets/video/face-turn-poster.jpg?v=15'; }
   let mode = null;
   function applySource() {
     const m = portrait() ? 'p' : 'l';
@@ -1744,11 +1744,11 @@ window._sectionJump = function _sectionJump(target) {
     const range = r.height - innerHeight;
     if (range <= 0) return;
     const p = Math.min(1, Math.max(0, -r.top / range));
-    /* V6 item 2: exit fires early enough that the name has fully lifted
-       away BEFORE About enters the viewport (was 0.90 - About was already
-       on screen, so name + About 'landed together'). */
-    const beats = { name: p >= 0.05, sub: p >= 0.28, cta: p >= 0.46, exit: p >= 0.70 };
-    for (const k of ['name', 'sub', 'cta', 'exit']) {
+    /* V15: no exit beat - his call. The name + description stay pinned for
+       the whole scrub and ride up with the hero itself when the stage ends,
+       instead of lifting away early at p=0.70. */
+    const beats = { name: p >= 0.05, sub: p >= 0.28, cta: p >= 0.46 };
+    for (const k of ['name', 'sub', 'cta']) {
       if (beats[k] === state[k]) continue;
       if (k === 'name' && beats.name && state.name !== null) {
         playSfx('assets/sfx/hover.mp3', 0.12); /* a soft stamp as the name lands */
