@@ -26,7 +26,7 @@ const PAGE_TRACKS = {
   academics: 'assets/music/education.mp3',
   projects:  'assets/music/projects.mp3',
   beyond:    'assets/music/about.mp3',
-  community: 'assets/music/about.mp3',
+  community: 'assets/music/skills.mp3',
 };
 
 /* ─── SFX HELPER ───────────────────────────────────────────
@@ -435,32 +435,18 @@ const SECTION_TRACKS = {
 };
 /* REVIEW ROUND 2: footer.mp3 (the dark horror-ish track) is retired -
    the footer stays on the calm contact track. */
-const FOOTER_TRACK = 'assets/music/contact.mp3';
+/* V6: footer track retired with per-section switching - the page track plays through. */
 
 (function initSectionSoundtrack() {
-  const map = SECTION_TRACKS[PAGE_ID] || {};
-  const sections = Object.keys(map)
-    .map(id => document.getElementById(id))
-    .filter(Boolean);
-  const footer = document.querySelector('.footer');
-  if (!sections.length && !footer) return;
-
-  /* rootMargin -50% top/bottom collapses the observation band to the
-     exact middle line of the viewport: a section "owns" the music when
-     it crosses that line. */
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const track = entry.target.classList.contains('footer')
-        ? FOOTER_TRACK
-        : map[entry.target.id];
-      if (track) musicEngine.crossfadeTo(track);
-    });
-  }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
-
-  sections.forEach(sec => io.observe(sec));
-  if (footer) io.observe(footer);
+  /* V6: per-section track switching is gone. He kept hearing the
+     static intro restart every time a section boundary crossed into
+     a different file (worst at the footer, which had its own track).
+     Now the page's track starts with the first section and plays
+     straight through to the footer - a track only changes when the
+     PAGE changes. The section map stays below as documentation of
+     which track owns which page. */
 })();
+
 
 /* ─── PROMPT 14: CURSOR FOLLOWER ──────────────────────────────
    A dot that follows the mouse exactly + a ring that lags behind
@@ -677,6 +663,16 @@ window._sectionJump = function _sectionJump(target) {
     });
   }
 
+
+  /* V6 item 7: ESC steps back - closes the side menu from anywhere
+     (he shouldn't have to travel to the top-right close button). */
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && checkbox.checked) {
+      checkbox.checked = false;
+      checkbox.dispatchEvent(new Event('change'));
+    }
+  });
+
   /* 3. Menu links are anchors inside <label for="menu-toggle">, so a
      click already closes the menu (the label unchecks the box) and
      then follows the link - page links open their page, same-page
@@ -731,11 +727,11 @@ window._sectionJump = function _sectionJump(target) {
     const heroArea = heroBg.closest('.hero-sticky');
     const gridLines = heroArea.querySelector('.hero__grid-lines');
     const crosshair = heroArea.querySelector('.hero__crosshair');
-    heroBg.style.scale = '1.05';
+    heroBg.style.scale = '1.14'; /* V6: drift cranked, deeper overscan */
     const layers = [
-      { el: heroBg,    depth: -36 }, /* opposite the cursor, ±18px */
-      { el: gridLines, depth: 16 },  /* with the cursor, ±8px */
-      { el: crosshair, depth: 44 }   /* loosest layer, ±22px */
+      { el: heroBg,    depth: -84 }, /* V6: opposite the cursor, ±42px */
+      { el: gridLines, depth: 34 },  /* V6: with the cursor, ±17px */
+      { el: crosshair, depth: 100 }  /* V6: loosest layer, ±50px */
     ].filter(l => l.el).map(l => ({
       cx: 0, cy: 0, tx: 0, ty: 0,
       apply(x, y) {
@@ -745,8 +741,10 @@ window._sectionJump = function _sectionJump(target) {
     layers.forEach(l => items.push(l));
     heroArea.addEventListener('mousemove', (e) => {
       const r = heroArea.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width - 0.5;  /* -0.5 … 0.5 */
-      const ny = (e.clientY - r.top) / r.height - 0.5;
+      /* V6: clamp -0.5 … 0.5 - pinned/tall areas made raw ratios overshoot
+         the overscan and flash edges at the viewport edge. */
+      const nx = Math.max(-0.5, Math.min(0.5, (e.clientX - r.left) / r.width - 0.5));
+      const ny = Math.max(-0.5, Math.min(0.5, (e.clientY - r.top) / r.height - 0.5));
       layers.forEach(l => { l.tx = nx; l.ty = ny; });
       kick();
     });
@@ -772,17 +770,17 @@ window._sectionJump = function _sectionJump(target) {
            physical card (KSR-style 3D), while its layers keep drifting
            inside for parallax depth. */
         if (thumb) thumb.style.transform =
-          `perspective(700px) rotateX(${(-y * 9).toFixed(2)}deg) rotateY(${(x * 11).toFixed(2)}deg)`;
-        front.style.transform = `translate(${(-x * 40).toFixed(2)}px, ${(-y * 40).toFixed(2)}px)`;
-        mid.style.transform   = `translate(${(-x * 20).toFixed(2)}px, ${(-y * 20).toFixed(2)}px)`;
-        back.style.transform  = `translate(${(-x * 6).toFixed(2)}px, ${(-y * 6).toFixed(2)}px)`;
+          `perspective(700px) rotateX(${(-y * 13).toFixed(2)}deg) rotateY(${(x * 16).toFixed(2)}deg)` /* V6 cranked */;
+        front.style.transform = `translate(${(-x * 84).toFixed(2)}px, ${(-y * 84).toFixed(2)}px)`; /* V6 cranked */
+        mid.style.transform   = `translate(${(-x * 44).toFixed(2)}px, ${(-y * 44).toFixed(2)}px)`; /* V6 cranked */
+        back.style.transform  = `translate(${(-x * 16).toFixed(2)}px, ${(-y * 16).toFixed(2)}px)`; /* V6 cranked */
       }
     };
     items.push(st);
     card.addEventListener('mousemove', (e) => {
       const r = card.getBoundingClientRect();
-      st.tx = (e.clientX - r.left) / r.width - 0.5;
-      st.ty = (e.clientY - r.top) / r.height - 0.5;
+      st.tx = Math.max(-0.5, Math.min(0.5, (e.clientX - r.left) / r.width - 0.5)); /* V6: clamp */
+      st.ty = Math.max(-0.5, Math.min(0.5, (e.clientY - r.top) / r.height - 0.5)); /* V6: clamp */
       kick();
     });
     card.addEventListener('mouseleave', () => { st.tx = 0; st.ty = 0; kick(); });
@@ -793,18 +791,18 @@ window._sectionJump = function _sectionJump(target) {
   document.querySelectorAll('.section-bg img').forEach((img) => {
     const sec = img.closest('.section--photo');
     if (!sec) return;
-    img.style.scale = '1.07'; /* overscan so the drift never shows an edge */
+    img.style.scale = '1.22'; /* V6: overscan for the cranked drift */
     const st = {
       cx: 0, cy: 0, tx: 0, ty: 0,
       apply(x, y) {
-        img.style.translate = `${(-x * 32).toFixed(2)}px ${(-y * 32).toFixed(2)}px`;
+        img.style.translate = `${(-x * 90).toFixed(2)}px ${(-y * 90).toFixed(2)}px`; /* V6: ±45px, KPR energy */
       }
     };
     items.push(st);
     sec.addEventListener('mousemove', (e) => {
       const r = sec.getBoundingClientRect();
-      st.tx = (e.clientX - r.left) / r.width - 0.5;
-      st.ty = (e.clientY - r.top) / r.height - 0.5;
+      st.tx = Math.max(-0.5, Math.min(0.5, (e.clientX - r.left) / r.width - 0.5)); /* V6: clamp */
+      st.ty = Math.max(-0.5, Math.min(0.5, (e.clientY - r.top) / r.height - 0.5)); /* V6: clamp */
       kick();
     });
     sec.addEventListener('mouseleave', () => { st.tx = 0; st.ty = 0; kick(); });
