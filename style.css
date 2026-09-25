@@ -945,6 +945,42 @@ body:has(.menu-checkbox:checked) .nav-overlay {
   pointer-events: auto;
 }
 
+/* V4: 3D moving backdrop for the side menu ("make it impressive").
+   Two flat hairline layers - a slow-drifting wall and a perspective
+   floor driving toward the viewer - low-alpha lavender over black.
+   Hairlines only, per the no-visual-gradients design rule. JS adds
+   cursor parallax on top (desktop pointer, motion-safe only). */
+.nav-overlay__bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.nav-overlay__inner { position: relative; z-index: 1; }
+.nav-overlay__bg-wall {
+  position: absolute; inset: -60px;
+  background: repeating-linear-gradient(90deg,
+    transparent 0px, transparent 159px,
+    rgba(255, 255, 255, 0.09) 159px, rgba(255, 255, 255, 0.09) 160px);
+}
+.nav-overlay__bg-floor {
+  position: absolute; left: -60%; right: -60%; bottom: -10%; height: 88%;
+  transform: perspective(620px) rotateX(56deg);
+  transform-origin: 50% 100%;
+  background:
+    repeating-linear-gradient(90deg, transparent 0px, transparent 109px,
+      rgba(150, 138, 223, 0.42) 109px, rgba(150, 138, 223, 0.42) 110px),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 109px,
+      rgba(150, 138, 223, 0.42) 109px, rgba(150, 138, 223, 0.42) 110px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nav-overlay__bg-wall  { animation: navWallDrift 24s ease-in-out infinite alternate; }
+  .nav-overlay__bg-floor { animation: navGridDrive 2.8s linear infinite; }
+}
+@keyframes navWallDrift {
+  from { transform: translateX(-50px); }
+  to   { transform: translateX(50px); }
+}
+@keyframes navGridDrive {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 0 0, 0 110px; }
+}
+
 /* Inner flex layout: CLOSE top-right, links centred, caption bottom-left */
 .nav-overlay__inner {
   display:        flex;
@@ -979,6 +1015,8 @@ body:has(.menu-checkbox:checked) .nav-overlay {
   flex-grow: 1;
   display: flex;
   align-items: center;
+  min-height: 0;     /* V4: let it shrink... */
+  overflow-y: auto;  /* ...and scroll if a tiny screen still overflows */
 }
 
 .nav-overlay__nav ul {
@@ -998,7 +1036,7 @@ body:has(.menu-checkbox:checked) .nav-overlay {
 .nav-overlay__link {
   display: inline-block;
   font-family:    var(--font-display);
-  font-size:      clamp(2.2rem, 7vw, 5.5rem);
+  font-size:      clamp(1.9rem, 4.5vh + 1.8vw, 4.4rem); /* V4: vh-based so all five items + subs fit on short laptop screens */
   font-weight:    900;
   text-transform: uppercase;
   letter-spacing: -0.03em;
@@ -1120,13 +1158,22 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 /* Sub-links: indented section anchors shown under the current page */
-.nav-overlay__sub {
-  padding-left: 1.5rem;
-  margin-top: 0.5rem;
+.nav-overlay__nav ul.nav-overlay__sub {
+  /* V4: one compact horizontal row - the old vertical list pushed the
+     fifth menu item (Community) clean off shorter screens.
+     Selector must out-specific .nav-overlay__nav ul (0,1,1). */
+  padding-left: 0;
+  margin-top: 0.45rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  border-left: 1px solid rgba(255,255,255,0.15);
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+}
+.nav-overlay__sub li { display: flex; align-items: baseline; }
+.nav-overlay__sub li + li::before {
+  content: '/';
+  margin-right: 0.9rem;
+  color: rgba(255,255,255,0.22);
 }
 
 .nav-overlay__sub-link {

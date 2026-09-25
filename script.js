@@ -363,16 +363,17 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
 window.scrambleText.cancel = function cancelScramble(el) { el._scrambling = false; };
 
 /* First use of the engine: the mono section labels (001 / 002 ...)
-   decode once when they first enter the viewport. IntersectionObserver
-   + unobserve guarantees exactly one pass per label. */
+   decode when they enter the viewport. V4: NO unobserve - every
+   re-entry replays the decode (he wants reveals to fire on every
+   scroll past, not just the first). The engine's no-restart guard
+   keeps overlapping passes from buzzing. */
 (function initLabelScramble() {
   const labels = document.querySelectorAll('.section__header .section-label');
   if (!labels.length) return;
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      window.scrambleText(entry.target, { tick: true });
-      io.unobserve(entry.target);
+      if (!entry.target._scrambling) window.scrambleText(entry.target, { tick: true });
     });
   }, { threshold: 0.6 });
   labels.forEach(label => io.observe(label));
@@ -582,6 +583,32 @@ window._sectionJump = function _sectionJump(target) {
       update();
     }
   }
+})();
+
+/* ─── V4: SIDE MENU BACKDROP CURSOR PARALLAX ────────────────
+   The 3D wall + perspective floor layers are pure CSS; this adds a
+   gentle cursor drift on top. Desktop pointer only, motion-safe
+   only, and a no-op wherever the backdrop markup is absent. */
+(function initMenuBackdropParallax() {
+  if (REDUCED_MOTION || !window.matchMedia('(pointer: fine)').matches) return;
+  const overlay = document.querySelector('.nav-overlay');
+  const wall = overlay && overlay.querySelector('.nav-overlay__bg-wall');
+  const floor = overlay && overlay.querySelector('.nav-overlay__bg-floor');
+  if (!wall || !floor) return;
+  let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+  function tick() {
+    cx += (tx - cx) * 0.08;
+    cy += (ty - cy) * 0.08;
+    wall.style.translate = (cx * -18).toFixed(1) + 'px ' + (cy * -10).toFixed(1) + 'px';
+    floor.style.translate = (cx * 26).toFixed(1) + 'px ' + (cy * 12).toFixed(1) + 'px';
+    if (Math.abs(tx - cx) > 0.0005 || Math.abs(ty - cy) > 0.0005) raf = requestAnimationFrame(tick);
+    else raf = null;
+  }
+  overlay.addEventListener('pointermove', (e) => {
+    tx = e.clientX / innerWidth - 0.5;
+    ty = e.clientY / innerHeight - 0.5;
+    if (!raf) raf = requestAnimationFrame(tick);
+  });
 })();
 
 /* ─── REVIEW ROUND 2: NAVBAR SCROLL FILL + SKILL EXPANDERS ─────
@@ -1375,8 +1402,8 @@ window._sectionJump = function _sectionJump(target) {
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      window.scrambleText(entry.target, { tick: true });
-      io.unobserve(entry.target); /* exactly one pass per element */
+      /* V4: replays on every entry - no unobserve */
+      if (!entry.target._scrambling) window.scrambleText(entry.target, { tick: true });
     });
   }, { threshold: 0.6 });
   targets.forEach(el => io.observe(el));
@@ -1660,30 +1687,49 @@ window._sectionJump = function _sectionJump(target) {
   const acro = document.querySelector('.footer__acrostic');
   if (acro && !REDUCED_MOTION) acro.classList.add('will-stage');
 
+  /* V4: the finale replays on EVERY scroll into the footer - he called
+     out the wordmark + acrostic + quicklinks animations firing only on
+     first load. Scrolling away resets the state; re-entering re-runs. */
+  let finaleTimers = [];
+  let finaleRunning = false;
+  function runFinale() {
+    if (finaleRunning) return;
+    finaleRunning = true;
+    wordmark.classList.remove('is-dropping');
+    void wordmark.offsetWidth; /* restart the letter animations */
+    wordmark.classList.add('is-dropping');
+    /* the acrostic stages in right after the last letter lands */
+    if (acro) {
+      acro.classList.remove('is-staged');
+      finaleTimers.push(setTimeout(() => acro.classList.add('is-staged'),
+        REDUCED_MOTION ? 0 : letters.length * 90 + 400));
+    }
+    if (!REDUCED_MOTION) {
+      letters.forEach((s, i) => {
+        s.style.animationDelay = (i * 0.09) + 's';
+        finaleTimers.push(setTimeout(() => playSfx('assets/sfx/scramble.mp3', 0.08), i * 90));
+      });
+      /* after the last letter lands: one subtle scramble over the
+         footer mono links (the visible roll-text of each) */
+      finaleTimers.push(setTimeout(() => {
+        document.querySelectorAll('.footer__link .roll-text:not(.roll-text--dup)')
+          .forEach(el => window.scrambleText(el, { duration: 350 }));
+        finaleRunning = false;
+      }, letters.length * 90 + 550));
+    } else {
+      /* reduced motion: letters simply appear, links decode instantly */
+      document.querySelectorAll('.footer__link .roll-text:not(.roll-text--dup)')
+        .forEach(el => window.scrambleText(el, { duration: 0 }));
+      finaleRunning = false;
+    }
+  }
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      io.unobserve(footer); /* the ending happens once */
-      wordmark.classList.add('is-dropping');
-      /* the acrostic stages in right after the last letter lands */
-      if (acro) setTimeout(() => acro.classList.add('is-staged'),
-        REDUCED_MOTION ? 0 : letters.length * 90 + 400);
-      if (!REDUCED_MOTION) {
-        letters.forEach((s, i) => {
-          s.style.animationDelay = (i * 0.09) + 's';
-          setTimeout(() => playSfx('assets/sfx/scramble.mp3', 0.08), i * 90);
-        });
-        /* after the last letter lands: one subtle scramble over the
-           footer mono links (the visible roll-text of each) */
-        setTimeout(() => {
-          document.querySelectorAll('.footer__link .roll-text:not(.roll-text--dup)')
-            .forEach(el => window.scrambleText(el, { duration: 350 }));
-        }, letters.length * 90 + 550);
-      } else {
-        /* reduced motion: letters simply appear, links decode instantly */
-        document.querySelectorAll('.footer__link .roll-text:not(.roll-text--dup)')
-          .forEach(el => window.scrambleText(el, { duration: 0 }));
-      }
+      if (entry.isIntersecting) { runFinale(); return; }
+      finaleTimers.forEach(clearTimeout); finaleTimers = [];
+      finaleRunning = false;
+      wordmark.classList.remove('is-dropping');
+      if (acro) acro.classList.remove('is-staged');
     });
   }, { threshold: 0.3 });
   io.observe(footer);
