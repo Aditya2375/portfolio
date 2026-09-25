@@ -52,7 +52,7 @@
   <div class="scroll-progress" aria-hidden="true"></div>
   <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true">
   <div class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
-    <div class="nav-overlay__bg" aria-hidden="true"><div class="nav-overlay__bg-wall"></div><div class="nav-overlay__bg-floor"></div></div>
+    <div class="nav-overlay__photo" aria-hidden="true"><img src="assets/bg/beyond-sport.jpg" alt="" loading="lazy"></div><div class="nav-overlay__bg" aria-hidden="true"><div class="nav-overlay__bg-wall"></div><div class="nav-overlay__bg-floor"></div></div>
     <div class="nav-overlay__inner">
       <label for="menu-toggle" class="nav-overlay__close" aria-label="Close navigation menu">
         <span class="section-label">✕ CLOSE</span>
@@ -105,7 +105,11 @@
     </nav>
   </header>
 
-  <main>
+    <!-- V5 background photo credits (CC-licensed, Openverse):
+       academics-exams: "A book that is shut is but a block. ~Thomas Fuller" by katerha - by (https://creativecommons.org/licenses/by/2.0/) - https://www.flickr.com/photos/8489692@N03/5020407401
+       academics-learning: "Notes" by English106 - by (https://creativecommons.org/licenses/by/2.0/) - https://www.flickr.com/photos/47381479@N04/4357529719
+       academics-olympiads: "Superbokehtheorie" by eriwst - by-sa (https://creativecommons.org/licenses/by-sa/2.0/) - https://www.flickr.com/photos/37977505@N00/2421129047 -->
+<main>
     <header class="page-header section min-h-[60vh] pt-14 pb-16 relative flex flex-col justify-end bg-white border-b border-hairline" id="hero">
       <div class="page-header__grid" aria-hidden="true"></div>
       <div class="container page-header__inner relative z-[1] px-[clamp(1rem,8vw,6rem)] flex flex-col gap-4">
@@ -136,7 +140,8 @@
       </div>
     </section>
 
-    <section class="section" id="exams" aria-labelledby="exams-heading">
+    <section class="section section--photo" id="exams"
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/academics-exams.jpg" alt="" loading="lazy"></div> aria-labelledby="exams-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">002 EXAMS</p>
@@ -200,7 +205,8 @@
       </div>
     </section>
 
-    <section class="section" id="olympiads" aria-labelledby="olympiads-heading">
+    <section class="section section--photo" id="olympiads"
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/academics-olympiads.jpg" alt="" loading="lazy"></div> aria-labelledby="olympiads-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">004 OLYMPIADS</p>
@@ -225,7 +231,8 @@
       </div>
     </section>
 
-    <section class="section" id="learning" aria-labelledby="learning-heading">
+    <section class="section section--photo" id="learning"
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/academics-learning.jpg" alt="" loading="lazy"></div> aria-labelledby="learning-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">005 LEARNING</p>
