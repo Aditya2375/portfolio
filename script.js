@@ -1361,7 +1361,10 @@ window._sectionJump = function _sectionJump(target) {
     (function step(now) {
       if (!isOpen) return; /* a stop mid-drive freezes the page where it is */
       const p = Math.min((now - t0) / ms, 1);
-      window.scrollTo(0, startY + (targetY - startY) * p);
+      /* behavior:'instant' beats the page's CSS scroll-behavior:smooth -
+         without it every frame's scrollTo restarts a smooth animation
+         toward a moving target and the drive never actually moves. */
+      window.scrollTo({ left: 0, top: startY + (targetY - startY) * p, behavior: 'instant' });
       if (p < 1) requestAnimationFrame(step);
     })(t0);
   }
