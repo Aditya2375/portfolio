@@ -1848,7 +1848,7 @@ window._sectionJump = function _sectionJump(target) {
 
   function openOverlay(mode, row) {
     openRow = row;
-    kickerEl.textContent = (mode === 'summary' ? 'SUMMARY' : 'EVERYTHING') + ' — ' + row.dataset.number;
+    kickerEl.textContent = (mode === 'summary' ? 'SUMMARY' : 'ALL DETAILS') + ' — ' + row.dataset.number; /* V7 item 9: renamed */
     titleEl.textContent = row.dataset.title;
     bodyEl.textContent = mode === 'summary' ? row.dataset.summary : row.dataset.details;
     overlay.classList.add('is-open');
@@ -1864,24 +1864,36 @@ window._sectionJump = function _sectionJump(target) {
 
   const HOLD_MS = 900;
   rows.forEach(row => {
-    const fill = row.querySelector('.prow__holdfill');
+    /* V7 item 9: KPR press ring - a circular progress line grows around the
+       press point; when it completes the full circle, you go in. */
+    const ring = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    ring.setAttribute('class', 'prow__pressring');
+    ring.setAttribute('viewBox', '0 0 132 132');
+    ring.setAttribute('aria-hidden', 'true');
+    ring.innerHTML = '<circle class="bg" cx="66" cy="66" r="54"></circle><circle class="fg" cx="66" cy="66" r="54"></circle>';
+    row.appendChild(ring);
     let holdTimer = null;
     function startHold(x, y) {
       if (openRow || holdTimer) return;
       const r = row.getBoundingClientRect();
-      fill.style.left = (x - r.left) + 'px';
-      fill.style.top = (y - r.top) + 'px';
+      ring.style.left = (x - r.left) + 'px';
+      ring.style.top = (y - r.top) + 'px';
       row.classList.add('is-holding');
+      ring.classList.remove('is-live');
+      void ring.getBoundingClientRect(); /* restart the dash draw */
+      ring.classList.add('is-live');
       holdTimer = setTimeout(() => {
         holdTimer = null;
         row.classList.remove('is-holding');
+        ring.classList.remove('is-live');
         try { if ('vibrate' in navigator) navigator.vibrate(30); } catch (err) { /* no-op */ }
         openOverlay('summary', row);
-      }, HOLD_MS);
+      }, HOLD_MS + 80); /* the circle completes first, THEN you go in */
     }
     function cancelHold() {
       if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
       row.classList.remove('is-holding');
+      ring.classList.remove('is-live');
     }
     row.addEventListener('pointerdown', (e) => {
       if (e.target.closest('button, a')) return;
@@ -1891,8 +1903,8 @@ window._sectionJump = function _sectionJump(target) {
     row.addEventListener('pointermove', (e) => {
       if (!holdTimer) return;
       const r = row.getBoundingClientRect();
-      fill.style.left = (e.clientX - r.left) + 'px';
-      fill.style.top = (e.clientY - r.top) + 'px';
+      ring.style.left = (e.clientX - r.left) + 'px';
+      ring.style.top = (e.clientY - r.top) + 'px';
     });
     row.addEventListener('contextmenu', (e) => e.preventDefault());
     /* keyboard: hold ENTER on a focused card for the summary */
@@ -1918,25 +1930,31 @@ window._sectionJump = function _sectionJump(target) {
 (function initProwTilt() {
   if (REDUCED_MOTION || !window.matchMedia('(pointer: fine)').matches) return;
   document.querySelectorAll('.prow__card').forEach((row) => { /* V6 item 4: tilt the KPR card, never the text */
-    let rx = 0, ry = 0, tx = 0, ty = 0, raf = null;
+    let rx = 0, ry = 0, tx = 0, ty = 0, mx = 0, my = 0, tmx = 0, tmy = 0, raf = null;
     function loop() {
       rx += (tx - rx) * 0.12;
       ry += (ty - ry) * 0.12;
-      row.style.transform = 'rotateX(' + rx.toFixed(3) + 'deg) rotateY(' + ry.toFixed(3) + 'deg)';
-      if (Math.abs(tx - rx) > 0.005 || Math.abs(ty - ry) > 0.005) {
+      mx += (tmx - mx) * 0.14;
+      my += (tmy - my) * 0.14;
+      row.style.transform = 'translate3d(' + mx.toFixed(2) + 'px,' + my.toFixed(2) + 'px,0) rotateX(' + rx.toFixed(3) + 'deg) rotateY(' + ry.toFixed(3) + 'deg)';
+      if (Math.abs(tx - rx) > 0.005 || Math.abs(ty - ry) > 0.005 || Math.abs(tmx - mx) > 0.02 || Math.abs(tmy - my) > 0.02) {
         raf = requestAnimationFrame(loop);
       } else {
-        row.style.transform = (tx === 0 && ty === 0) ? '' : row.style.transform;
+        row.style.transform = (tx === 0 && ty === 0 && tmx === 0 && tmy === 0) ? '' : row.style.transform;
         raf = null;
       }
     }
     function kick() { if (!raf) raf = requestAnimationFrame(loop); }
     row.addEventListener('pointermove', (e) => {
       const r = row.getBoundingClientRect();
-      ty = ((e.clientX - r.left) / r.width - 0.5) * 5;  /* rotateY follows x */
-      tx = -((e.clientY - r.top) / r.height - 0.5) * 3; /* rotateX follows y */
+      const nx = (e.clientX - r.left) / r.width - 0.5;
+      const ny = (e.clientY - r.top) / r.height - 0.5;
+      ty = nx * 6;   /* rotateY follows x */
+      tx = -ny * 4;  /* rotateX follows y */
+      tmx = nx * 34; /* V7 item 8: the window MOVES with the cursor (+-17px) */
+      tmy = ny * 22; /* +-11px vertical drift */
       kick();
     });
-    row.addEventListener('pointerleave', () => { tx = 0; ty = 0; kick(); });
+    row.addEventListener('pointerleave', () => { tx = 0; ty = 0; tmx = 0; tmy = 0; kick(); });
   });
 })();
