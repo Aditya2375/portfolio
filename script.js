@@ -1024,9 +1024,9 @@ window._sectionJump = function _sectionJump(target) {
    uncovers once loaded. If playTransition somehow never loads, every
    link keeps its default behavior (smooth scroll / normal open). */
 (function initTransitions() {
-  const COVER_MS = 620;   /* V5: five-slice staggered wipe-in */
-  const HOLD_MS = 80;     /* beat at full cover before uncovering */
-  const UNCOVER_MS = 620; /* V5: slices peel back out */
+  const COVER_MS = 680;   /* V6: seven-slice alternating shutter */
+  const HOLD_MS = 560;    /* beat at full cover - scanline sweeps, label reads */
+  const UNCOVER_MS = 680; /* V6: shutter peels back out */
   let overlay = null, running = false;
 
   function buildOverlay() {
@@ -1041,7 +1041,11 @@ window._sectionJump = function _sectionJump(target) {
       '<span class="transition-overlay__slice transition-overlay__slice--3"></span>' +
       '<span class="transition-overlay__slice transition-overlay__slice--4"></span>' +
       '<span class="transition-overlay__slice transition-overlay__slice--5"></span>' +
+      '<span class="transition-overlay__slice transition-overlay__slice--6"></span>' +
+      '<span class="transition-overlay__slice transition-overlay__slice--7"></span>' +
       '<span class="transition-overlay__blade"></span>' +
+      '<span class="transition-overlay__scan"></span>' +
+      '<span class="transition-overlay__label"></span>' +
       '<span class="transition-overlay__bracket transition-overlay__bracket--tl"></span>' +
       '<span class="transition-overlay__bracket transition-overlay__bracket--tr"></span>' +
       '<span class="transition-overlay__bracket transition-overlay__bracket--br"></span>' +
@@ -1065,6 +1069,11 @@ window._sectionJump = function _sectionJump(target) {
        the left and right edges instead of the single veil wipe. */
     const sides = !!(opts && opts.mode === 'sides');
     if (sides) el.classList.add('transition-overlay--sides');
+    /* V6 item 8: destination tag in the cover - mono index + page name,
+       KPR HUD style. Text is from our own static map, safe to inject. */
+    const labelEl = el.querySelector('.transition-overlay__label');
+    const label = (opts && opts.label) || '';
+    if (labelEl) labelEl.textContent = label;
     const coverMs = REDUCED_MOTION ? 0 : COVER_MS;
     const uncoverMs = REDUCED_MOTION ? 0 : UNCOVER_MS;
     el.classList.add('is-active', 'is-covering');
@@ -1103,6 +1112,9 @@ window._sectionJump = function _sectionJump(target) {
   if (sessionStorage.getItem('ak-transition-arrive') === '1') {
     sessionStorage.removeItem('ak-transition-arrive');
     const el = buildOverlay();
+    const arriveLabel = sessionStorage.getItem('ak-transition-label') || '';
+    sessionStorage.removeItem('ak-transition-label');
+    if (arriveLabel) el.querySelector('.transition-overlay__label').textContent = arriveLabel;
     el.classList.add('is-active', 'is-covered');
     running = true;
     const uncover = () => {
@@ -1155,10 +1167,19 @@ window._sectionJump = function _sectionJump(target) {
     }
     if (url.pathname === location.pathname) return; /* bare self-link: default */
     e.preventDefault();
+    const PAGE_TAGS = {
+      'index.html': '01 - HOME',
+      'academics.html': '02 - ACADEMICS',
+      'projects.html': '03 - PROJECTS',
+      'beyond.html': '04 - BEYOND THE TERMINAL',
+      'community.html': '05 - COMMUNITY'
+    };
+    const tag = PAGE_TAGS[url.pathname.split('/').pop()] || '';
     window.playTransition(() => {
       sessionStorage.setItem('ak-transition-arrive', '1');
+      sessionStorage.setItem('ak-transition-label', tag);
       location.href = url.href; /* a #hash rides along: lands on the section */
-    });
+    }, { label: tag });
   });
 })();
 
@@ -1651,7 +1672,10 @@ window._sectionJump = function _sectionJump(target) {
     const range = r.height - innerHeight;
     if (range <= 0) return;
     const p = Math.min(1, Math.max(0, -r.top / range));
-    const beats = { name: p >= 0.05, sub: p >= 0.28, cta: p >= 0.46, exit: p >= 0.90 };
+    /* V6 item 2: exit fires early enough that the name has fully lifted
+       away BEFORE About enters the viewport (was 0.90 - About was already
+       on screen, so name + About 'landed together'). */
+    const beats = { name: p >= 0.05, sub: p >= 0.28, cta: p >= 0.46, exit: p >= 0.70 };
     for (const k of ['name', 'sub', 'cta', 'exit']) {
       if (beats[k] === state[k]) continue;
       if (k === 'name' && beats.name && state.name !== null) {

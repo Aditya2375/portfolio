@@ -1594,46 +1594,90 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 
 .transition-overlay__veil { display: none; /* V5: replaced by the slices */ }
 
-/* V5: five vertical slices stagger-drop from the top, a lavender blade
-   riding the leading edge, hold at full cover, then peel back up in
-   the same left-to-right order. Flat colour only - cooler than the
-   old single square wipe, and more mechanical. */
+/* V6 item 8 (transition complexity 7/10): SEVEN vertical slices as an
+   alternating shutter - odd slices drop from the top, even slices rise
+   from the bottom - while the lavender blade rides the leading edge.
+   At full cover the corner brackets draw in, a scanline sweeps the
+   cover, and a mono destination tag reads out. Flat colour only. */
 .transition-overlay__slice {
   position: absolute; top: 0; bottom: 0;
-  width: 20.5%;
+  width: 14.8%;
   background-color: #000;
   transform: scaleY(0);
-  transform-origin: top;
 }
 .transition-overlay__slice--1 { left: 0; }
-.transition-overlay__slice--2 { left: 20%; }
-.transition-overlay__slice--3 { left: 40%; }
-.transition-overlay__slice--4 { left: 60%; }
-.transition-overlay__slice--5 { left: 80%; }
+.transition-overlay__slice--2 { left: 14.285%; }
+.transition-overlay__slice--3 { left: 28.57%; }
+.transition-overlay__slice--4 { left: 42.855%; }
+.transition-overlay__slice--5 { left: 57.14%; }
+.transition-overlay__slice--6 { left: 71.425%; }
+.transition-overlay__slice--7 { left: 85.71%; }
+.transition-overlay__slice--1, .transition-overlay__slice--3,
+.transition-overlay__slice--5, .transition-overlay__slice--7 { transform-origin: top; }
+.transition-overlay__slice--2, .transition-overlay__slice--4,
+.transition-overlay__slice--6 { transform-origin: bottom; }
 .transition-overlay.is-covering .transition-overlay__slice {
   transform: scaleY(1);
-  transition: transform 380ms cubic-bezier(0.65, 0, 0.35, 1);
+  transition: transform 340ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 .transition-overlay.is-covering .transition-overlay__slice--1 { transition-delay: 0ms; }
-.transition-overlay.is-covering .transition-overlay__slice--2 { transition-delay: 55ms; }
-.transition-overlay.is-covering .transition-overlay__slice--3 { transition-delay: 110ms; }
-.transition-overlay.is-covering .transition-overlay__slice--4 { transition-delay: 165ms; }
-.transition-overlay.is-covering .transition-overlay__slice--5 { transition-delay: 220ms; }
+.transition-overlay.is-covering .transition-overlay__slice--2 { transition-delay: 45ms; }
+.transition-overlay.is-covering .transition-overlay__slice--3 { transition-delay: 90ms; }
+.transition-overlay.is-covering .transition-overlay__slice--4 { transition-delay: 135ms; }
+.transition-overlay.is-covering .transition-overlay__slice--5 { transition-delay: 180ms; }
+.transition-overlay.is-covering .transition-overlay__slice--6 { transition-delay: 225ms; }
+.transition-overlay.is-covering .transition-overlay__slice--7 { transition-delay: 270ms; }
 .transition-overlay.is-covered .transition-overlay__slice {
   transform: scaleY(1);
   transition: none;
-  transform-origin: bottom; /* the peel leaves upward on uncover */
 }
+.transition-overlay.is-uncovering .transition-overlay__slice--1, .transition-overlay.is-uncovering .transition-overlay__slice--3,
+.transition-overlay.is-uncovering .transition-overlay__slice--5, .transition-overlay.is-uncovering .transition-overlay__slice--7 { transform-origin: bottom; }
+.transition-overlay.is-uncovering .transition-overlay__slice--2, .transition-overlay.is-uncovering .transition-overlay__slice--4,
+.transition-overlay.is-uncovering .transition-overlay__slice--6 { transform-origin: top; }
 .transition-overlay.is-uncovering .transition-overlay__slice {
   transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 380ms cubic-bezier(0.65, 0, 0.35, 1);
+  transition: transform 340ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 .transition-overlay.is-uncovering .transition-overlay__slice--1 { transition-delay: 0ms; }
-.transition-overlay.is-uncovering .transition-overlay__slice--2 { transition-delay: 55ms; }
-.transition-overlay.is-uncovering .transition-overlay__slice--3 { transition-delay: 110ms; }
-.transition-overlay.is-uncovering .transition-overlay__slice--4 { transition-delay: 165ms; }
-.transition-overlay.is-uncovering .transition-overlay__slice--5 { transition-delay: 220ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--2 { transition-delay: 45ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--3 { transition-delay: 90ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--4 { transition-delay: 135ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--5 { transition-delay: 180ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--6 { transition-delay: 225ms; }
+.transition-overlay.is-uncovering .transition-overlay__slice--7 { transition-delay: 270ms; }
+
+/* scanline sweep across the full cover during the hold beat */
+.transition-overlay__scan {
+  position: absolute; left: 0; right: 0; top: 0; height: 2px;
+  background-color: var(--clr-accent);
+  opacity: 0;
+}
+.transition-overlay.is-covered .transition-overlay__scan {
+  opacity: 1;
+  animation: transitionScan 420ms cubic-bezier(0.4, 0, 0.6, 1) 60ms both;
+}
+@keyframes transitionScan {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100vh); }
+}
+
+/* destination tag: mono index + page name at the heart of the cover */
+.transition-overlay__label {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) translateY(10px);
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(0.8rem, 1.6vw, 1.1rem);
+  letter-spacing: 0.34em; text-transform: uppercase;
+  color: #FFF; white-space: nowrap;
+  opacity: 0;
+  transition: opacity 260ms ease, transform 260ms var(--easing, ease);
+}
+.transition-overlay.is-covered .transition-overlay__label {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+  transition-delay: 60ms;
+}
 
 /* the lavender blade sweeping with the cover edge */
 .transition-overlay__blade {
@@ -1659,8 +1703,13 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 .transition-overlay__bracket {
   position: absolute; width: 44px; height: 44px;
   border: 0 solid var(--clr-accent);
-  opacity: 0; transition: opacity 220ms ease;
+  opacity: 0; transform: scale(0.3);
+  transition: opacity 260ms ease, transform 320ms cubic-bezier(0.2, 1.3, 0.4, 1);
 }
+.transition-overlay__bracket--tl { transform-origin: top left; }
+.transition-overlay__bracket--tr { transform-origin: top right; }
+.transition-overlay__bracket--br { transform-origin: bottom right; }
+.transition-overlay__bracket--bl { transform-origin: bottom left; }
 .transition-overlay__bracket--tl { top: 24px; left: 24px; border-top-width: 2px; border-left-width: 2px; }
 .transition-overlay__bracket--tr { top: 24px; right: 24px; border-top-width: 2px; border-right-width: 2px; }
 .transition-overlay__bracket--br { bottom: 24px; right: 24px; border-bottom-width: 2px; border-right-width: 2px; }
@@ -1676,7 +1725,13 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 .transition-overlay__shard--2 { top: 64%; right: 8%; width: 12vw; transform: rotate(4deg); }
 .transition-overlay__shard--3 { top: 48%; left: 44%; width: 6vw; background-color: rgba(255, 255, 255, 0.35); }
 
-.transition-overlay.is-covered .transition-overlay__bracket,
+.transition-overlay.is-covered .transition-overlay__bracket {
+  opacity: 1; transform: scale(1);
+}
+.transition-overlay.is-covered .transition-overlay__bracket--tl { transition-delay: 30ms; }
+.transition-overlay.is-covered .transition-overlay__bracket--tr { transition-delay: 90ms; }
+.transition-overlay.is-covered .transition-overlay__bracket--br { transition-delay: 150ms; }
+.transition-overlay.is-covered .transition-overlay__bracket--bl { transition-delay: 210ms; }
 .transition-overlay.is-covered .transition-overlay__shard { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1690,7 +1745,9 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   .transition-overlay.is-covering .transition-overlay__blade,
   .transition-overlay.is-uncovering .transition-overlay__blade,
   .transition-overlay__bracket,
-  .transition-overlay__shard { transition: none !important; }
+  .transition-overlay__shard,
+  .transition-overlay__label { transition: none !important; }
+  .transition-overlay.is-covered .transition-overlay__scan { animation: none !important; }
 }
 
 
@@ -1710,9 +1767,13 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 .transition-overlay__panel--left  { left: 0;  transform: translateX(-101%); }
 .transition-overlay__panel--right { right: 0; transform: translateX(101%); }
 .transition-overlay--sides .transition-overlay__veil { display: none; }
-.transition-overlay.is-covering .transition-overlay__panel,
-.transition-overlay.is-covered .transition-overlay__panel { transform: translateX(0); }
-.transition-overlay.is-covered .transition-overlay__panel { transition: none; }
+/* V6 item 8 fix: panels are for 'sides' mode ONLY. They used to slide in
+   on EVERY cover - being black and last in the DOM, they silently hid the
+   brackets, shards, scan and label behind a second black layer (which is
+   why the transition read 3/10: its details never showed). */
+.transition-overlay--sides.is-covering .transition-overlay__panel,
+.transition-overlay--sides.is-covered .transition-overlay__panel { transform: translateX(0); }
+.transition-overlay--sides.is-covered .transition-overlay__panel { transition: none; }
 @media (prefers-reduced-motion: reduce) {
   .transition-overlay__panel { transition: none !important; }
 }
