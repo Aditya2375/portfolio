@@ -2002,3 +2002,82 @@ window._sectionJump = function _sectionJump(target) {
     row.addEventListener('pointerleave', () => { tx = 0; ty = 0; tmx = 0; tmy = 0; kick(); });
   });
 })();
+
+/* ─── V9 ITEM 1: SCROLL PERCENT READOUT ───────────────────────
+   The removed top line's replacement: a 3-digit number in the navbar
+   brand. It never jumps to the real position - a rAF loop chases the
+   target at ~6%/frame, so the number FILLS UP slowly behind the heavy
+   Lenis glide, exactly the weighted feel he keeps asking for. */
+(function initScrollPct() {
+  const el = document.querySelector('.scroll-pct');
+  if (!el) return;
+  let shown = 0;
+  function target() {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    return max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+  }
+  (function loop() {
+    shown += (target() - shown) * 0.06;
+    if (Math.abs(target() - shown) < 0.05) shown = target();
+    el.textContent = String(Math.round(shown)).padStart(3, '0');
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ─── V9 ITEM 3: ADAPTIVE MENU + MUSIC BUTTONS ────────────────
+   Both buttons are solid ink and vanish over the dark photo sections.
+   On scroll we look at what's actually beneath each button and tag
+   .ui-on-dark when it sits over something dark (photo sections, bg
+   spans, the hero stage, the footer, project cards). The menu button
+   samples the content right under the translucent navbar, which is
+   what shows through its blur. */
+(function initAdaptiveUi() {
+  const menu = document.querySelector('.menu-trigger');
+  const music = document.querySelector('.music-toggle');
+  if (!menu && !music) return;
+  const DARK_SEL = '.section--photo, .bgspan, .hero-stage, .footer, .prow__card, .art-break, .nav-overlay, .intro';
+  function isDarkAt(x, y, skip) {
+    const prev = skip ? skip.style.pointerEvents : null;
+    if (skip) skip.style.pointerEvents = 'none';
+    const el = document.elementFromPoint(x, y);
+    if (skip) skip.style.pointerEvents = prev;
+    if (!el) return false;
+    if (el.closest(DARK_SEL)) return true;
+    /* fallback: first ancestor with a real background, read its luminance */
+    let n = el;
+    while (n && n !== document.body) {
+      const bg = getComputedStyle(n).backgroundColor;
+      const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+      if (m && (m[4] === undefined || parseFloat(m[4]) > 0.85)) {
+        const lum = (0.2126 * m[1] + 0.7152 * m[2] + 0.0722 * m[3]) / 255;
+        return lum < 0.42;
+      }
+      n = n.parentElement;
+    }
+    return false;
+  }
+  let ticking = false;
+  function update() {
+    ticking = false;
+    if (menu) {
+      const r = menu.getBoundingClientRect();
+      /* sample the button's OWN backdrop (the navbar, or the content
+         straight through it when the bar is transparent) - flipping on
+         what sits BELOW the bar turns it white-on-white at the top */
+      menu.classList.toggle('ui-on-dark', isDarkAt(r.left + r.width / 2, r.top + r.height / 2, menu));
+    }
+    if (music) {
+      const r = music.getBoundingClientRect();
+      music.classList.toggle('ui-on-dark', isDarkAt(r.left + r.width / 2, r.top + r.height / 2, music));
+    }
+  }
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  addEventListener('resize', update);
+  /* the intro overlay covers everything at load and is removed without a
+     scroll event, and lazy photos change what's under the buttons as they
+     load in - a light interval keeps the state honest */
+  setInterval(update, 1200);
+  update();
+})();

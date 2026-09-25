@@ -198,17 +198,7 @@ a, button, .btn {
   );
 }
 
-/* ─── 6. SCREEN FRAME ───────────────────────────────────────── */
-
-.screen-frame {
-  position:       fixed;
-  inset:          14px;
-  border:         1px solid rgba(0, 0, 0, 0.1);
-  border-radius:  4px;
-  pointer-events: none;
-  z-index:        900;
-}
-
+/* (V9: screen-frame removed - he read the faint fixed frame as broken) */
 
 /* ─── 7. BUTTONS ────────────────────────────────────────────── */
 
@@ -2482,3 +2472,36 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 @media (prefers-reduced-motion: reduce) {
   .page-header__bg img, .tech-ticker__track { animation: none; }
 }
+
+
+/* ─── V9 ITEM 3: ADAPTIVE UI BUTTONS ──────────────────────────
+   The menu trigger and music toggle are solid ink - camouflaged over
+   the dark photo sections. JS tags them .ui-on-dark when the content
+   beneath them is dark; they flip to white with ink glyphs. */
+.menu-trigger, .music-toggle {
+  transition: background-color 0.35s var(--easing), border-color 0.35s var(--easing);
+}
+.menu-trigger.ui-on-dark {
+  background-color: #FFF;
+  border-color: #FFF;
+}
+.menu-trigger.ui-on-dark .menu-trigger__bars i { background-color: var(--clr-text); }
+.music-toggle.ui-on-dark {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(255, 255, 255, 0.94);
+}
+.music-toggle.ui-on-dark span { background-color: var(--clr-text); }
+
+/* ─── V9 ITEM 1: SCROLL PERCENT IN THE NAVBAR ─────────────────
+   The old top progress line is gone for good; its replacement is a
+   mono 3-digit readout that CHASES the real scroll position slowly
+   (lerped), so the number visibly fills up as you scroll. */
+.scroll-pct {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--clr-muted);
+  min-width: 3ch;
+  user-select: none;
+}
+.scroll-pct::after { content: '%'; }
