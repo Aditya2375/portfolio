@@ -2437,3 +2437,48 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 @media (max-width: 640px) {
   .footer .footer__cols.footer__cols { grid-template-columns: repeat(2, max-content); column-gap: 2.5rem; }
 }
+
+
+/* ─── V8 ITEM 4: PROJECTS PAGE LIFE ───────────────────────────
+   The projects header was the pale one: flat white, no photo, no
+   motion. Now it carries the CRT code close-up (home-skills.jpg,
+   previously unused) under a flat scrim, drifting very slowly
+   (Ken Burns), plus a hairline tech ticker under it. */
+.page-header.section--photo .page-header__title,
+.page-header.section--photo .page-header__title .reveal-text { color: #FFF !important; }
+.page-header.section--photo .page-header__sub { color: rgba(255, 255, 255, 0.82) !important; }
+.page-header.section--photo .page-header__grid { opacity: 0.25; }
+.page-header.section--photo .container { position: relative; z-index: 1; }
+.page-header__bg img {
+  animation: kb-drift 28s ease-in-out infinite alternate;
+  transform-origin: 60% 40%;
+}
+@keyframes kb-drift {
+  from { transform: scale(1.02) translate(0, 0); }
+  to   { transform: scale(1.12) translate(-1.5%, -2%); }
+}
+.tech-ticker {
+  position: relative; z-index: 1;
+  overflow: hidden; white-space: nowrap;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 0.55rem 0;
+  margin-top: 1.75rem;
+}
+.tech-ticker__track {
+  display: inline-flex;
+  animation: ticker-scroll 36s linear infinite;
+}
+.tech-ticker__track span {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-header__bg img, .tech-ticker__track { animation: none; }
+}
