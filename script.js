@@ -1734,3 +1734,101 @@ window._sectionJump = function _sectionJump(target) {
   }, { threshold: 0.3 });
   io.observe(footer);
 })();
+
+/* ─── V4 ITEM 15: PROJECT ROWS - HOLD SUMMARY + EVERYTHING ────
+   Five full-width rows. Hold a card 900ms: the lavender fill grows
+   from the press point and the SUMMARY opens. The + EVERYTHING
+   button skips the hold and opens the full story. ESC / tap
+   outside closes. Where CSS view-timeline is missing, an IO drives
+   the edge-on -> flat reveal (replaying both ways). */
+(function initProjectRows() {
+  const rows = [...document.querySelectorAll('.prow')];
+  if (!rows.length) return;
+
+  if (!CSS.supports('animation-timeline: view()') && !REDUCED_MOTION) {
+    document.documentElement.classList.add('no-view-timeline');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => entry.target.classList.toggle('is-flat', entry.isIntersecting));
+    }, { threshold: 0.35 });
+    rows.forEach(r => io.observe(r));
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'prow-overlay';
+  overlay.innerHTML =
+    '<div class="prow-overlay__panel" role="dialog" aria-modal="true">' +
+      '<p class="prow-overlay__kicker section-label"></p>' +
+      '<h3 class="prow-overlay__title"></h3>' +
+      '<div class="prow-overlay__body"></div>' +
+      '<p class="prow-overlay__hint section-label">ESC OR TAP OUTSIDE TO CLOSE</p>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  const kickerEl = overlay.querySelector('.prow-overlay__kicker');
+  const titleEl = overlay.querySelector('.prow-overlay__title');
+  const bodyEl = overlay.querySelector('.prow-overlay__body');
+  let openRow = null;
+
+  function openOverlay(mode, row) {
+    openRow = row;
+    kickerEl.textContent = (mode === 'summary' ? 'SUMMARY' : 'EVERYTHING') + ' — ' + row.dataset.number;
+    titleEl.textContent = row.dataset.title;
+    bodyEl.textContent = mode === 'summary' ? row.dataset.summary : row.dataset.details;
+    overlay.classList.add('is-open');
+    if (!REDUCED_MOTION) window.scrambleText(titleEl, { duration: 300 });
+    playSfx('assets/sfx/transition.mp3', 0.25);
+  }
+  function closeOverlay() {
+    overlay.classList.remove('is-open');
+    openRow = null;
+  }
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeOverlay(); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && openRow) closeOverlay(); });
+
+  const HOLD_MS = 900;
+  rows.forEach(row => {
+    const fill = row.querySelector('.prow__holdfill');
+    let holdTimer = null;
+    function startHold(x, y) {
+      if (openRow || holdTimer) return;
+      const r = row.getBoundingClientRect();
+      fill.style.left = (x - r.left) + 'px';
+      fill.style.top = (y - r.top) + 'px';
+      row.classList.add('is-holding');
+      holdTimer = setTimeout(() => {
+        holdTimer = null;
+        row.classList.remove('is-holding');
+        try { if ('vibrate' in navigator) navigator.vibrate(30); } catch (err) { /* no-op */ }
+        openOverlay('summary', row);
+      }, HOLD_MS);
+    }
+    function cancelHold() {
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+      row.classList.remove('is-holding');
+    }
+    row.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button, a')) return;
+      startHold(e.clientX, e.clientY);
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => row.addEventListener(ev, cancelHold));
+    row.addEventListener('pointermove', (e) => {
+      if (!holdTimer) return;
+      const r = row.getBoundingClientRect();
+      fill.style.left = (e.clientX - r.left) + 'px';
+      fill.style.top = (e.clientY - r.top) + 'px';
+    });
+    row.addEventListener('contextmenu', (e) => e.preventDefault());
+    /* keyboard: hold ENTER on a focused card for the summary */
+    row.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.repeat && document.activeElement === row) {
+        const r = row.getBoundingClientRect();
+        startHold(r.left + r.width / 2, r.top + r.height / 2);
+      }
+    });
+    row.addEventListener('keyup', (e) => { if (e.key === 'Enter') cancelHold(); });
+    row.querySelector('[data-everything]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      cancelHold();
+      openOverlay('everything', row);
+    });
+  });
+})();

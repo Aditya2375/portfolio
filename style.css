@@ -2045,3 +2045,137 @@ html.lenis, html.lenis body { height: auto; }
 }
 .section--photo .stat-card__value { color: #FFF !important; }
 .section--photo .stat-card__label { color: rgba(255, 255, 255, 0.7) !important; }
+
+/* ─── V4 ITEM 15: PROJECT ROWS ────────────────────────────────
+   The projects page becomes five full-width horizontal rows, one
+   below the other, each with a photo backdrop (the shared 3D drift
+   comes free via .section-bg). Each row starts edge-on and turns
+   flat as it scrolls into view (replays every pass, per his
+   reveals-replay rule). Press-and-hold fills from the finger and
+   opens the SUMMARY; the EVERYTHING button opens the full story. */
+.prow {
+  position: relative;
+  overflow: hidden;
+  min-height: 62vh;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+}
+.prow__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-top: clamp(3rem, 8vh, 5rem);
+  padding-bottom: clamp(3rem, 8vh, 5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  transform-origin: left center;
+}
+.prow__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 7vw, 5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  color: #FFF;
+}
+.prow__tagline {
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 52ch;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.prow .section-label { color: rgba(255, 255, 255, 0.65); }
+.prow .section-label::before { background-color: rgba(255, 255, 255, 0.35); }
+.prow__actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-xs); }
+.prow__more {
+  background-color: transparent;
+  color: #FFF;
+  outline: 1px solid #FFF;
+  outline-offset: -1px;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.8em 1.6em;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--easing), color var(--dur-fast) var(--easing);
+}
+.prow__more:hover, .prow__more:focus-visible { background-color: #FFF; color: var(--clr-text); }
+
+/* hold fill: a lavender circle grows from the press point over 900ms */
+.prow__holdfill {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(150, 138, 223, 0.38);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  z-index: -1;
+}
+.prow.is-holding .prow__holdfill {
+  transition: transform 0.9s linear;
+  transform: translate(-50%, -50%) scale(160);
+}
+
+/* edge-on -> flat scroll reveal (CSS view-timeline: replays freely) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .prow__inner {
+      animation: prowTurn linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+  }
+}
+@keyframes prowTurn {
+  0%   { transform: perspective(1200px) rotateY(54deg); opacity: 0.25; }
+  100% { transform: perspective(1200px) rotateY(0deg);  opacity: 1; }
+}
+/* JS fallback where view() is unsupported: IO toggles .is-flat */
+.prow__inner { transition: transform 0.9s var(--easing), opacity 0.9s var(--easing); }
+html.no-view-timeline .prow__inner { transform: perspective(1200px) rotateY(54deg); opacity: 0.25; }
+html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; }
+
+/* the shared SUMMARY / EVERYTHING overlay */
+.prow-overlay {
+  position: fixed; inset: 0; z-index: 960;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex; align-items: center; justify-content: center;
+  padding: clamp(1rem, 5vw, 4rem);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s var(--easing);
+}
+.prow-overlay.is-open { opacity: 1; pointer-events: auto; }
+.prow-overlay__panel {
+  background-color: var(--clr-footer);
+  color: #FFF;
+  max-width: 720px; width: 100%;
+  max-height: 80vh; overflow-y: auto;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+  transform: translateY(24px);
+  transition: transform 0.35s var(--easing);
+  display: flex; flex-direction: column; gap: var(--space-sm);
+}
+.prow-overlay.is-open .prow-overlay__panel { transform: none; }
+.prow-overlay__kicker { color: rgba(255, 255, 255, 0.6); }
+.prow-overlay__kicker::before { background-color: rgba(255, 255, 255, 0.35); }
+.prow-overlay__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 900; text-transform: uppercase;
+  letter-spacing: -0.02em; color: #FFF;
+}
+.prow-overlay__body {
+  font-size: 0.9375rem; line-height: 1.75;
+  color: rgba(255, 255, 255, 0.88);
+  white-space: pre-line;
+}
+.prow-overlay__hint { color: rgba(255, 255, 255, 0.45); margin-top: var(--space-xs); }
+.prow-overlay__hint::before { background-color: rgba(255, 255, 255, 0.25); }
