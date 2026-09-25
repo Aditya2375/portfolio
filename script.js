@@ -556,15 +556,20 @@ window._sectionJump = function _sectionJump(target) {
   }
 
   /* 3. Hover scramble + blip on every navbar and footer link.
-     The decode runs on the DUPLICATE label (.roll-text--dup), so the
-     CSS roll hover and the scramble resolve together. The original
-     text stays safe in the data attribute; a running scramble is
-     never restarted (the engine guards it). With script.js deleted,
-     the CSS roll hover still works on its own. */
+     V5: the roll-mask spans are gone site-wide, so the decode runs on
+     the link's own text. The original text stays safe in the data
+     attribute; a running scramble is never restarted (the engine
+     guards it). */
+  let lastNavHover = 0;
   document.querySelectorAll('.navbar__link, .footer__link, .contact__email, .contact__link').forEach(a => {
-    const dup = a.querySelector('.roll-text--dup') || a;
+    const isNav = a.classList.contains('navbar__link');
     a.addEventListener('mouseenter', () => {
-      window.scrambleText(dup, { duration: 300 });
+      if (isNav) {
+        const now = performance.now();
+        if (now - lastNavHover < 700) return; /* calm bar: one decode per crossing */
+        lastNavHover = now;
+      }
+      window.scrambleText(a, { duration: 300 });
       playSfx('assets/sfx/hover.mp3', 0.2);
     });
   });
@@ -1021,9 +1026,9 @@ window._sectionJump = function _sectionJump(target) {
    uncovers once loaded. If playTransition somehow never loads, every
    link keeps its default behavior (smooth scroll / normal open). */
 (function initTransitions() {
-  const COVER_MS = 380;   /* veil wipe-in */
+  const COVER_MS = 620;   /* V5: five-slice staggered wipe-in */
   const HOLD_MS = 80;     /* beat at full cover before uncovering */
-  const UNCOVER_MS = 380; /* veil wipe-out */
+  const UNCOVER_MS = 620; /* V5: slices peel back out */
   let overlay = null, running = false;
 
   function buildOverlay() {
@@ -1033,6 +1038,12 @@ window._sectionJump = function _sectionJump(target) {
     overlay.setAttribute('aria-hidden', 'true');
     overlay.innerHTML =
       '<div class="transition-overlay__veil"></div>' +
+      '<span class="transition-overlay__slice transition-overlay__slice--1"></span>' +
+      '<span class="transition-overlay__slice transition-overlay__slice--2"></span>' +
+      '<span class="transition-overlay__slice transition-overlay__slice--3"></span>' +
+      '<span class="transition-overlay__slice transition-overlay__slice--4"></span>' +
+      '<span class="transition-overlay__slice transition-overlay__slice--5"></span>' +
+      '<span class="transition-overlay__blade"></span>' +
       '<span class="transition-overlay__bracket transition-overlay__bracket--tl"></span>' +
       '<span class="transition-overlay__bracket transition-overlay__bracket--tr"></span>' +
       '<span class="transition-overlay__bracket transition-overlay__bracket--br"></span>' +
@@ -1271,10 +1282,15 @@ window._sectionJump = function _sectionJump(target) {
     if (!vs.length) return null;
     const score = (v) => {
       const n = v.name.toLowerCase();
-      if (n.includes('female')) return 3;
-      if (/zira|samantha|victoria|karen|moira|tessa|fiona|susan|allison|ava|serena|kate|stephanie|catherine|joelle|aditi|swara|kalpana|neerja|lekha/.test(n)) return 2;
-      if (n.includes('google us english')) return 1; /* reads female */
-      return 0;
+      let s = 0;
+      /* Microsoft's neural "Online (Natural)" voices read far more human */
+      if (n.includes('natural') || n.includes('online')) s += 4;
+      if (n.includes('female')) s += 3;
+      if (/zira|samantha|victoria|karen|moira|tessa|fiona|susan|allison|ava|serena|kate|stephanie|catherine|joelle|aditi|swara|heera|kalpana|neerja|lekha|veena|raveena|ananya|aarohi/.test(n)) s += 2;
+      /* his ear is Indian English - prefer it as the tiebreak */
+      if (/en-in|india|indian/.test(n) || v.lang === 'en-IN') s += 1;
+      if (n.includes('google us english')) s += 1; /* reads female */
+      return s;
     };
     const best = vs.slice().sort((a, b) => score(b) - score(a))[0];
     if (score(best) > 0) voiceCache = best;
@@ -1328,6 +1344,28 @@ window._sectionJump = function _sectionJump(target) {
     timers.push(setTimeout(() => bar.classList.remove('is-speaking'), dur + 150));
   }
 
+  /* V5: the agent SCROLLS the page slowly at its own reading pace - a
+     steady linear drive matched to the line length, never a jump-cut.
+     Lenis gets a linear easing; without it a rAF drive does the same. */
+  function guidedScroll(section, ms) {
+    if (REDUCED_MOTION) { section.scrollIntoView({ block: 'start' }); return; }
+    if (window._lenis) {
+      try {
+        window._lenis.scrollTo(section, { duration: ms / 1000, easing: t => t });
+        return;
+      } catch (err) { /* fall through to the rAF drive */ }
+    }
+    const startY = window.scrollY;
+    const targetY = startY + section.getBoundingClientRect().top;
+    const t0 = performance.now();
+    (function step(now) {
+      if (!isOpen) return; /* a stop mid-drive freezes the page where it is */
+      const p = Math.min((now - t0) / ms, 1);
+      window.scrollTo(0, startY + (targetY - startY) * p);
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
   /* (a) scroll -> (b) decode as it arrives -> (c) line 0.7s later */
   let lastShowAt = 0;
   function showLine(i) {
@@ -1339,11 +1377,11 @@ window._sectionJump = function _sectionJump(target) {
     const { sel, text } = lines[idx];
     const section = sel ? document.querySelector(sel) : null;
     if (section) {
-      /* Prompt 22: eased through Lenis when it runs, native otherwise */
-      if (window._lenis) window._lenis.scrollTo(section, { duration: 1.8 });
-      else section.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth', block: 'start' });
-      timers.push(setTimeout(() => decodeSection(section), REDUCED_MOTION ? 0 : 550));
-      timers.push(setTimeout(() => speak(text), REDUCED_MOTION ? 60 : 1250));
+      /* slow enough to read the page going past; longer lines, longer rides */
+      const scrollMs = Math.min(6000, 1800 + text.length * 40);
+      guidedScroll(section, scrollMs);
+      timers.push(setTimeout(() => decodeSection(section), REDUCED_MOTION ? 0 : Math.round(scrollMs * 0.55)));
+      timers.push(setTimeout(() => speak(text), REDUCED_MOTION ? 60 : Math.round(scrollMs * 0.8)));
     } else {
       timers.push(setTimeout(() => speak(text), 300));
     }
@@ -1376,6 +1414,7 @@ window._sectionJump = function _sectionJump(target) {
     isOpen = false;
     clearTimers();
     if ('speechSynthesis' in window) try { speechSynthesis.cancel(); } catch (err) {}
+    if (window._lenis) try { window._lenis.scrollTo(window.scrollY, { immediate: true }); } catch (err) {}
     bar.classList.remove('is-live', 'is-speaking');
     barLabel.textContent = 'HOLD SPACE FOR AI AGENT';
     window.playTransition(() => {
@@ -1385,6 +1424,15 @@ window._sectionJump = function _sectionJump(target) {
 
   /* tap the live bar to stop the tour early (ESC works too) */
   bar.addEventListener('click', () => { if (isOpen) closeGuide(); });
+
+  /* V5: the visitor grabs the wheel, the agent politely leaves. Any
+     manual scroll input (wheel, touch drag, scroll keys) closes the
+     tour instantly instead of fighting the guided drive. */
+  ['wheel', 'touchmove'].forEach(ev =>
+    addEventListener(ev, () => { if (isOpen) closeGuide(); }, { passive: true }));
+  addEventListener('keydown', (e) => {
+    if (isOpen && /^(ArrowUp|ArrowDown|PageUp|PageDown|Home|End)$/.test(e.key)) closeGuide();
+  });
 })();
 
 /* ─── PROMPT 21: SCRAMBLE-ON-SCROLL EVERYWHERE ────────────────
@@ -1710,15 +1758,15 @@ window._sectionJump = function _sectionJump(target) {
         finaleTimers.push(setTimeout(() => playSfx('assets/sfx/scramble.mp3', 0.08), i * 90));
       });
       /* after the last letter lands: one subtle scramble over the
-         footer mono links (the visible roll-text of each) */
+         footer mono links */
       finaleTimers.push(setTimeout(() => {
-        document.querySelectorAll('.footer__link .roll-text:not(.roll-text--dup)')
+        document.querySelectorAll('.footer__link')
           .forEach(el => window.scrambleText(el, { duration: 350 }));
         finaleRunning = false;
       }, letters.length * 90 + 550));
     } else {
       /* reduced motion: letters simply appear, links decode instantly */
-      document.querySelectorAll('.footer__link .roll-text:not(.roll-text--dup)')
+      document.querySelectorAll('.footer__link')
         .forEach(el => window.scrambleText(el, { duration: 0 }));
       finaleRunning = false;
     }
