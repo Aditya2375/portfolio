@@ -1229,26 +1229,33 @@ window._sectionJump = function _sectionJump(target) {
   });
   addEventListener('keyup', (e) => { if (e.code === 'Space') cancelHold(); });
 
-  /* The docked panel */
-  const panel = document.createElement('aside');
-  panel.className = 'guide-panel';
-  panel.setAttribute('role', 'dialog');
-  panel.setAttribute('aria-label', 'Site guide');
-  panel.innerHTML =
-    '<p class="guide-panel__kicker">//AI AGENT</p>' +
-    '<p class="guide-panel__line" aria-live="polite"></p>' +
-    '<span class="guide-panel__wave" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
-    '<div class="guide-panel__controls">' +
-      '<button type="button" data-guide="prev">PREV</button>' +
-      '<button type="button" data-guide="next">NEXT</button>' +
-      '<button type="button" data-guide="close">CLOSE</button>' +
-    '</div>' +
-    (next ? `<a class="guide-panel__nextpage" href="${next.href}" hidden><span>NEXT</span><span>${next.name} →</span></a>` : '');
-  document.body.appendChild(panel);
-  const lineEl = panel.querySelector('.guide-panel__line');
-  const prevBtn = panel.querySelector('[data-guide="prev"]');
-  const nextBtn = panel.querySelector('[data-guide="next"]');
-  const nextRow = panel.querySelector('.guide-panel__nextpage');
+  /* V4: the bottom-right text panel is gone - the agent is voice plus
+     on-page decode only. The hold bar doubles as the status pill while
+     the agent speaks, and as the stop switch (tap it or press ESC). */
+  const barLabel = bar.querySelector('.guide-hold__label');
+
+  /* V4: a female voice for the agent. Chrome ships several; pick the
+     best known female one, else let a raised pitch carry the default.
+     The voice list can arrive async, so the cache resets on change. */
+  let voiceCache = null;
+  function pickVoice() {
+    if (voiceCache) return voiceCache;
+    const vs = speechSynthesis.getVoices();
+    if (!vs.length) return null;
+    const score = (v) => {
+      const n = v.name.toLowerCase();
+      if (n.includes('female')) return 3;
+      if (/zira|samantha|victoria|karen|moira|tessa|fiona|susan|allison|ava|serena|kate|stephanie|catherine|joelle|aditi|swara|kalpana|neerja|lekha/.test(n)) return 2;
+      if (n.includes('google us english')) return 1; /* reads female */
+      return 0;
+    };
+    const best = vs.slice().sort((a, b) => score(b) - score(a))[0];
+    if (score(best) > 0) voiceCache = best;
+    return voiceCache;
+  }
+  if ('speechSynthesis' in window) {
+    speechSynthesis.onvoiceschanged = () => { voiceCache = null; };
+  }
 
   let idx = 0, isOpen = false, robotFlip = false;
   let timers = [];
@@ -1268,29 +1275,30 @@ window._sectionJump = function _sectionJump(target) {
 
   /* (c) the line itself: robot sting, waveform on, scramble in, vibrate */
   function speak(text) {
-    /* v3: the agent actually READS the line aloud (browser speech
-       synthesis, only when the visitor entered with sound). The old
-       robot blip went away with it - it read as a random noise. */
+    /* v3/v4: the agent READS the line aloud - browser speech synthesis,
+       female voice (V4), only with sound on. No on-screen transcript:
+       the section's own decode is the visual. */
     if (window.SOUND_ON && 'speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.rate = 1.05; u.pitch = 0.95; u.volume = 0.9;
+        const v = pickVoice();
+        if (v) u.voice = v;
+        u.rate = 1.04;
+        u.pitch = v ? 1.0 : 1.25; /* unknown default voice: pitch reads feminine */
+        u.volume = 0.9;
         /* Chrome drops an utterance spoken in the same tick as cancel();
-           the tiny delay (tracked in timers, so CLOSE can kill it)
+           the tiny delay (tracked in timers, so stop can kill it)
            makes every line actually sound. */
         timers.push(setTimeout(() => {
           try { speechSynthesis.speak(u); } catch (err) { /* no-op */ }
         }, 60));
-      } catch (err) { /* speech unavailable: text still renders */ }
+      } catch (err) { /* speech unavailable: the tour still runs */ }
     }
     try { if ('vibrate' in navigator) navigator.vibrate(25); } catch (err) { /* no-op */ }
-    panel.classList.add('is-speaking');
-    lineEl.dataset.scrambleText = text;
+    bar.classList.add('is-speaking');
     const dur = REDUCED_MOTION ? 0 : Math.min(1100, 220 + text.length * 14);
-    window.scrambleText(lineEl, { duration: dur });
-    if (REDUCED_MOTION) lineEl.textContent = text;
-    timers.push(setTimeout(() => panel.classList.remove('is-speaking'), dur + 150));
+    timers.push(setTimeout(() => bar.classList.remove('is-speaking'), dur + 150));
   }
 
   /* (a) scroll -> (b) decode as it arrives -> (c) line 0.7s later */
@@ -1312,27 +1320,24 @@ window._sectionJump = function _sectionJump(target) {
     } else {
       timers.push(setTimeout(() => speak(text), 300));
     }
-    prevBtn.disabled = idx === 0;
-    nextBtn.disabled = idx === lines.length - 1;
-    if (nextRow) nextRow.hidden = idx !== lines.length - 1;
-    /* Auto-tour (review round): after the line lands, the agent moves
-       to the next section on its own - no clicks needed. Manual
-       PREV/NEXT re-enters the same flow at that line. */
+    /* Auto-tour: after each line lands the agent moves on by itself;
+       after the LAST line it closes itself with the blackout out. */
     const speakDur = REDUCED_MOTION ? 0 : Math.min(1100, 220 + text.length * 14);
     const readPause = 2200 + text.length * 35;
-    if (idx < lines.length - 1) {
-      timers.push(setTimeout(() => { if (isOpen) showLine(idx + 1); },
-        (REDUCED_MOTION ? 60 : 1250) + speakDur + readPause));
-    }
+    timers.push(setTimeout(() => {
+      if (!isOpen) return;
+      if (idx < lines.length - 1) showLine(idx + 1);
+      else closeGuide();
+    }, (REDUCED_MOTION ? 60 : 1250) + speakDur + readPause));
   }
 
   function openGuide() {
     if (isOpen) return;
     isOpen = true;
     cancelHold();
-    bar.classList.add('is-hidden');
+    bar.classList.add('is-live');
+    barLabel.textContent = 'AI AGENT SPEAKING — ESC TO STOP';
     window.playTransition(() => {
-      panel.classList.add('is-open');
       idx = 0;
       /* first line after the panels open back out */
       setTimeout(() => showLine(0), REDUCED_MOTION ? 60 : 500);
@@ -1344,16 +1349,15 @@ window._sectionJump = function _sectionJump(target) {
     isOpen = false;
     clearTimers();
     if ('speechSynthesis' in window) try { speechSynthesis.cancel(); } catch (err) {}
+    bar.classList.remove('is-live', 'is-speaking');
+    barLabel.textContent = 'HOLD SPACE FOR AI AGENT';
     window.playTransition(() => {
-      panel.classList.remove('is-open', 'is-speaking');
-      bar.classList.remove('is-hidden');
       /* the visitor stays exactly where the agent stopped */
     }, { mode: 'sides' });
   }
 
-  prevBtn.addEventListener('click', () => showLine(idx - 1));
-  nextBtn.addEventListener('click', () => showLine(idx + 1));
-  panel.querySelector('[data-guide="close"]').addEventListener('click', closeGuide);
+  /* tap the live bar to stop the tour early (ESC works too) */
+  bar.addEventListener('click', () => { if (isOpen) closeGuide(); });
 })();
 
 /* ─── PROMPT 21: SCRAMBLE-ON-SCROLL EVERYWHERE ────────────────
