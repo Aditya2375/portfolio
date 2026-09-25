@@ -24,7 +24,7 @@ const PAGE_ID = document.body.dataset.page || 'home';
 const PAGE_TRACKS = {
   home:      'assets/music/hero.mp3',
   academics: 'assets/music/education.mp3',
-  projects:  'assets/music/projects.mp3',
+  projects:  'assets/music/contact.mp3', /* V8 item 4: was projects.mp3 (81bpm, plodding - he called it pale); contact.mp3 is the spare track, brighter 117bpm */
   beyond:    'assets/music/about.mp3',
   community: 'assets/music/skills.mp3',
 };
@@ -120,10 +120,20 @@ const musicEngine = (() => {
     setDeckVolume(active, targetVolume(), 300);
   }
 
+  /* V8 item 5: page-to-page handoff. The outgoing page ramps its deck
+     to silence under the cover wipe; the incoming page fades up from 0
+     (gain always starts at 0). To the ear it reads as one continuous
+     crossfade instead of the old hard cut. */
+  function fadeOutAll(rampMs = 650) {
+    if (!currentTrack) return;
+    setDeckVolume(active, 0, rampMs);
+  }
+
   return {
     ensureContext,
     playTrack,
     crossfadeTo,
+    fadeOutAll,
     setMuted,
     isMuted: () => muted,
     get currentTrack() { return currentTrack; },
@@ -1159,6 +1169,7 @@ window._sectionJump = function _sectionJump(target) {
       'community.html': '05 - COMMUNITY'
     };
     const tag = PAGE_TAGS[url.pathname.split('/').pop()] || '';
+    if (window.SOUND_ON) musicEngine.fadeOutAll(700); /* V8 item 5: fade the track out under the cover - the next page fades its own in */
     window.playTransition(() => {
       sessionStorage.setItem('ak-transition-arrive', '1');
       sessionStorage.setItem('ak-transition-label', tag);
@@ -1236,8 +1247,8 @@ window._sectionJump = function _sectionJump(target) {
   bar.className = 'guide-hold';
   bar.innerHTML =
     '<span class="guide-hold__fill" aria-hidden="true"></span>' +
-    '<span class="guide-hold__label">HOLD SPACE FOR AI AGENT</span>' + waveHTML;
-  bar.setAttribute('aria-label', 'Hold space, or press and hold, for the AI agent');
+    '<span class="guide-hold__label">PRESS AND HOLD FOR AI AGENT</span>' + waveHTML;
+  bar.setAttribute('aria-label', 'Press and hold for the AI agent');
   document.body.appendChild(bar);
 
   const HOLD_MS = 900;
@@ -1388,7 +1399,14 @@ window._sectionJump = function _sectionJump(target) {
   let lastShowAt = 0;
   function showLine(i) {
     const now = Date.now();
-    if (now - lastShowAt < 900) return; /* v3: no accidental section skips */
+    if (now - lastShowAt < 900) {
+      /* V8: never DROP the line - a fast-ending utterance (speech error,
+         instant ceiling) used to advance inside the throttle window and
+         the tour froze on line 0 forever, page never scrolling again.
+         Wait out the window and fire the same line instead. */
+      timers.push(setTimeout(() => showLine(i), 900 - (now - lastShowAt) + 40));
+      return;
+    }
     lastShowAt = now;
     idx = Math.max(0, Math.min(lines.length - 1, i));
     clearTimers();
@@ -1426,20 +1444,38 @@ window._sectionJump = function _sectionJump(target) {
     barLabel.textContent = 'AI AGENT SPEAKING — ESC TO STOP';
     window.playTransition(() => {
       idx = 0;
+      window._tourActive = true; /* V8: GSAP ticker parks Lenis while this is set - no scroll fight, belt + braces on top of lenis.stop() */
       if (window._lenis) try { window._lenis.stop(); } catch (err) {} /* V6: rAF drive owns the tour */
-      /* first line after the panels open back out */
-      setTimeout(() => showLine(0), REDUCED_MOTION ? 60 : 500);
+      /* V8 item 1: from ANYWHERE on the page, ride to the absolute top
+         first - the agent always starts from the hero, so the first line
+         plays stationary at the top and every later ride is a real gap. */
+      const begin = () => setTimeout(() => showLine(0), REDUCED_MOTION ? 60 : 350);
+      if (REDUCED_MOTION) { window.scrollTo({ top: 0, behavior: 'instant' }); begin(); return; }
+      const startY = window.scrollY;
+      if (startY < 2) { begin(); return; }
+      const rideMs = Math.min(9000, Math.max(1400, startY / 0.455)); /* same ~455px/s pace as the section rides */
+      const t0 = performance.now();
+      (function step(now) {
+        if (!isOpen) return;
+        const p = Math.min((now - t0) / rideMs, 1);
+        const e = 1 - Math.pow(1 - p, 3); /* ease-out: brisk start, gentle landing */
+        window.scrollTo({ left: 0, top: startY * (1 - e), behavior: 'instant' });
+        if (p < 1) { requestAnimationFrame(step); return; }
+        window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
+        begin();
+      })(t0);
     }, { mode: 'sides' });
   }
 
   function closeGuide() {
     if (!isOpen) return;
     isOpen = false;
+    window._tourActive = false;
     clearTimers();
     if ('speechSynthesis' in window) try { speechSynthesis.cancel(); } catch (err) {}
     if (window._lenis) try { window._lenis.start(); window._lenis.scrollTo(window.scrollY, { immediate: true }); } catch (err) {}
     bar.classList.remove('is-live', 'is-speaking');
-    barLabel.textContent = 'HOLD SPACE FOR AI AGENT';
+    barLabel.textContent = 'PRESS AND HOLD FOR AI AGENT';
     window.playTransition(() => {
       /* the visitor stays exactly where the agent stopped */
     }, { mode: 'sides' });
@@ -1467,16 +1503,25 @@ window._sectionJump = function _sectionJump(target) {
    scrambleText() directly. Reduced-motion: the engine no-ops, so
    text simply appears. */
 (function initScrollScramble() {
-  const targets = [...document.querySelectorAll('.section h2, .project-card__title')]
-    .filter(el => el.children.length === 0 && el.textContent.trim());
+  /* V8 item 3: EVERYTHING written decodes in as it scrolls into view,
+     site-wide - headings, paragraphs, list rows, card titles, hero sub,
+     footer copy. Leaves only (elements with child markup keep their
+     links/spans intact); anything another mechanic already owns
+     (data-scramble-text holders like the beyond hold-reveal stats) is
+     left alone. Replays on every entry, never with sound (the tick is
+     dead for good), reduced-motion still no-ops in the engine. */
+  const targets = [...document.querySelectorAll(
+    '.section h1, .section h2, .section h3, .section p, .section li, ' +
+    '.project-card__title, .hero__sub, .footer p, .footer li')]
+    .filter(el => el.children.length === 0 && el.textContent.trim() && !el.dataset.scrambleText);
   if (!targets.length) return;
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
       /* V4: replays on every entry - no unobserve */
-      if (!entry.target._scrambling) window.scrambleText(entry.target, { tick: true });
+      if (!entry.target._scrambling) window.scrambleText(entry.target, { duration: 450 });
     });
-  }, { threshold: 0.6 });
+  }, { threshold: 0.35 });
   targets.forEach(el => io.observe(el));
 })();
 
@@ -1518,7 +1563,7 @@ window._sectionJump = function _sectionJump(target) {
      two independent rAF loops would drift a frame apart and judder. */
   if (window._lenis) {
     window._lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => window._lenis.raf(time * 1000));
+    gsap.ticker.add((time) => { if (!window._tourActive) window._lenis.raf(time * 1000); });
     gsap.ticker.lagSmoothing(0); /* no catch-up jumps after tab switches */
   }
 
