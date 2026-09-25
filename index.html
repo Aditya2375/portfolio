@@ -53,7 +53,7 @@
   <div class="scroll-progress" aria-hidden="true"></div>
   <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true">
   <div class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
-    <div class="nav-overlay__bg" aria-hidden="true"><div class="nav-overlay__bg-wall"></div><div class="nav-overlay__bg-floor"></div></div>
+    <div class="nav-overlay__photo" aria-hidden="true"><img src="assets/bg/beyond-sport.jpg" alt="" loading="lazy"></div><div class="nav-overlay__bg" aria-hidden="true"><div class="nav-overlay__bg-wall"></div><div class="nav-overlay__bg-floor"></div></div>
     <div class="nav-overlay__inner">
       <label for="menu-toggle" class="nav-overlay__close" aria-label="Close navigation menu">
         <span class="section-label">✕ CLOSE</span>
@@ -106,7 +106,12 @@
     </nav>
   </header>
 
-  <main>
+    <!-- V5 background photo credits (CC-licensed, Openverse):
+       home-contact: "A hand presses the dial of a vintage rotary telephone on a desk next to a sleek laptop" by Shixart1985 - by (https://creativecommons.org/licenses/by/2.0/) - https://commons.wikimedia.org/w/index.php?curid=190999318
+       home-skills: "HTML Code" by Sebastian Fuss - by-sa (https://creativecommons.org/licenses/by-sa/2.0/) - https://www.flickr.com/photos/37868239@N02/5848333881
+       home-projects: "The completed workplace" by yprime - by (https://creativecommons.org/licenses/by/2.0/) - https://www.flickr.com/photos/24613260@N06/5569638156
+       home-about: "University of Virginia" by Phil Roeder - by - https://www.flickr.com/photos/88876166@N00/5551813436 -->
+<main>
     <!-- SHARED: keep identical on all 5 pages -->
     <!-- ── HERO: 12-frame face-turn scroll sequence (Prompt 9G) ──
          300vh scroll stage; a sticky 100svh screen holds 12 stacked frames.
@@ -181,7 +186,8 @@
     </section>
 
     <!-- ── ABOUT ──────────────────────────────────────── -->
-    <section class="section about" id="about" aria-labelledby="about-heading">
+    <section class="section about section--photo" id="about"
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/home-about.jpg" alt="" loading="lazy"></div> aria-labelledby="about-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">001 ABOUT</p>
@@ -209,7 +215,8 @@
     </section>
 
     <!-- ── SKILLS ─────────────────────────────────────── -->
-    <section class="section skills bg-accent border-t-[rgba(0,0,0,0.12)]" id="skills" aria-labelledby="skills-heading">
+    <section class="section skills border-t-[rgba(0,0,0,0.12)] section--photo" id="skills"
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/home-skills.jpg" alt="" loading="lazy"></div> aria-labelledby="skills-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">002 SKILLS</p>
@@ -256,7 +263,8 @@
     </section>
 
     <!-- ── FEATURED PROJECTS ────────────────────────────────────── -->
-    <section class="section projects" id="projects" aria-labelledby="projects-heading">
+    <section class="section projects section--photo" id="projects"
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/home-projects.jpg" alt="" loading="lazy"></div> aria-labelledby="projects-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">003 FEATURED PROJECTS</p>
@@ -310,7 +318,8 @@
     </section>
 
     <!-- ── CONTACT ────────────────────────────────────── -->
-    <section class="section contact" id="contact" aria-labelledby="contact-heading">
+    <section class="section contact section--photo" id="contact"
+      <div class="section-bg" aria-hidden="true"><img src="assets/bg/home-contact.jpg" alt="" loading="lazy"></div> aria-labelledby="contact-heading">
       <div class="container">
         <div class="section__header">
           <p class="section-label">005 CONTACT</p>
