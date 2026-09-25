@@ -117,10 +117,10 @@
          <picture> picks the set: wide screens (min-aspect-ratio 1/1) download
          only the 16:9 landscape set (face right of centre, headline over the
          dark left half); phones and portrait tablets download only the 4:5 set. -->
-    <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 12">
-      <!-- FACE-CLIP DROP-IN: when the AI face video lands, add
-           data-face-clip="assets/video/face-turn.mp4" to this tag -
-           script.js swaps the frame stack for the scroll-scrubbed clip. -->
+    <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 12" data-face-clip="assets/video/face-turn.mp4" data-face-clip-portrait="assets/video/face-turn-vertical.mp4">
+      <!-- FACE-CLIP ACTIVE: script.js swaps the 12-frame stack for the
+           scroll-scrubbed AI clip (assets/video/face-turn.mp4). The frames
+           stay in the DOM as the no-JS / reduced-motion / pre-load fallback. -->
       <div class="hero-sticky">
         <!-- Frame stack: frame01 (side profile) sits at the bottom, frame12
              (facing camera) on top. Each frame carries --i; the stage carries
