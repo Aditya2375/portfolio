@@ -1847,6 +1847,7 @@ window._sectionJump = function _sectionJump(target) {
       '<h3 class="prow-overlay__title"></h3>' +
       '<div class="prow-overlay__body"></div>' +
       '<p class="prow-overlay__hint section-label">ESC OR TAP OUTSIDE TO CLOSE</p>' +
+      '<span class="prow-overlay__scan" aria-hidden="true"></span>' +
     '</div>';
   document.body.appendChild(overlay);
   const kickerEl = overlay.querySelector('.prow-overlay__kicker');
@@ -1925,7 +1926,7 @@ window._sectionJump = function _sectionJump(target) {
    it. Lerp-driven so it glides instead of snapping. */
 (function initProwTilt() {
   if (REDUCED_MOTION || !window.matchMedia('(pointer: fine)').matches) return;
-  document.querySelectorAll('.prow').forEach((row) => {
+  document.querySelectorAll('.prow__card').forEach((row) => { /* V6 item 4: tilt the KPR card, never the text */
     let rx = 0, ry = 0, tx = 0, ty = 0, raf = null;
     function loop() {
       rx += (tx - rx) * 0.12;
