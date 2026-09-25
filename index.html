@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=4">
 
   <!-- Tailwind Play CDN, pinned 3.4.16 (Prompt 27): compiles the utility
        classes in the browser at runtime, so this page needs internet for
@@ -95,11 +95,11 @@
         <a href="index.html" class="navbar__logo font-display text-[1.1rem] font-black tracking-[-0.02em] text-ink uppercase">AK</a>
       </div>
       <ul class="navbar__links hidden md:flex md:items-center md:gap-4 md:flex-wrap md:justify-center" role="list">
-        <li><a href="#about" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">About</span><span class="roll-text roll-text--dup" aria-hidden="true">About</span></span></span></a></li>
-        <li><a href="#skills" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Skills</span><span class="roll-text roll-text--dup" aria-hidden="true">Skills</span></span></span></a></li>
-        <li><a href="#projects" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Projects</span><span class="roll-text roll-text--dup" aria-hidden="true">Projects</span></span></span></a></li>
-        <li><a href="#explore" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Explore</span><span class="roll-text roll-text--dup" aria-hidden="true">Explore</span></span></span></a></li>
-        <li><a href="#contact" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none"><span class="roll-mask"><span class="roll-stack"><span class="roll-text">Contact</span><span class="roll-text roll-text--dup" aria-hidden="true">Contact</span></span></span></a></li>
+        <li><a href="#about" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">About</a></li>
+        <li><a href="#skills" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">Skills</a></li>
+        <li><a href="#projects" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">Projects</a></li>
+        <li><a href="#explore" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">Explore</a></li>
+        <li><a href="#contact" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">Contact</a></li>
       </ul>
       <a href="index.html#contact" class="btn btn--outline navbar__cta hidden md:inline-flex">Contact</a>
     </nav>
@@ -113,57 +113,48 @@
          only the 16:9 landscape set (face right of centre, headline over the
          dark left half); phones and portrait tablets download only the 4:5 set. -->
     <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 12">
+      <!-- FACE-CLIP DROP-IN: when the AI face video lands, add
+           data-face-clip="assets/video/face-turn.mp4" to this tag -
+           script.js swaps the frame stack for the scroll-scrubbed clip. -->
       <div class="hero-sticky">
         <!-- Frame stack: frame01 (side profile) sits at the bottom, frame12
              (facing camera) on top. Each frame carries --i; the stage carries
              --frame-count; the CSS slices the scroll range from those two. -->
         <div class="hero-bg">
           <picture class="portrait-frame portrait-frame--first" style="--i: 1">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame01_16x9.jpg">
             <img src="assets/frames/frame01.jpg" alt="" aria-hidden="true" width="1122" height="1402" fetchpriority="high">
           </picture>
           <picture class="portrait-frame" style="--i: 2">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame02_16x9.jpg">
             <img src="assets/frames/frame02.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 3">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame03_16x9.jpg">
             <img src="assets/frames/frame03.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 4">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame04_16x9.jpg">
             <img src="assets/frames/frame04.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 5">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame05_16x9.jpg">
             <img src="assets/frames/frame05.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 6">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame06_16x9.jpg">
             <img src="assets/frames/frame06.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 7">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame07_16x9.jpg">
             <img src="assets/frames/frame07.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 8">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame08_16x9.jpg">
             <img src="assets/frames/frame08.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 9">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame09_16x9.jpg">
             <img src="assets/frames/frame09.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 10">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame10_16x9.jpg">
             <img src="assets/frames/frame10.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 11">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame11_16x9.jpg">
             <img src="assets/frames/frame11.jpg" alt="" aria-hidden="true" width="1122" height="1402" decoding="async">
           </picture>
           <picture class="portrait-frame portrait-frame--default" style="--i: 12">
-            <source media="(min-aspect-ratio: 1/1)" srcset="assets/frames/landscape/frame12_16x9.jpg">
             <img src="assets/frames/frame12.jpg" alt="AI-generated portrait of Aditya Kulkarni" width="1122" height="1402" decoding="async">
           </picture>
         </div>
@@ -399,6 +390,6 @@
   <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js?v=4"></script>
 </body>
 </html>

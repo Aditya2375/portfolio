@@ -366,7 +366,15 @@ a:focus-visible .roll-stack {
    the face stays right of centre so the headline sits over the empty
    dark left half. */
 @media (min-aspect-ratio: 1/1) {
-  .portrait-frame img { object-position: 70% 30%; }
+  .portrait-frame img { object-position: 50% 28%; }
+}
+
+/* V4 face-clip hook: when script.js swaps in the AI video (stage carries
+   data-face-clip), the frame stack hides and the clip fills the hero. */
+.hero--clip .portrait-frame { display: none; }
+.hero-clip {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 28%;
 }
 
 /* frame01, the side profile every visit starts on: always visible at the
@@ -733,7 +741,7 @@ a:focus-visible .roll-stack {
       animation: portraitFadeIn linear both;
       animation-timeline: --hero;
       animation-range:
-        contain calc((var(--i) - 2.5) / (var(--frame-count) - 1) * 77%)
+        contain max(0%, calc((var(--i) - 2.5) / (var(--frame-count) - 1) * 77%))
         contain calc(var(--i) / (var(--frame-count) - 1) * 77%);
     }
 
@@ -876,7 +884,7 @@ a:focus-visible .roll-stack {
   transition: background-color var(--dur-base) var(--easing);
 }
 .navbar--scrolled {
-  background-color: rgba(240, 240, 240, 0.82) !important;
+  background-color: rgba(216, 216, 216, 0.92) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -1246,29 +1254,11 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* ENTER buttons stay dimmed until preloading finishes (or the 6s
-   safety timeout fires), so the readout reads as the loading state. */
-.intro__actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-sm);
-  opacity: 0.35;
-  transition: opacity var(--dur-base) var(--easing);
-}
-.intro--ready .intro__actions { opacity: 1; }
-
-.intro__btn {
-  background-color: transparent;
-  color: var(--clr-bg);
-  outline: 1px solid var(--clr-bg);
-  outline-offset: -1px;
-  border: none;
-}
-.intro__btn:hover, .intro__btn:focus-visible {
-  background-color: var(--clr-bg);
-  color: var(--clr-text);
-}
+/* V4: the ENTER buttons are gone - the intro plays itself once the
+   preload hits 100% (or the 6s safety fires) and swoops into the site
+   through the counter of the D. The D span only exists so JS can
+   measure where the camera should dive. */
+.intro__d { display: inline-block; }
 
 /* While the intro gates the first visit, hold every load-in animation
    at its first frame; removing .intro-gated runs them on ENTER. */
@@ -1969,6 +1959,17 @@ html.lenis, html.lenis body { height: auto; }
 }
 .hero-seq.seq-sub .hero__sub { opacity: 1; transform: none; }
 .hero-seq.seq-cta .hero__ctas { opacity: 1; transform: none; }
+
+/* V4 exit beat: as About arrives the whole hero text block lifts up and
+   away - he asked for the name to "go up" as About comes in - while the
+   face holds centre-frame underneath. Scrolling back up reverses it. */
+.hero-seq .hero__content {
+  transition: transform 0.7s var(--easing), opacity 0.7s var(--easing);
+}
+.hero-seq.seq-exit .hero__content {
+  transform: translateY(-32vh);
+  opacity: 0;
+}
 
 
 /* ─── V3: PHOTO SECTION BACKGROUNDS (Beyond The Terminal) ─────
