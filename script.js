@@ -1659,27 +1659,52 @@ window._sectionJump = function _sectionJump(target) {
   setInterval(tick, 30000);
 })();
 
-/* ─── V4: FACE-CLIP HERO (drop-in hook for the AI video) ─────
-   When Aditya's generated face clip lands, set ONE attribute on the
-   hero stage - data-face-clip="assets/video/face-turn.mp4" - and this
-   swaps the 12-frame crossfade stack for the video, scrubbing its
-   playhead with scroll progress (the smooth turn he wants, zero
-   stepped frames). With the attribute absent everything stays as-is.
+/* ─── V4/V10: FACE-CLIP HERO (the AI video is live) ───────────
+   The hero stage carries data-face-clip="assets/video/face-turn.mp4";
+   this swaps the 12-frame crossfade stack for the video, scrubbing its
+   playhead with scroll progress (the smooth turn he wanted, zero
+   stepped frames). The frame stack stays in the DOM underneath as the
+   no-JS / reduced-motion / still-loading fallback - hero--clip (which
+     hides the frames) is only added once the video can paint.
    The video is decorative: muted, playsinline, preload auto. */
 (function initFaceClip() {
   const stage = document.querySelector('.hero-stage');
   if (!stage || !stage.dataset.faceClip) return;
+  if (REDUCED_MOTION) return; /* reduced motion keeps the static frame12 hero */
   const bg = stage.querySelector('.hero-bg');
   if (!bg) return;
   const video = document.createElement('video');
   video.muted = true;
   video.playsInline = true;
   video.preload = 'auto';
-  video.src = stage.dataset.faceClip;
   video.setAttribute('aria-hidden', 'true');
   video.className = 'hero-clip';
-  bg.appendChild(video);
-  stage.classList.add('hero--clip'); /* CSS hides the frame stack */
+  /* two masters: the wide clip for landscape, a 9:19.5 pan-and-scan
+     reframe for portrait phones (the raw cover-crop left the face huge
+     and half out of frame - his 'too zoomed in' note). Picked by
+     orientation, swapped on rotate. */
+  function portrait() { return innerWidth < innerHeight && stage.dataset.faceClipPortrait; }
+  function src() { return portrait() ? stage.dataset.faceClipPortrait : stage.dataset.faceClip; }
+  function poster() { return portrait() ? 'assets/video/face-turn-poster-portrait.jpg' : 'assets/video/face-turn-poster.jpg'; }
+  let mode = null;
+  function applySource() {
+    const m = portrait() ? 'p' : 'l';
+    if (m === mode) return;
+    mode = m;
+    video.poster = poster();
+    video.src = src();
+    video.load();
+  }
+  applySource();
+  /* keep the frame stack visible until the clip can actually paint -
+     no black flash while ~1.5MB downloads */
+  video.addEventListener('loadeddata', () => {
+    if (!video.parentNode) {
+      bg.appendChild(video);
+      stage.classList.add('hero--clip'); /* CSS hides the frame stack */
+    }
+    scrub();
+  });
   let ticking = false;
   function scrub() {
     ticking = false;
@@ -1688,15 +1713,15 @@ window._sectionJump = function _sectionJump(target) {
     const range = r.height - innerHeight;
     if (range <= 0) return;
     const p = Math.min(1, Math.max(0, -r.top / range));
-    /* frames hold through the first 77% in the image version; the clip
-       maps the whole turn onto the same window, then holds its last
-       frame while About scrolls in. */
+    /* the clip maps the whole turn onto the same 77% window the frames
+       used, then holds its last frame while About scrolls in. */
     const t = Math.min(1, p / 0.77) * video.duration;
     if (Math.abs(video.currentTime - t) > 0.04) video.currentTime = t;
   }
   addEventListener('scroll', () => {
     if (!ticking) { ticking = true; requestAnimationFrame(scrub); }
   }, { passive: true });
+  addEventListener('resize', () => { applySource(); scrub(); }, { passive: true });
   video.addEventListener('loadedmetadata', scrub);
   scrub();
 })();
