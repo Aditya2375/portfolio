@@ -1883,3 +1883,33 @@ window._sectionJump = function _sectionJump(target) {
     });
   });
 })();
+
+/* ─── V5: KPR CURSOR TILT ON PROJECT ROWS ───────────────────
+   The row leans toward the cursor in 3D - KPR's card feel. Fine
+   pointers + motion-safe only; rows are fully readable without
+   it. Lerp-driven so it glides instead of snapping. */
+(function initProwTilt() {
+  if (REDUCED_MOTION || !window.matchMedia('(pointer: fine)').matches) return;
+  document.querySelectorAll('.prow').forEach((row) => {
+    let rx = 0, ry = 0, tx = 0, ty = 0, raf = null;
+    function loop() {
+      rx += (tx - rx) * 0.12;
+      ry += (ty - ry) * 0.12;
+      row.style.transform = 'rotateX(' + rx.toFixed(3) + 'deg) rotateY(' + ry.toFixed(3) + 'deg)';
+      if (Math.abs(tx - rx) > 0.005 || Math.abs(ty - ry) > 0.005) {
+        raf = requestAnimationFrame(loop);
+      } else {
+        row.style.transform = (tx === 0 && ty === 0) ? '' : row.style.transform;
+        raf = null;
+      }
+    }
+    function kick() { if (!raf) raf = requestAnimationFrame(loop); }
+    row.addEventListener('pointermove', (e) => {
+      const r = row.getBoundingClientRect();
+      ty = ((e.clientX - r.left) / r.width - 0.5) * 5;  /* rotateY follows x */
+      tx = -((e.clientY - r.top) / r.height - 0.5) * 3; /* rotateX follows y */
+      kick();
+    });
+    row.addEventListener('pointerleave', () => { tx = 0; ty = 0; kick(); });
+  });
+})();
