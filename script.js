@@ -361,16 +361,49 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
   el._scrambling = true;
   const start = performance.now();
 
-  /* V26: fixed-slot decode. His note: mid-scramble the line visibly
-     JUMPS wider - same character count, but in proportional fonts the
-     random uppercase glyphs are wider than the real mix, so the line
-     balloons for a split second before collapsing back. Fix: measure
-     each real character's natural width once, then render every still-
-     scrambled character inside an inline-block slot of exactly that
-     width (overflow clipped, glyph centered). Locked-in real letters
-     render as plain text. The line's width can never change - only the
-     glyphs flicker. */
+  /* V26/V27: fixed-slot decode for SINGLE-LINE text. His note: mid-
+     scramble the line visibly JUMPS wider - same character count, but
+     in proportional fonts the random uppercase glyphs are wider than
+     the real mix. Fix: measure each real character's natural width
+     once, then render every still-scrambled character inside an
+     inline-block slot of exactly that width (overflow clipped, glyph
+     centered). The line's width can never change - only glyphs flicker.
+     V27: slots are single-line ONLY. On multi-line paragraphs the slot
+     boundaries become bogus line-break opportunities and the reflow
+     ballooned the section 17x (the about background "zooming"), so
+     wrapping text decodes with the original same-length string swap -
+     identical character count and identical break points, zero reflow. */
   el.textContent = original; /* normalize any leftover slot spans */
+  const cs0 = getComputedStyle(el);
+  const lh0 = parseFloat(cs0.lineHeight) || parseFloat(cs0.fontSize) * 1.2 || 16;
+  const h0 = el.getBoundingClientRect().height;
+  const singleLine = h0 <= lh0 * 1.7;
+
+  /* V27: height lock for the whole decode. Random glyphs never match the
+     real text's line wrapping, so mid-scramble paragraphs grew or lost
+     lines, the section height oscillated ~200px and the cover background
+     visibly zoomed in and out (his Who I Am recording). Locking the box
+     keeps the section - and its background - perfectly still; a line or
+     two of mid-decode noise is clipped behind overflow:hidden for the
+     fraction of a second it exists, then the real text settles whole. */
+  el.style.height = h0 + 'px';
+  el.style.overflow = 'hidden';
+  function unlock() { el.style.height = ''; el.style.overflow = ''; }
+
+  if (!singleLine) {
+    (function frame(now) {
+      if (!el._scrambling) { unlock(); return; } /* cancelled via scrambleText.cancel() */
+      const p = Math.min((now - start) / duration, 1);
+      const lockCount = Math.floor(p * original.length);
+      let out = original.slice(0, lockCount);
+      for (let i = lockCount; i < original.length; i++) out += scrambleCharFor(original[i]);
+      el.textContent = out;
+      if (p < 1) requestAnimationFrame(frame);
+      else { el.textContent = original; unlock(); el._scrambling = false; }
+    })(performance.now());
+    return;
+  }
+
   const slots = [];
   {
     const frag = document.createDocumentFragment();
@@ -404,11 +437,11 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
   }
 
   (function frame(now) {
-    if (!el._scrambling) return; /* cancelled via scrambleText.cancel() */
+    if (!el._scrambling) { unlock(); return; } /* cancelled via scrambleText.cancel() */
     const p = Math.min((now - start) / duration, 1);
     const lockCount = Math.floor(p * original.length);
     if (p < 1) { render(lockCount); requestAnimationFrame(frame); }
-    else { el.textContent = original; el._scrambling = false; }
+    else { el.textContent = original; unlock(); el._scrambling = false; }
   })(performance.now());
 };
 
