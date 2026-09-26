@@ -360,19 +360,54 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
   const original = el.dataset.scrambleText;
   el._scrambling = true;
   const start = performance.now();
-  let lastTick = 0;
+
+  /* V26: fixed-slot decode. His note: mid-scramble the line visibly
+     JUMPS wider - same character count, but in proportional fonts the
+     random uppercase glyphs are wider than the real mix, so the line
+     balloons for a split second before collapsing back. Fix: measure
+     each real character's natural width once, then render every still-
+     scrambled character inside an inline-block slot of exactly that
+     width (overflow clipped, glyph centered). Locked-in real letters
+     render as plain text. The line's width can never change - only the
+     glyphs flicker. */
+  el.textContent = original; /* normalize any leftover slot spans */
+  const slots = [];
+  {
+    const frag = document.createDocumentFragment();
+    const probes = [];
+    for (const ch of original) {
+      const s = document.createElement('span');
+      s.textContent = ch;
+      frag.appendChild(s);
+      probes.push(s);
+    }
+    el.textContent = '';
+    el.appendChild(frag);
+    for (const s of probes) slots.push(s.getBoundingClientRect().width);
+  }
+
+  function render(lockCount) {
+    const frag = document.createDocumentFragment();
+    if (lockCount > 0) frag.appendChild(document.createTextNode(original.slice(0, lockCount)));
+    for (let i = lockCount; i < original.length; i++) {
+      const s = document.createElement('span');
+      s.style.display = 'inline-block';
+      s.style.width = slots[i] + 'px';
+      s.style.overflow = 'hidden';
+      s.style.textAlign = 'center';
+      s.style.verticalAlign = 'top';
+      s.textContent = scrambleCharFor(original[i]);
+      frag.appendChild(s);
+    }
+    el.textContent = '';
+    el.appendChild(frag);
+  }
 
   (function frame(now) {
     if (!el._scrambling) return; /* cancelled via scrambleText.cancel() */
     const p = Math.min((now - start) / duration, 1);
     const lockCount = Math.floor(p * original.length);
-    let out = original.slice(0, lockCount); // locked-in real letters
-    for (let i = lockCount; i < original.length; i++) out += scrambleCharFor(original[i]);
-    el.textContent = out;
-    /* V7 hotfix: the scramble TICK sound is gone for good - it fired on
-       every section reveal as he scrolled and he wants it off the whole
-       site. The animation stays visual-only; the tick flag is inert. */
-    if (p < 1) requestAnimationFrame(frame);
+    if (p < 1) { render(lockCount); requestAnimationFrame(frame); }
     else { el.textContent = original; el._scrambling = false; }
   })(performance.now());
 };
