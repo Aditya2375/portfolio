@@ -450,7 +450,11 @@ a, button, .btn {
 /* ─── 10. SHARED SECTION STYLES ─────────────────────────────── */
 
 .section {
-  padding: clamp(4rem, 12vh, 8rem) 0;
+  /* V27: svh, not vh - vh tracks the mobile URL bar, so scrolling hid the
+     bar, the viewport grew, every section's padding ballooned ~13px and the
+     cover background visibly zoomed/shifted mid-scroll (his "zoomed in
+     zoomed out, moving left right" in Who I Am). svh is constant. */
+  padding: clamp(4rem, 12svh, 8rem) 0;
   border-top: 1px solid var(--clr-line);
   background-color: var(--clr-bg);
 }
@@ -520,7 +524,7 @@ a, button, .btn {
 .art-frame {
   position: relative;
   width: 100%;
-  height: clamp(300px, 40vh, 500px);
+  height: clamp(300px, 40svh, 500px); /* V27: svh - steady under the URL bar */
   overflow: hidden;
   background-color: var(--clr-bg);
   border: 1px solid var(--clr-line);
@@ -887,7 +891,7 @@ body:has(.menu-checkbox:checked) .nav-overlay {
   flex-direction: column;
   justify-content: space-between;
   height:  100%;
-  padding: clamp(1.5rem, 5vh, 3.5rem) clamp(2rem, 8vw, 6rem);
+  padding: clamp(1.5rem, 5svh, 3.5rem) clamp(2rem, 8vw, 6rem); /* V27: svh */
 }
 
 /* ── Close Control ── */
@@ -2076,12 +2080,12 @@ html.lenis, html.lenis body { height: auto; }
 .prow {
   position: relative;
   overflow: hidden;
-  min-height: 62vh;
+  min-height: 62svh; /* V27: svh - steady under the URL bar */
   display: grid; /* V6 item 4: text left, KPR card right */
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   align-items: center;
   gap: clamp(1.5rem, 4vw, 4rem);
-  padding: clamp(2.5rem, 7vh, 5rem) clamp(1rem, 6vw, 5rem);
+  padding: clamp(2.5rem, 7svh, 5rem) clamp(1rem, 6vw, 5rem); /* V27: svh */
   background-color: #000;
   border-top: 1px solid rgba(255, 255, 255, 0.22);
   cursor: pointer;
@@ -2120,8 +2124,8 @@ html.lenis, html.lenis body { height: auto; }
   position: relative;
   z-index: 1;
   width: 100%;
-  padding-top: clamp(3rem, 8vh, 5rem);
-  padding-bottom: clamp(3rem, 8vh, 5rem);
+  padding-top: clamp(3rem, 8svh, 5rem); /* V27: svh */
+  padding-bottom: clamp(3rem, 8svh, 5rem);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
