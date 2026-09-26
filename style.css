@@ -2696,9 +2696,16 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
         phone cut the face in half - shift the visible window onto it. */
   .portrait-frame img { object-position: 62% 20%; }
 
-  /* 3. AI-agent bar + music button: the floating centered pill covered
-        page content on narrow screens. Dock the bar full-width at the
-        bottom, lift the music button above it, give the page clearance. */
+}
+
+/* ─── V32: MOBILE PASS 2 - tablet + footer ────────────────────
+   Every rule is media-query scoped: viewports above 820px (his
+   desktop is 1440) render exactly as before. */
+
+/* Dock the AI-agent bar + lift the music button on phones AND
+   portrait tablets (at 768px the floating pill collided with the
+   hero scroll hint and covered content). */
+@media (max-width: 820px) {
   .guide-hold {
     left: 0; right: 0; bottom: 0; transform: none;
     width: 100%; justify-content: center;
@@ -2707,4 +2714,21 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
   }
   .music-toggle { bottom: 4.25rem; }
   body { padding-bottom: 3.6rem; }
+}
+
+/* Footer columns: the cols are a 2-track max-content grid (V6), so on
+   phones the Colophon track sized to its longest line and clipped
+   off-screen. minmax(0, 1fr) tracks share the container instead, and
+   long mono lines may wrap. */
+@media (max-width: 700px) {
+  .footer .footer__cols.footer__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.5rem; }
+  .footer .footer__col li { overflow-wrap: break-word; }
+}
+
+/* Tablet navbar (700-900px): brand + five section links + Contact CTA
+   + theme toggle exceeded the bar - the toggle rendered half
+   off-screen. The CTA is redundant (menu overlay + footer both reach
+   Contact); hide it in this band only. */
+@media (min-width: 701px) and (max-width: 900px) {
+  .navbar .navbar__cta { display: none; }
 }
