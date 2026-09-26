@@ -2564,6 +2564,10 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 :root[data-theme="dark"] .hover\:text-ink:hover { color: var(--clr-text) !important; }
 :root[data-theme="dark"] .focus-visible\:text-ink:focus-visible { color: var(--clr-text) !important; }
 
+/* Dark mode: the lavender skills island shifts slightly darker and bluer
+   (his call - light mode keeps the original #968ADF). The island text
+   palette stays as-is. */
+:root[data-theme="dark"] .skills.bg-accent { background-color: #7874D3; }
 /* The lavender skills island keeps its light palette in dark mode. */
 :root[data-theme="dark"] .skills {
   --clr-text: #1B1B1B;
@@ -2626,8 +2630,15 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
   background-color: #D9D7D3; color: #0E0E11;
 }
 
-/* Theme toggle button (top navbar, right of the CONTACT link). */
+/* Theme toggle button (top navbar, far right, right of the CONTACT button).
+   The negative right margin is exactly the toggle's width + gap, so the
+   CONTACT button keeps its original spot and the toggle extends past it.
+   Desktop only - on mobile the CTA is hidden and the toggle is the only
+   actions child, so no margin there. */
 .navbar__actions { display: flex; align-items: center; gap: 0.5rem; }
+@media (min-width: 768px) {
+  .navbar__actions { margin-right: -2.5rem; }
+}
 .theme-toggle {
   display: inline-flex; align-items: center; justify-content: center;
   width: 2rem; height: 2rem; padding: 0; flex: none;
