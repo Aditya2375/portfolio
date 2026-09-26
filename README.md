@@ -1,6 +1,6 @@
 # Aditya Kulkarni - Portfolio
 
-Live: https://aditya2375.github.io/portfolio/
+Live: https://adityakulkarni-eta.vercel.app (backup: https://aditya2375.github.io/portfolio/)
 
 ## About
 
@@ -10,6 +10,7 @@ I'm Aditya Kulkarni, 18, from Pune - studying CS and AI at Scaler School of Tech
 
 - HTML5 (semantic, 5 pages)
 - CSS3 - Flexbox, Grid, custom properties, scroll-driven animations, keyframes, media queries
+- Tailwind CSS 3.4 (CDN) for layout, spacing and typography utilities, with a custom inline config: preflight off, design-token colors (bg-accent / text-ink / border-hairline), md/lg breakpoints matching the site's media queries, and the three brand font stacks
 - Vanilla JavaScript as progressive enhancement (the site works with `script.js` deleted)
 - Lenis (smooth scroll) and GSAP ScrollTrigger from CDN, layered over the CSS so a CDN failure changes nothing
 
@@ -25,13 +26,13 @@ I'm Aditya Kulkarni, 18, from Pune - studying CS and AI at Scaler School of Tech
 - Hold-to-reveal running stat cards
 - Mountains parallax art break
 - Bracket-frame page transitions
-- Contact form
+- Contact section with direct email + social links
 - Footer wordmark finale
 - Responsive down to 375px, reduced-motion friendly throughout
 
 ## Projects
 
-- **Portfolio Workflow** - this very site, designed and built with an AI-assisted workflow (link pending deploy)
+- **Portfolio Workflow** - this very site, designed and built with an AI-assisted workflow - live at https://adityakulkarni-eta.vercel.app
 - **OmniRoute** - local AI coding setup routed through an open-source LLM gateway (no public link - local setup)
 - **Instagram Growth Bot** - follower-growth automation with a scoring engine (no public link)
 - **Junior-Senior Doubt Platform** - doubt-solving with scored answers and askers (no public link)
