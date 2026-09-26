@@ -129,6 +129,15 @@ const musicEngine = (() => {
     setDeckVolume(active, 0, rampMs);
   }
 
+  /* v28: real playback state for the gesture unlock. currentTrack is set
+     optimistically inside playTrack, so a BLOCKED autoplay attempt still
+     leaves currentTrack truthy with nothing playing - guards must ask the
+     deck itself. */
+  function isPlaying() {
+    const d = decks[active];
+    return !!(currentTrack && !d.paused && !d.ended);
+  }
+
   return {
     ensureContext,
     playTrack,
@@ -136,6 +145,7 @@ const musicEngine = (() => {
     fadeOutAll,
     setMuted,
     isMuted: () => muted,
+    isPlaying,
     get currentTrack() { return currentTrack; },
   };
 })();
@@ -153,16 +163,31 @@ function startPageMusic() {
    tap or keypress anywhere starts this page's track and clears the
    TAP FOR SOUND chip if it had appeared. */
 function armGestureUnlock() {
-  const retry = () => {
-    removeEventListener('pointerdown', retry);
-    removeEventListener('keydown', retry);
-    if (!window.SOUND_ON || musicEngine.currentTrack) return;
+  /* v28: first interaction of ANY kind starts the music - tap, click,
+     keypress, touch release, even a scroll attempt. wheel/touchstart are
+     not guaranteed "activation" in Chrome, so those try silently and stay
+     armed; a firm gesture (pointerdown/touchend/keydown) always unlocks.
+     Guards ask isPlaying() (real state), never currentTrack: a blocked
+     attempt sets currentTrack optimistically, which used to swallow every
+     later retry - the "have to go to another page and back" bug. */
+  const EVENTS = ['pointerdown', 'touchend', 'keydown', 'wheel', 'touchstart'];
+  const disarm = () => EVENTS.forEach(e => removeEventListener(e, retry));
+  const retry = (ev) => {
+    if (!window.SOUND_ON) { disarm(); return; }
+    if (musicEngine.isPlaying()) { disarm(); return; }
+    if (ev.type === 'wheel' || ev.type === 'touchstart') {
+      musicEngine.ensureContext();
+      const p = musicEngine.playTrack(PAGE_TRACKS[PAGE_ID] || PAGE_TRACKS.home);
+      if (p && p.catch) p.catch(() => { /* not an activation - stay armed */ });
+      setTimeout(() => { if (musicEngine.isPlaying()) disarm(); }, 350);
+      return;
+    }
+    disarm();
     const chip = document.querySelector('.tap-sound');
     if (chip) chip.remove();
     startPageMusic();
   };
-  addEventListener('pointerdown', retry);
-  addEventListener('keydown', retry);
+  EVENTS.forEach(e => addEventListener(e, retry, { passive: true }));
 }
 
 function showTapForSound() {
@@ -254,14 +279,31 @@ function showTapForSound() {
      tap/keypress anywhere unlocks the soundtrack; the TAP FOR SOUND
      chip stays as the visible fallback. */
   let gestureSeen = false;
-  const onFirstGesture = () => {
+  const GESTURES = ['pointerdown', 'touchend', 'keydown', 'wheel', 'touchstart'];
+  const onFirstGesture = (ev) => {
     gestureSeen = true;
-    removeEventListener('pointerdown', onFirstGesture);
-    removeEventListener('keydown', onFirstGesture);
-    if (entered && window.SOUND_ON && !musicEngine.currentTrack) startSoundtrack();
+    if (!entered) return; // still loading - fire again on the next gesture
+    if (!window.SOUND_ON || musicEngine.isPlaying()) {
+      GESTURES.forEach(e => removeEventListener(e, onFirstGesture));
+      return;
+    }
+    if (ev.type === 'wheel' || ev.type === 'touchstart') {
+      // try silently; stay armed if the browser refuses (not an activation)
+      musicEngine.ensureContext();
+      const p = musicEngine.playTrack('assets/music/intro.mp3', { loop: false });
+      if (p && p.catch) p.catch(() => {});
+      setTimeout(() => {
+        if (musicEngine.isPlaying()) {
+          GESTURES.forEach(e => removeEventListener(e, onFirstGesture));
+          setTimeout(() => { if (window.SOUND_ON) musicEngine.crossfadeTo(PAGE_TRACKS[PAGE_ID] || PAGE_TRACKS.home); }, 700);
+        }
+      }, 350);
+      return;
+    }
+    GESTURES.forEach(e => removeEventListener(e, onFirstGesture));
+    startSoundtrack();
   };
-  addEventListener('pointerdown', onFirstGesture);
-  addEventListener('keydown', onFirstGesture);
+  GESTURES.forEach(e => addEventListener(e, onFirstGesture, { passive: true }));
 
   function startSoundtrack() {
     musicEngine.ensureContext();
