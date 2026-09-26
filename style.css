@@ -2637,3 +2637,21 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 .theme-toggle__moon { display: none; }
 :root[data-theme="dark"] .theme-toggle__sun  { display: none; }
 :root[data-theme="dark"] .theme-toggle__moon { display: block; }
+
+/* ─── V22: LIGHT-MODE FOOTER (complete theme coverage) ────────
+   His call: the theme must reach EVERY surface. The footer is
+   Tailwind-utilities markup, so the light variant re-colors the
+   utility classes under the footer scope. Dark overlays (menu,
+   intro, tap-sound, project overlay) stay dark in both themes -
+   they are overlays, not surfaces. */
+:root[data-theme="light"] .footer.bg-footerblack { background-color: #F2F2F5 !important; }
+:root[data-theme="light"] .footer.text-white,
+:root[data-theme="light"] .footer .text-white { color: #141416 !important; }
+:root[data-theme="light"] .footer .text-\[rgba\(255\,255\,255\,0\.7\)\] { color: rgba(20, 20, 22, 0.66) !important; }
+:root[data-theme="light"] .footer .hover\:text-white:hover { color: #000 !important; }
+:root[data-theme="light"] .footer__wordmark { border-color: rgba(0, 0, 0, 0.12) !important; }
+:root[data-theme="light"] .footer .section-label { color: rgba(0, 0, 0, 0.5); }
+:root[data-theme="light"] .footer .section-label::before { background-color: rgba(0, 0, 0, 0.3); }
+:root[data-theme="light"] .footer__legal::before { background-color: #C7C7CD; }
+:root[data-theme="light"] .footer .text-\[\#545454\] { color: #8A8A90 !important; }
+:root[data-theme="light"] .footer .border-\[rgba\(255\,255\,255\,0\.08\)\] { border-color: rgba(0, 0, 0, 0.08) !important; }
