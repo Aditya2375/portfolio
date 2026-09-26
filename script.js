@@ -928,6 +928,9 @@ window._sectionJump = function _sectionJump(target) {
       valueEl.dataset.scrambleText = real;
       window.scrambleText(valueEl, { duration: 260 });
       if (REDUCED_MOTION) valueEl.textContent = real;
+      /* V25 belt: whatever the decode does, a revealed card ends on the
+         REAL value - never a scrambled leftover. */
+      setTimeout(() => { if (revealed) valueEl.textContent = real; }, 300);
     }
 
     function startHold(e) {
