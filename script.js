@@ -1695,7 +1695,7 @@ window._sectionJump = function _sectionJump(target) {
      orientation, swapped on rotate. */
   function portrait() { return innerWidth < innerHeight && stage.dataset.faceClipPortrait; }
   function src() { return portrait() ? stage.dataset.faceClipPortrait : stage.dataset.faceClip; }
-  function poster() { return portrait() ? 'assets/video/face-turn-poster-portrait.jpg?v=15' : 'assets/video/face-turn-poster.jpg?v=15'; }
+  function poster() { return portrait() ? 'assets/video/face-turn-poster-portrait.jpg?v=21' : 'assets/video/face-turn-poster.jpg?v=21'; }
   let mode = null;
   function applySource() {
     const m = portrait() ? 'p' : 'l';
@@ -2119,4 +2119,26 @@ window._sectionJump = function _sectionJump(target) {
      load in - a light interval keeps the state honest */
   setInterval(update, 1200);
   update();
+})();
+
+/* ─── V21: THEME TOGGLE ───────────────────────────────────────
+   Dark is the default; the button flips and stores the choice.
+   Icons swap in CSS from data-theme - moon shows in dark mode,
+   sun in light. */
+(function () {
+  const btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+  const root = document.documentElement;
+  function sync() {
+    const dark = root.getAttribute('data-theme') === 'dark';
+    btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function () {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ak-theme', next); } catch (e) {}
+    sync();
+  });
+  sync();
 })();

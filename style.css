@@ -2533,3 +2533,107 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
   background-color: #FFF !important;
 }
 .music-toggle--muted span { opacity: 1 !important; } /* white even when frozen; pause alone signals mute */
+
+/* ─── V21: THEMES (dark default + light) ──────────────────────
+   [data-theme="dark"] on <html> flips the token set. Photo
+   sections, the lavender skills island, the black footer and
+   every white-on-dark-surface element keep their exact look;
+   only page surfaces, text, hairlines and plates invert. The
+   toggle sits in the top navbar, right of the CONTACT link. */
+
+:root[data-theme="dark"] {
+  --clr-bg:      #0E0E11;
+  --clr-text:    #EDECEA;
+  --clr-muted:   #9B9A97;
+  --clr-accent:  #A795F0;
+  --clr-line:    #2B2B31;
+  --clr-plate:   #17171B;
+}
+
+/* Tailwind utilities carry hex literals - remap them in dark. */
+:root[data-theme="dark"] .text-ink        { color: var(--clr-text) !important; }
+:root[data-theme="dark"] .text-muted      { color: var(--clr-muted) !important; }
+:root[data-theme="dark"] .bg-white        { background-color: var(--clr-bg) !important; }
+:root[data-theme="dark"] .border-hairline { border-color: var(--clr-line) !important; }
+:root[data-theme="dark"] .bg-plate        { background-color: var(--clr-plate) !important; }
+:root[data-theme="dark"] .hover\:text-ink:hover { color: var(--clr-text) !important; }
+:root[data-theme="dark"] .focus-visible\:text-ink:focus-visible { color: var(--clr-text) !important; }
+
+/* The lavender skills island keeps its light palette in dark mode. */
+:root[data-theme="dark"] .skills {
+  --clr-text: #1B1B1B;
+  --clr-muted: #4A4A4A;
+  --clr-bg:   #FFFFFF;
+  --clr-line: #E5E5E5;
+}
+:root[data-theme="dark"] .skills .text-ink   { color: #1B1B1B !important; }
+:root[data-theme="dark"] .skills .text-muted { color: #4A4A4A !important; }
+
+/* Photo sections keep white text (re-guarded above the remaps). */
+:root[data-theme="dark"] .section--photo .text-ink,
+:root[data-theme="dark"] .section--photo .section-title,
+:root[data-theme="dark"] .section--photo h2,
+:root[data-theme="dark"] .section--photo h3 { color: #FFF !important; }
+:root[data-theme="dark"] .section--photo .text-muted { color: rgba(255, 255, 255, 0.8) !important; }
+
+/* Elements that used var(--clr-bg) as "white on a dark surface". */
+:root[data-theme="dark"] .hero__name { color: #FFF; }
+:root[data-theme="dark"] .hero-stage .btn--primary,
+:root[data-theme="dark"] .hero-stage .btn--outline {
+  background-color: transparent; color: #FFF; outline-color: #FFF;
+}
+:root[data-theme="dark"] .hero-stage .btn--primary:hover,
+:root[data-theme="dark"] .hero-stage .btn--primary:focus-visible,
+:root[data-theme="dark"] .hero-stage .btn--outline:hover,
+:root[data-theme="dark"] .hero-stage .btn--outline:focus-visible {
+  background-color: #FFF; color: #1B1B1B;
+}
+:root[data-theme="dark"] .nav-overlay__link,
+:root[data-theme="dark"] .nav-overlay__item--current > label > a,
+:root[data-theme="dark"] .nav-overlay__sub-link:hover,
+:root[data-theme="dark"] .nav-overlay__sub-link:focus-visible,
+:root[data-theme="dark"] .nav-overlay__close:hover .section-label { color: #FFF; }
+:root[data-theme="dark"] .intro__word { color: #FFF; }
+:root[data-theme="dark"] .tap-sound { color: #FFF; }
+
+/* Cursor follower: difference-blend needs a bright source on the
+   dark page or the dot vanishes (dark-over-dark difference ~= 0). */
+:root[data-theme="dark"] .cursor-dot  { background-color: #FFF; }
+:root[data-theme="dark"] .cursor-ring { border-color: #FFF; }
+
+/* Chips that pair var(--clr-text) with forced-white glyphs must
+   stay dark in dark mode or the white bars disappear. */
+:root[data-theme="dark"] .menu-trigger {
+  background-color: #1B1B1B !important; border-color: #1B1B1B !important;
+}
+:root[data-theme="dark"] .music-toggle, :root[data-theme="dark"] .music-toggle.ui-on-dark {
+  background: #1B1B1B !important; border-color: #1B1B1B !important;
+}
+
+/* Navbar: dark hairline, dark scrolled panel. */
+:root[data-theme="dark"] .navbar--scrolled {
+  background-color: rgba(14, 14, 17, 0.92) !important;
+}
+
+/* Solid-button hover on regular sections: lighten, not #333. */
+:root[data-theme="dark"] .btn--primary:hover,
+:root[data-theme="dark"] .btn--primary:focus-visible {
+  background-color: #D9D7D3; color: #0E0E11;
+}
+
+/* Theme toggle button (top navbar, right of the CONTACT link). */
+.navbar__actions { display: flex; align-items: center; gap: 0.5rem; }
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; padding: 0; flex: none;
+  background: transparent; border: 1px solid var(--clr-line);
+  color: var(--clr-text); cursor: pointer;
+  transition: color var(--dur-fast) var(--easing), border-color var(--dur-fast) var(--easing);
+}
+.theme-toggle:hover, .theme-toggle:focus-visible {
+  color: var(--clr-accent); border-color: var(--clr-accent); outline: none;
+}
+.theme-toggle__icon { width: 15px; height: 15px; }
+.theme-toggle__moon { display: none; }
+:root[data-theme="dark"] .theme-toggle__sun  { display: none; }
+:root[data-theme="dark"] .theme-toggle__moon { display: block; }
