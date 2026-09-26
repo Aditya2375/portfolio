@@ -1280,9 +1280,14 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
   50%      { transform: scaleY(1); }
 }
 
-/* Frozen equalizer = muted (or entered without sound) */
+/* Muted (or entered without sound): bars animate DOWN to flat,
+   so the stopped state reads as stopped, not frozen mid-dance.
+   Removing the animation lets the transition carry each bar from
+   its current height to flat. */
 .music-toggle--muted span {
-  animation-play-state: paused;
+  animation: none;
+  transform: scaleY(0.08);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   opacity: 0.4;
 }
 
