@@ -398,6 +398,37 @@ window.scrambleText.cancel = function cancelScramble(el) { el._scrambling = fals
   labels.forEach(label => io.observe(label));
 })();
 
+
+/* ─── V24: MENU PHOTO PARALLAX ────────────────────────────────
+   The waterfall backdrop drifts against the cursor while the side
+   menu is open. Lerped so it glides, clamped well inside the 7%
+   scale headroom, parked under reduced motion, and reset on close. */
+(function initMenuParallax() {
+  const checkbox = document.getElementById('menu-toggle');
+  const photo = document.querySelector('.nav-overlay__photo img');
+  if (!checkbox || !photo || REDUCED_MOTION) return;
+  let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+  function tick() {
+    cx += (tx - cx) * 0.08;
+    cy += (ty - cy) * 0.08;
+    photo.style.transform = 'scale(1.07) translate3d(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px,0)';
+    if (Math.abs(tx - cx) > 0.05 || Math.abs(ty - cy) > 0.05 || checkbox.checked) {
+      raf = requestAnimationFrame(tick);
+    } else { raf = null; }
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+  addEventListener('mousemove', (e) => {
+    if (!checkbox.checked) return;
+    tx = (e.clientX / innerWidth - 0.5) * -26;  /* against the cursor */
+    ty = (e.clientY / innerHeight - 0.5) * -18;
+    kick();
+  }, { passive: true });
+  checkbox.addEventListener('change', () => {
+    if (!checkbox.checked) { tx = 0; ty = 0; }
+    kick();
+  });
+})();
+
 /* ─── PROMPT 12: MUSIC TOGGLE ─────────────────────────────────
    Fixed bottom-left equalizer: 5 thin bars, pure CSS animation —
    JS only toggles a class and calls the engine. Frozen while
@@ -825,6 +856,117 @@ window._sectionJump = function _sectionJump(target) {
    touchend could also strand a card mid-cycle), so the running stats now
    simply show their real values - the HTML always carried them. */
 
+/* ─── PROMPT 18 (V24 RESTORE): HOLD-DOWN STAT CARDS ───────────
+   The running stats idle as glitching placeholders with a mono HOLD
+   TO REVEAL hint; a 600ms press-and-hold decodes to the real stat.
+   V24: pointer events ONLY (no mousedown + touchstart pair) - the
+   emulated-mouse double-fire was what stranded cards mid-cycle on
+   touch. Letting go early resets to the placeholder; a completed
+   hold ALWAYS lands on the real value (the settle decode's target
+   is the real string, and the engine writes it at the end). */
+(function initHoldRevealStats() {
+  const cards = document.querySelectorAll('.stat-card');
+  if (!cards.length) return;
+  const HOLD_MS = 600;
+
+  function noiseLike(str) {
+    let out = '';
+    for (const ch of str) out += scrambleCharFor(ch);
+    return out;
+  }
+
+  cards.forEach((card) => {
+    const valueEl = card.querySelector('.stat-card__value');
+    if (!valueEl) return;
+    const real = valueEl.textContent.trim();
+    const labelEl = card.querySelector('.stat-card__label');
+    const labelText = labelEl ? labelEl.textContent.trim().toLowerCase() : '';
+
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `${real}${labelText ? ', ' + labelText : ''}. Hold to reveal.`);
+    valueEl.setAttribute('aria-hidden', 'true');
+
+    const hint = document.createElement('span');
+    hint.className = 'stat-card__hint';
+    hint.textContent = 'HOLD TO REVEAL';
+    hint.setAttribute('aria-hidden', 'true');
+    const progress = document.createElement('span');
+    progress.className = 'stat-card__progress';
+    progress.setAttribute('aria-hidden', 'true');
+    progress.innerHTML = '<i></i>';
+    card.append(hint, progress);
+
+    let holding = false, revealed = false, holdTimer = null, cycleTimer = null;
+
+    valueEl.dataset.scrambleText = real;
+    valueEl.textContent = noiseLike(real);
+
+    let idleTimer = null;
+    if (!REDUCED_MOTION) {
+      idleTimer = setInterval(() => {
+        if (!revealed && !holding) valueEl.textContent = noiseLike(real);
+      }, 2400);
+    }
+
+    function cycle() {
+      if (!holding || revealed || REDUCED_MOTION) return;
+      valueEl.dataset.scrambleText = noiseLike(real);
+      window.scrambleText(valueEl, { duration: 140, tick: true });
+      cycleTimer = setTimeout(cycle, 150);
+    }
+
+    function reveal() {
+      if (revealed) return;
+      revealed = true; holding = false;
+      clearTimeout(cycleTimer);
+      clearInterval(idleTimer);
+      window.scrambleText.cancel(valueEl);
+      card.classList.remove('is-holding');
+      card.classList.add('is-revealed');
+      card.setAttribute('aria-label', `${real}${labelText ? ', ' + labelText : ''}.`);
+      valueEl.dataset.scrambleText = real;
+      window.scrambleText(valueEl, { duration: 260 });
+      if (REDUCED_MOTION) valueEl.textContent = real;
+    }
+
+    function startHold(e) {
+      if (revealed || holding) return;
+      if (e.type === 'keydown') {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        if (e.repeat) return;
+      }
+      holding = true;
+      card.classList.add('is-holding');
+      cycle();
+      holdTimer = setTimeout(reveal, HOLD_MS);
+    }
+
+    function endHold() {
+      if (!holding || revealed) return;
+      holding = false;
+      clearTimeout(holdTimer);
+      clearTimeout(cycleTimer);
+      window.scrambleText.cancel(valueEl);
+      card.classList.remove('is-holding');
+      valueEl.dataset.scrambleText = real;
+      valueEl.textContent = noiseLike(real);
+    }
+
+    /* pointer events unify mouse/touch/pen: exactly ONE start and ONE
+       end per press - the v22.3 stranding bug cannot reappear. */
+    card.addEventListener('pointerdown', startHold);
+    card.addEventListener('pointerup', endHold);
+    card.addEventListener('pointercancel', endHold);
+    card.addEventListener('pointerleave', endHold);
+    card.addEventListener('keydown', startHold);
+    card.addEventListener('keyup', endHold);
+    card.addEventListener('blur', endHold);
+    card.addEventListener('contextmenu', (e) => e.preventDefault());
+  });
+})();
+
 /* ─── REVIEW ROUND: HOLD A PROJECT CARD FOR CONTEXT ───────────
    Each projects.html card carries a data-context one-liner (the WHY
    behind the build). Press-and-hold the card for 600ms: a black
@@ -974,7 +1116,7 @@ window._sectionJump = function _sectionJump(target) {
     setTimeout(() => {
       el.classList.remove('is-covering');
       el.classList.add('is-covered');
-      playSfx('assets/sfx/transition.mp3', 0.5); /* sweep at full cover */
+      playSfx((opts && opts.sfx) || 'assets/sfx/transition.mp3', 0.5); /* sweep at full cover */
       try { if (callback) callback(); } catch (err) { console.error(err); }
       /* If the callback navigated away, the rest never runs here. */
       setTimeout(() => {
@@ -1198,7 +1340,11 @@ window._sectionJump = function _sectionJump(target) {
       const n = v.name.toLowerCase();
       let s = 0;
       /* Microsoft's neural "Online (Natural)" voices read far more human */
-      if (n.includes('natural') || n.includes('online')) s += 4;
+      if (v.localService) s += 8; /* V24: local voices only really - the
+        network "Online (Natural)" voices fail SILENTLY when the speech
+        service is unreachable, which killed the agent's voice on his
+        machine while the tour kept scrolling */
+      if (n.includes('natural') || n.includes('online')) s += 1;
       if (n.includes('female')) s += 3;
       if (/zira|samantha|victoria|karen|moira|tessa|fiona|susan|allison|ava|serena|kate|stephanie|catherine|joelle|aditi|swara|heera|kalpana|neerja|lekha|veena|raveena|ananya|aarohi/.test(n)) s += 2;
       /* his ear is Indian English - prefer it as the tiebreak */
@@ -1242,7 +1388,7 @@ window._sectionJump = function _sectionJump(target) {
     timers.push(setTimeout(finish, estimateMs * 1.15)); /* V7: ceiling already generous; 2x was the dead gap */
     if (window.SOUND_ON && 'speechSynthesis' in window) {
       try {
-        speechSynthesis.cancel();
+        if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         const v = pickVoice();
         if (v) u.voice = v;
@@ -1250,7 +1396,22 @@ window._sectionJump = function _sectionJump(target) {
         u.pitch = v ? 1.0 : 1.25;
         u.volume = 0.9;
         u.onend = finish;
-        u.onerror = finish;
+        /* V24: a voice that errors (network voices do this silently on
+           some machines) gets ONE retry on the system default voice
+           before the tour gives up on the line's audio. */
+        u.onerror = () => {
+          if (!u._retried && v) {
+            u._retried = true;
+            try {
+              const u2 = new SpeechSynthesisUtterance(text);
+              u2.rate = 1.04; u2.pitch = 1.25; u2.volume = 0.9;
+              u2.onend = finish; u2.onerror = finish;
+              speechSynthesis.speak(u2);
+              return;
+            } catch (err) { /* fall through */ }
+          }
+          finish();
+        };
         timers.push(setTimeout(() => {
           try { speechSynthesis.speak(u); } catch (err) { finish(); }
         }, 60));
@@ -1364,7 +1525,7 @@ window._sectionJump = function _sectionJump(target) {
         window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
         begin();
       })(t0);
-    }, { mode: 'sides' });
+    }, { mode: 'sides', sfx: 'assets/sfx/transition-soft.mp3' });
   }
 
   function closeGuide() {
@@ -1378,7 +1539,7 @@ window._sectionJump = function _sectionJump(target) {
     barLabel.textContent = 'PRESS AND HOLD FOR AI AGENT';
     window.playTransition(() => {
       /* the visitor stays exactly where the agent stopped */
-    }, { mode: 'sides' });
+    }, { mode: 'sides', sfx: 'assets/sfx/transition-soft.mp3' });
   }
 
   /* tap the live bar to stop the tour early (ESC works too) */
