@@ -2681,3 +2681,30 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 :root[data-theme="light"] .footer__legal::before { background-color: #C7C7CD; }
 :root[data-theme="light"] .footer .text-\[\#545454\] { color: #8A8A90 !important; }
 :root[data-theme="light"] .footer .border-\[rgba\(255\,255\,255\,0\.08\)\] { border-color: rgba(0, 0, 0, 0.08) !important; }
+
+/* ─── V31: MOBILE DESIGN PASS ─────────────────────────────────
+   Phones only (max-width: 700px, below the md breakpoint). Every rule
+   lives inside this media query: desktop rendering is pixel-untouched. */
+@media (max-width: 700px) {
+  /* 1. Page-header titles: the desktop clamp floor (3.5rem) pushed
+        single-word titles (ACADEMICS. / COMMUNITY. / PROJECTS.) off the
+        right edge. Floor drops; the title tracks phone width instead. */
+  .page-header .page-header__title { font-size: clamp(2.4rem, 11.2vw, 3.5rem); }
+
+  /* 2. Hero frames: the 16:9 sequence is composed face-right for desktop
+        (headline sits over the dark left half). Cover-cropping that on a
+        phone cut the face in half - shift the visible window onto it. */
+  .portrait-frame img { object-position: 62% 20%; }
+
+  /* 3. AI-agent bar + music button: the floating centered pill covered
+        page content on narrow screens. Dock the bar full-width at the
+        bottom, lift the music button above it, give the page clearance. */
+  .guide-hold {
+    left: 0; right: 0; bottom: 0; transform: none;
+    width: 100%; justify-content: center;
+    border-left: none; border-right: none; border-bottom: none;
+    padding: 0.85rem 1rem calc(0.85rem + env(safe-area-inset-bottom, 0px));
+  }
+  .music-toggle { bottom: 4.25rem; }
+  body { padding-bottom: 3.6rem; }
+}
