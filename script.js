@@ -624,7 +624,12 @@ window._sectionJump = function _sectionJump(target) {
   document.querySelectorAll('.skill-row__plus').forEach(btn => {
     const detail = document.getElementById(btn.getAttribute('aria-controls'));
     if (!detail) return;
-    btn.addEventListener('click', () => {
+    /* V22.3: the whole row toggles, not just the plus (the plus stays the
+       visual indicator). Clicks on the plus bubble up to the row, so one
+       listener handles both. The row inherits the plus's cursor. */
+    const row = btn.closest('.skill-row') || btn;
+    row.style.cursor = getComputedStyle(btn).cursor;
+    row.addEventListener('click', () => {
       const open = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!open));
       detail.hidden = open;
