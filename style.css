@@ -85,7 +85,7 @@ body {
   font-size:        0.9375rem;
   min-height:       100vh;
   /* overflow-x: clip, not hidden: hidden makes <body> a scroll container,
-     which breaks animation-timeline: view() (Prompt 17) - the view
+     which breaks animation-timeline: view() - the view
      timeline would track a scrollport that never scrolls. */
   overflow-x:       hidden;
   overflow-x:       clip;
@@ -93,7 +93,7 @@ body {
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 0v10m0 4v10M0 12h10m4 0h10' stroke='%231B1B1B' stroke-width='1'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 
-/* Prompt 27: Tailwind preflight is OFF, so re-assert the one base rule
+/* Tailwind preflight is OFF, so re-assert the one base rule
    its border utilities depend on - without border-style: solid here,
    border-b etc. compute to 0px. Universal selector, specificity 0: every
    class-level border rule in this file still wins. */
@@ -257,7 +257,7 @@ a, button, .btn {
 
 /* ─── 8. NAVBAR ─────────────────────────────────────────────── */
 
-/* NAVBAR -> Tailwind utilities on the elements (Prompt 27).
+/* NAVBAR -> Tailwind utilities on the elements.
    Concept map: fixed top-0 inset-x-0 z-[800] = position:fixed + z-index;
    flex items-center justify-between = the flexbox bar; border-b
    border-hairline = the 1px bottom hairline; hidden md:flex = the 700px
@@ -467,7 +467,7 @@ a, button, .btn {
 
 
 
-/* ABOUT + SKILLS layout/type -> Tailwind utilities (Prompt 27).
+/* ABOUT + SKILLS layout/type -> Tailwind utilities.
    Concept map: gap-16/gap-8 = the --space-lg/--space-md stacks;
    md:flex-row + md:flex-[3]/md:flex-[2] = the 700px two-column split
    with the 4vw gutter and hairline divider; items-baseline = the
@@ -500,7 +500,7 @@ a, button, .btn {
 
 
 
-/* PROJECTS grid + cards -> Tailwind utilities (Prompt 27).
+/* PROJECTS grid + cards -> Tailwind utilities.
    Concept map: grid-cols-1 -> md:auto-fill/minmax(300px) = the responsive
    card grid; border-t-2 border-ink + hover:border-accent = the ink top
    rule that flips lavender on hover (transition-colors + the 300ms site
@@ -542,7 +542,7 @@ a, button, .btn {
 /* ─── 14. FACT ROWS (Education, Beyond, Extras, Languages) ──── */
 
 
-/* FACT-LIST rows -> Tailwind utilities (Prompt 27).
+/* FACT-LIST rows -> Tailwind utilities.
    Concept map: py-8 = the --space-md row rhythm; border-b border-hairline
    = the row divider; the display/tracking/leading scale mirrors the
    hand-written rules. Kept in CSS: :last-child divider removal. */
@@ -568,7 +568,7 @@ a, button, .btn {
 
 
 
-/* CONTACT links -> Tailwind utilities (Prompt 27).
+/* CONTACT links -> Tailwind utilities.
    Concept map: decoration-hairline -> hover:decoration-ink = the underline
    that darkens on hover; clamp() type sizes carried over verbatim;
    w-fit = shrink-to-fit link boxes. */
@@ -580,7 +580,7 @@ a, button, .btn {
 
 
 
-/* FOOTER layout/type -> Tailwind utilities (Prompt 27).
+/* FOOTER layout/type -> Tailwind utilities.
    Concept map: bg-footerblack pt-16 = the black footer with 4rem top air;
    text-[rgba(255,255,255,0.7)] -> hover:text-white = the link fade-in;
    the wordmark keeps its clamp() scale. Kept in CSS: custom cursors,
@@ -599,7 +599,7 @@ a, button, .btn {
 /* ─── 17. MEDIA QUERIES ─────────────────────────────────────── */
 
 @media (min-width: 700px) {
-  /* navbar responsive rules moved to md: utilities (Prompt 27) */
+  /* navbar responsive rules moved to md: utilities */
 
   /* Two-column layout: bio text left, sticky portrait right */
 
@@ -1161,7 +1161,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 
 
 
-/* ─── 26. INTRO SCREEN (Prompt 10) ──────────────────────────
+/* ─── 26. INTRO SCREEN ──────────────────────────
    Full-screen black gate shown once per visit. Injected by JS;
    wiped away with an upward clip-path on ENTER. */
 .intro {
@@ -1242,7 +1242,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* ─── 27. MUSIC TOGGLE (Prompt 12) ────────────────────────────
+/* ─── 27. MUSIC TOGGLE ────────────────────────────
    5 thin bars, one CSS keyframe equalizer. Each bar gets its own
    duration + delay so they never move in sync. animation-play-state
    is the whole mute mechanism: paused bars freeze mid-dance. */
@@ -1296,7 +1296,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* ─── 28. CURSOR FOLLOWER (Prompt 14) ─────────────────────────
+/* ─── 28. CURSOR FOLLOWER ─────────────────────────
    mix-blend-mode: difference inverts the dot/ring over any
    background (black on white, white on the black footer).
    Both are hidden on touch via @media (hover: none). */
@@ -1339,7 +1339,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* ─── 29. SCROLLSPY ACTIVE LINK (Prompt 15) ───────────────────
+/* ─── 29. SCROLLSPY ACTIVE LINK ───────────────────
    KPR-style filled square before the active navbar link. */
 /* Doubled class = specificity 0,2,0 so the JS state color beats the
    equal-specificity text-muted utility (Tailwind's style tag lands after
@@ -1357,7 +1357,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* ─── 30. PROJECT CARD GRAPHIC PLATES (completes Prompt 9B) ───
+/* ─── 30. PROJECT CARD GRAPHIC PLATES ───
    Three stacked layers per thumbnail: .layer-back (plate + hairline
    grid + mono readout, drawn by the inline SVG), .layer-mid (one flat
    lavender shape, different per card), .layer-front (giant index +
@@ -1432,7 +1432,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* ─── 31. SIDE MENU HOVER BLOCKS (Prompt 16) ──────────────────
+/* ─── 31. SIDE MENU HOVER BLOCKS ──────────────────
    kprverse-style: the hovered item gets a translucent highlight
    block with a chamfered bottom-right corner and a tiny mono index
    tag at its top-right. The current page sits on solid lavender. */
@@ -1473,7 +1473,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* ─── 32. DEPTH PARALLAX (Prompt 17) ──────────────────────────
+/* ─── 32. DEPTH PARALLAX ──────────────────────────
    Two systems that add up instead of fighting:
    - mouse offsets live on the `transform` property (JS, below)
    - scroll drift lives on the individual `translate` property
@@ -1515,11 +1515,11 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 @keyframes layer-scroll-front { from { translate: 0 10px;   } to { translate: 0 -10px;  } }
 
 
-/* ─── 33. HOLD-TO-REVEAL STAT CARDS (Prompt 18) ───────────────
+/* ─── 33. HOLD-TO-REVEAL STAT CARDS ───────────────
    The hold affordance lives entirely in JS-injected elements
    (.stat-card__hint, .stat-card__progress) so the no-JS site never
    shows them; CSS only styles them and runs the progress line. */
-/* STAT cards -> Tailwind utilities (Prompt 27).
+/* STAT cards -> Tailwind utilities.
    Concept map: auto-fit/minmax(130px) grid, p-4 + hairline border cards.
    Kept in CSS: .chamfer clip-path, position/user-select for the
    hold-to-reveal interaction, .stat-card__hint/__progress, and the
@@ -1556,7 +1556,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* ─── 34. BRACKET-FRAME PAGE TRANSITION (Prompt 19) ───────────
+/* ─── 34. BRACKET-FRAME PAGE TRANSITION ───────────
    Full-screen overlay: a flat black veil wipes in with clip-path,
    four lavender corner brackets + hairline shards fade in at full
    cover, then the veil wipes out upward. No gradients, no glow.
@@ -1728,7 +1728,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 }
 
 
-/* ─── 35. AI GUIDE (Prompt 20) ────────────────────────────────
+/* ─── 35. AI GUIDE ────────────────────────────────
    Side-panels cover mode for the guide's open/close, the trigger
    buttons, the fixed mini button, the docked panel with its
    speaking waveform, and the section decode/reveal the guide
@@ -1873,7 +1873,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
 .guide-panel__nextpage[hidden] { display: none; }
 
 
-/* ─── 36. LENIS SMOOTH SCROLL (Prompt 22) ─────────────────────
+/* ─── 36. LENIS SMOOTH SCROLL ─────────────────────
    Lenis' recommended companion CSS: while it runs it owns scrolling,
    so CSS smooth scroll stands down (it remains the no-JS and
    CDN-failure fallback). */
@@ -1883,7 +1883,7 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 
-/* ─── 37. FOOTER WORDMARK FINALE (Prompt 24) ──────────────────
+/* ─── 37. FOOTER WORDMARK FINALE ──────────────────
    Letters are split by JS (no-JS keeps the plain wordmark, visible).
    Dropped letters start hidden; .is-dropping runs the staggered
    drop with a small settle bounce. The A lands in lavender. */
@@ -1904,7 +1904,7 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 
-/* ─── 38. RESPONSIVE SWEEP FIXES (Prompt 25) ──────────────────
+/* ─── 38. RESPONSIVE SWEEP FIXES ──────────────────
    Checked every page at 375/768/1024/1440: no horizontal overflow
    anywhere (scrollWidth == innerWidth on all 15 combinations), the
    navbar collapses to the MENU overlay on phone, headlines scale via
