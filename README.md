@@ -32,7 +32,7 @@ I'm Aditya Kulkarni, 18, from Pune - studying CS and AI at Scaler School of Tech
 
 ## Projects
 
-- **Portfolio Workflow** - this very site, designed and built with an AI-assisted workflow - live at https://adityakulkarni-eta.vercel.app
+- **Portfolio Workflow** - this very site, live at https://adityakulkarni-eta.vercel.app
 - **OmniRoute** - local AI coding setup routed through an open-source LLM gateway (no public link - local setup)
 - **Instagram Growth Bot** - follower-growth automation with a scoring engine (no public link)
 - **Junior-Senior Doubt Platform** - doubt-solving with scored answers and askers (no public link)
@@ -59,12 +59,7 @@ portfolio/
 ## Credits
 
 - Music and sound effects: Mixkit (Mixkit Free License)
-- Portrait frames: AI-generated
 - Fonts: Google Fonts - Archivo Black, IBM Plex Mono, Inter
-
-## AI tools used
-
-Built with an AI-assisted workflow in Google Antigravity from a custom prompt system. Every part reviewed and understood by me.
 
 ## Author
 
