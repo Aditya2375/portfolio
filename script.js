@@ -19,7 +19,7 @@ document.body.classList.add(window.SOUND_ON ? 'sound-on' : 'sound-off');
    per-page soundtrack map below. */
 const PAGE_ID = document.body.dataset.page || 'home';
 
-/* Each page opens on its own track (Prompt 13 maps sections
+/* Each page opens on its own track (section tracks map sections
    within the page onto the same engine). */
 const PAGE_TRACKS = {
   home:      'assets/music/hero.mp3',
@@ -487,7 +487,7 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
   })(performance.now());
 };
 
-/* Stop a running scramble without its final write (Prompt 18 needs to
+/* Stop a running scramble without its final write (needed to
    cut one off when a hold ends early or the reveal takes over). */
 window.scrambleText.cancel = function cancelScramble(el) { el._scrambling = false; };
 
@@ -614,7 +614,7 @@ const SECTION_TRACKS = {
    distance, which gives the smooth elastic feel). Both use
    mix-blend-mode: difference so they invert over any background.
    Hidden on touch devices; motion off under reduced motion.
-   The CSS crosshair cursor from Prompt 6 stays underneath. */
+   The CSS crosshair cursor stays underneath. */
 (function initCursorFollower() {
   // Touch devices and reduced-motion users keep the plain CSS cursor.
   if (window.matchMedia('(hover: none)').matches || REDUCED_MOTION) return;
@@ -654,7 +654,7 @@ const SECTION_TRACKS = {
 /* ─── PROMPT 15: NAVBAR WIRING ────────────────────────────────
    Smooth anchors, scrollspy, hover scramble + blip, hash landing,
    and a JS fallback for the CSS scroll progress bar.
-   Section jumps route through window._sectionJump so Prompt 19 can
+   Section jumps route through window._sectionJump so the bracket transition can
    later swap in the bracket transition WITHOUT rebinding anything. */
 window._sectionJump = function _sectionJump(target) {
   target.scrollIntoView({ behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
@@ -829,7 +829,7 @@ window._sectionJump = function _sectionJump(target) {
      click already closes the menu (the label unchecks the box) and
      then follows the link - page links open their page, same-page
      section links smooth-scroll via CSS scroll-behavior. No JS needed
-     for the base path; Prompt 19 wraps the jump in the transition. */
+     for the base path; the page transition wraps the jump in the transition. */
 })();
 
 /* ─── PROMPT 17: 3D MOUSE PARALLAX (REVIEW ROUND: BG, NOT TEXT) ─
@@ -1214,7 +1214,7 @@ window._sectionJump = function _sectionJump(target) {
     if (running) { if (callback) callback(); return; }
     running = true;
     const el = buildOverlay();
-    /* mode 'sides' (Prompt 20's guide): two black panels close in from
+    /* mode 'sides': two black panels close in from
        the left and right edges instead of the single veil wipe. */
     const sides = !!(opts && opts.mode === 'sides');
     if (sides) el.classList.add('transition-overlay--sides');
@@ -1670,10 +1670,10 @@ window._sectionJump = function _sectionJump(target) {
 
 /* ─── PROMPT 21: SCRAMBLE-ON-SCROLL EVERYWHERE ────────────────
    Section headlines and project card titles decode once when they
-   first enter the viewport (the mono labels already do - Prompt 11).
+   first enter the viewport (the mono labels already do).
    One pass per element: IntersectionObserver + unobserve. Body
    paragraphs and long text are deliberately excluded. The guide's
-   section decode (Prompt 20) may still replay a section by calling
+   section decode may still replay a section by calling
    scrambleText() directly. Reduced-motion: the engine no-ops, so
    text simply appears. */
 (function initScrollScramble() {
@@ -1713,7 +1713,7 @@ window._sectionJump = function _sectionJump(target) {
     wheelMultiplier: 0.85, /* V7 item 13: each wheel tick travels less - deliberate, heavy */
     autoRaf: typeof gsap === 'undefined'
     /* One rAF authority only: when GSAP is present its ticker drives
-       lenis.raf (Prompt 23), so autoRaf must stand down; when GSAP is
+       lenis.raf, so autoRaf must stand down; when GSAP is
        absent Lenis runs its own loop. Double-driving would double-step
        the scroll every frame. */
   });
@@ -1723,7 +1723,7 @@ window._sectionJump = function _sectionJump(target) {
 /* ─── PROMPT 23: GSAP + SCROLLTRIGGER ─────────────────────────
    Loaded from the jsDelivr CDN in every page. Everything below is
    layered: if the CDN fails, the CSS scroll-driven versions under
-   Prompts 9G/17/23-fallbacks keep working untouched. Reduced motion
+   The existing fallbacks keep working untouched. Reduced motion
    skips all of it. */
 (function initGsap() {
   if (REDUCED_MOTION) return;
