@@ -55,40 +55,41 @@
       }
     };
   </script>
+<noscript><style>button.menu-trigger, button.nav-overlay__close { display: none; }</style></noscript>
 </head>
 <body id="top" data-page="home">
 
   <!-- SHARED: keep identical on all 5 pages -->
-  <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true">
-  <div class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
+  <input type="checkbox" id="menu-toggle" class="menu-checkbox" aria-hidden="true" tabindex="-1">
+  <div id="site-menu" class="nav-overlay" role="dialog" aria-label="Site navigation" aria-modal="true">
     <div class="nav-overlay__photo" aria-hidden="true"><img src="assets/bg/menu-waterfall.jpg" alt="" loading="lazy"></div>
     <div class="nav-overlay__inner">
-      <label for="menu-toggle" class="nav-overlay__close" aria-label="Close navigation menu">
+      <button type="button" class="nav-overlay__close" aria-label="Close navigation menu">
         <span class="section-label">✕ CLOSE</span>
-      </label>
+      </button><noscript><label for="menu-toggle" class="nav-overlay__close"><span class="section-label">✕ CLOSE</span></label></noscript>
       <nav class="nav-overlay__nav" aria-label="Overlay navigation">
         <ul role="list" class="flex flex-col gap-3">
           <li class="nav-overlay__item nav-overlay__item--current" data-index="01">
-            <label for="menu-toggle"><a href="index.html" class="nav-overlay__link" aria-current="page">01 Home</a></label>
+            <span class="nav-overlay__row"><a href="index.html" class="nav-overlay__link" aria-current="page">01 Home</a></span>
             <ul class="nav-overlay__sub" role="list">
-              <li><label for="menu-toggle"><a href="#about" class="nav-overlay__sub-link">About</a></label></li>
-              <li><label for="menu-toggle"><a href="#skills" class="nav-overlay__sub-link">Skills</a></label></li>
-              <li><label for="menu-toggle"><a href="#projects" class="nav-overlay__sub-link">Projects</a></label></li>
-              <li><label for="menu-toggle"><a href="#explore" class="nav-overlay__sub-link">Explore</a></label></li>
-              <li><label for="menu-toggle"><a href="#contact" class="nav-overlay__sub-link">Contact</a></label></li>
+              <li><span class="nav-overlay__row"><a href="#about" class="nav-overlay__sub-link">About</a></span></li>
+              <li><span class="nav-overlay__row"><a href="#skills" class="nav-overlay__sub-link">Skills</a></span></li>
+              <li><span class="nav-overlay__row"><a href="#projects" class="nav-overlay__sub-link">Projects</a></span></li>
+              <li><span class="nav-overlay__row"><a href="#explore" class="nav-overlay__sub-link">Explore</a></span></li>
+              <li><span class="nav-overlay__row"><a href="#contact" class="nav-overlay__sub-link">Contact</a></span></li>
             </ul>
           </li>
           <li class="nav-overlay__item" data-index="02">
-            <label for="menu-toggle"><a href="academics.html" class="nav-overlay__link">02 Academics</a></label>
+            <span class="nav-overlay__row"><a href="academics.html" class="nav-overlay__link">02 Academics</a></span>
           </li>
           <li class="nav-overlay__item" data-index="03">
-            <label for="menu-toggle"><a href="projects.html" class="nav-overlay__link">03 Projects</a></label>
+            <span class="nav-overlay__row"><a href="projects.html" class="nav-overlay__link">03 Projects</a></span>
           </li>
           <li class="nav-overlay__item" data-index="04">
-            <label for="menu-toggle"><a href="beyond.html" class="nav-overlay__link">04 Beyond The Terminal</a></label>
+            <span class="nav-overlay__row"><a href="beyond.html" class="nav-overlay__link">04 Beyond The Terminal</a></span>
           </li>
           <li class="nav-overlay__item" data-index="05">
-            <label for="menu-toggle"><a href="community.html" class="nav-overlay__link">05 Community</a></label>
+            <span class="nav-overlay__row"><a href="community.html" class="nav-overlay__link">05 Community</a></span>
           </li>
         </ul>
       </nav>
@@ -99,7 +100,7 @@
   <header class="navbar fixed top-0 inset-x-0 z-[800] bg-white border-b border-hairline" id="navbar">
     <nav class="navbar__inner flex items-center justify-between px-[clamp(1rem,4vw,3rem)] min-h-14 max-w-[1200px] mx-auto" aria-label="Primary navigation">
       <div class="navbar__brand flex items-center gap-3">
-        <label for="menu-toggle" class="menu-trigger" aria-label="Open navigation menu"><span class="menu-trigger__bars" aria-hidden="true"><i></i><i></i><i></i></span></label>
+        <button type="button" class="menu-trigger" aria-controls="site-menu" aria-expanded="false" aria-label="Open navigation menu"><span class="menu-trigger__bars" aria-hidden="true"><i></i><i></i><i></i></span></button><noscript><label for="menu-toggle" class="menu-trigger" aria-label="Open navigation menu"><span class="menu-trigger__bars" aria-hidden="true"><i></i><i></i><i></i></span></label></noscript>
         <a href="index.html" class="navbar__logo font-display text-[1.1rem] font-black tracking-[-0.02em] text-ink uppercase">AK</a>
         <span class="scroll-pct" aria-hidden="true">000</span>
       </div>
@@ -366,8 +367,8 @@
           <h2 class="section-title" id="projects-heading"><span class="reveal-text">Things I've Built</span></h2>
         </div>
         <div class="projects__teaser flex flex-col gap-8 border-t-2 border-ink pt-8">
-        <p class="font-body text-[0.9375rem] text-muted max-w-[52ch] leading-[1.7]">Five builds, from this site to a competitive-programming pipeline. The full breakdown - problem, approach, stack - lives on the projects page.</p>
-        <a href="projects.html" class="btn btn--outline">SEE ALL FIVE PROJECTS &#8594;</a>
+        <p class="font-body text-[0.9375rem] text-muted max-w-[52ch] leading-[1.7]">Web experiments, practical tools, and platforms built around real problems. The full breakdown - problem, approach, stack - lives on the projects page.</p>
+        <a href="projects.html" class="btn btn--outline">EXPLORE THE PROJECTS &#8594;</a>
       </div>
         <div class="projects__all-link">
           <a href="projects.html" class="btn btn--primary">ALL PROJECTS →</a>
@@ -392,7 +393,7 @@
           <article class="explore-card chamfer">
             <p class="explore-card__index section-label">03</p>
             <h3 class="explore-card__title">PROJECTS</h3>
-            <p class="explore-card__desc">Five projects built: AI tooling, LLM routing, automation, a community platform, and CP.</p>
+            <p class="explore-card__desc">Web experiments, developer tools, and community platforms. Explore the full project collection.</p>
             <a href="projects.html" class="explore-card__link btn btn--outline btn--sm">View Page →</a>
           </article>
           <article class="explore-card chamfer">
