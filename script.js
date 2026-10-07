@@ -7,6 +7,9 @@
 // =====================================================
 'use strict';
 
+/* No-script fallback nodes must not enter animated text measurements. */
+document.querySelectorAll('noscript').forEach(node => node.remove());
+
 /* ─── GLOBAL STATE ─────────────────────────────────────────
    The sound choice lives on window (window.SOUND_ON) so every
    feature can read it, and in sessionStorage so it survives
@@ -14,6 +17,46 @@
 window.SOUND_ON = sessionStorage.getItem('soundChoice') !== 'off'; /* V4: audio defaults ON; the bottom-left toggle is the off switch */
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.body.classList.add(window.SOUND_ON ? 'sound-on' : 'sound-off');
+
+/* Overlay focus and background state, shared by navigation and details. */
+const overlayState = (() => {
+  let active = null, returnTo = null, saved = [], overflow = '';
+  const focusables = () => [...active.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')]
+    .filter(el => el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
+  function open(el, focusTarget) {
+    if (active) return;
+    active = el; returnTo = document.activeElement;
+    overflow = document.documentElement.style.overflow;
+    saved = [...document.body.children].filter(n => n !== el && !['SCRIPT','STYLE'].includes(n.tagName))
+      .map(n => [n, n.inert]);
+    saved.forEach(([n]) => { n.inert = true; });
+    el.inert = false;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.classList.add('overlay-open');
+    if (window._lenis) window._lenis.stop();
+    focusTarget.focus({ preventScroll: true });
+  }
+  function close(el) {
+    if (active !== el) return;
+    active = null;
+    saved.forEach(([n, inert]) => { n.inert = inert; }); saved = [];
+    document.documentElement.style.overflow = overflow;
+    document.body.classList.remove('overlay-open');
+    if (window._lenis && !window._tourActive) window._lenis.start();
+    if (returnTo && returnTo.isConnected) returnTo.focus({ preventScroll: true });
+  }
+  addEventListener('keydown', e => {
+    if (!active || e.key !== 'Tab') return;
+    const items = focusables(), first = items[0], last = items[items.length - 1];
+    if (!first) { e.preventDefault(); return; }
+    if (e.shiftKey && (document.activeElement === first || !active.contains(document.activeElement))) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && (document.activeElement === last || !active.contains(document.activeElement))) {
+      e.preventDefault(); first.focus();
+    }
+  });
+  return { open, close };
+})();
 
 /* Current page id from <body data-page="..."> — drives the
    per-page soundtrack map below. */
@@ -401,6 +444,7 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
   if (!el.dataset.scrambleText) el.dataset.scrambleText = el.textContent;
   const original = el.dataset.scrambleText;
   el._scrambling = true;
+  const run = el._scrambleRun = (el._scrambleRun || 0) + 1;
   const start = performance.now();
 
   /* V26/V27: fixed-slot decode for SINGLE-LINE text. His note: mid-
@@ -434,6 +478,7 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
 
   if (!singleLine) {
     (function frame(now) {
+      if (el._scrambleRun !== run) return;
       if (!el._scrambling) { unlock(); return; } /* cancelled via scrambleText.cancel() */
       const p = Math.min((now - start) / duration, 1);
       const lockCount = Math.floor(p * original.length);
@@ -479,7 +524,8 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
   }
 
   (function frame(now) {
-    if (!el._scrambling) { unlock(); return; } /* cancelled via scrambleText.cancel() */
+    if (el._scrambleRun !== run) return;
+      if (!el._scrambling) { unlock(); return; } /* cancelled via scrambleText.cancel() */
     const p = Math.min((now - start) / duration, 1);
     const lockCount = Math.floor(p * original.length);
     if (p < 1) { render(lockCount); requestAnimationFrame(frame); }
@@ -489,7 +535,11 @@ window.scrambleText = function scrambleText(el, { duration = 400, tick = false }
 
 /* Stop a running scramble without its final write (needed to
    cut one off when a hold ends early or the reveal takes over). */
-window.scrambleText.cancel = function cancelScramble(el) { el._scrambling = false; };
+window.scrambleText.cancel = function cancelScramble(el) {
+  el._scrambling = false;
+  el._scrambleRun = (el._scrambleRun || 0) + 1;
+  el.style.height = ''; el.style.overflow = '';
+};
 
 /* First use of the engine: the mono section labels (001 / 002 ...)
    decode when they enter the viewport. V4: NO unobserve - every
@@ -783,19 +833,41 @@ window._sectionJump = function _sectionJump(target) {
 })();
 
 /* ─── PROMPT 16: SIDE MENU UPGRADE ────────────────────────────
-   The checkbox/:has() CSS mechanism stays the no-JS base; this only
-   layers sound and scramble on top. */
+   The checkbox/:has() mechanism is the no-JS base. Buttons add
+   keyboard access, focus management, sound and scramble. */
 (function initSideMenu() {
   const checkbox = document.getElementById('menu-toggle');
   if (!checkbox) return;
   const links = [...document.querySelectorAll('.nav-overlay__link, .nav-overlay__sub-link')];
+
+  const menu = document.querySelector('.nav-overlay');
+  const openButton = document.querySelector('button.menu-trigger');
+  const closeButton = menu.querySelector('button.nav-overlay__close');
+  menu.inert = true;
+  menu.setAttribute('aria-hidden', 'true');
+  function syncMenu() {
+    const opened = checkbox.checked;
+    openButton.setAttribute('aria-expanded', String(opened));
+    menu.setAttribute('aria-hidden', String(!opened));
+    menu.inert = !opened;
+    if (opened) overlayState.open(menu, closeButton);
+    else overlayState.close(menu);
+  }
+  function setMenu(opened) {
+    checkbox.checked = opened;
+    checkbox.dispatchEvent(new Event('change'));
+  }
+  openButton.addEventListener('click', () => setMenu(true));
+  closeButton.addEventListener('click', () => setMenu(false));
+  links.forEach(link => link.addEventListener('click', () => setMenu(false)));
+  checkbox.addEventListener('change', syncMenu);
 
   /* 1. On open, each link's label scrambles in, staggered one after
      another (70ms apart), with the tick on the first only. */
   checkbox.addEventListener('change', () => {
     if (!checkbox.checked) return;
     links.forEach((a, i) => {
-      setTimeout(() => window.scrambleText(a, { duration: 350, tick: i === 0 }), i * 70);
+      setTimeout(() => { if (checkbox.checked) window.scrambleText(a, { duration: 350, tick: i === 0 }); }, i * 70);
     });
   });
 
@@ -825,11 +897,6 @@ window._sectionJump = function _sectionJump(target) {
     }
   });
 
-  /* 3. Menu links are anchors inside <label for="menu-toggle">, so a
-     click already closes the menu (the label unchecks the box) and
-     then follows the link - page links open their page, same-page
-     section links smooth-scroll via CSS scroll-behavior. No JS needed
-     for the base path; the page transition wraps the jump in the transition. */
 })();
 
 /* ─── PROMPT 17: 3D MOUSE PARALLAX (REVIEW ROUND: BG, NOT TEXT) ─
@@ -1296,7 +1363,7 @@ window._sectionJump = function _sectionJump(target) {
       if (!target) return;
       e.preventDefault();
       const mt = document.getElementById('menu-toggle');
-      if (mt) mt.checked = false; /* close the side menu over the jump */
+      if (mt && mt.checked) { mt.checked = false; mt.dispatchEvent(new Event('change')); }
       window._sectionJump(target);
       return;
     }
@@ -1310,7 +1377,7 @@ window._sectionJump = function _sectionJump(target) {
       if (!target) return;
       e.preventDefault();
       const mt = document.getElementById('menu-toggle');
-      if (mt) mt.checked = false;
+      if (mt && mt.checked) { mt.checked = false; mt.dispatchEvent(new Event('change')); }
       window._sectionJump(target);
       return;
     }
@@ -2076,9 +2143,10 @@ window._sectionJump = function _sectionJump(target) {
   const overlay = document.createElement('div');
   overlay.className = 'prow-overlay';
   overlay.innerHTML =
-    '<div class="prow-overlay__panel" role="dialog" aria-modal="true">' +
+    '<div class="prow-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="project-detail-title">' +
+      '<button type="button" class="prow-overlay__close" aria-label="Close project details">✕ CLOSE</button>' +
       '<p class="prow-overlay__kicker section-label"></p>' +
-      '<h3 class="prow-overlay__title"></h3>' +
+      '<h3 id="project-detail-title" class="prow-overlay__title"></h3>' +
       '<div class="prow-overlay__body"></div>' +
       '<p class="prow-overlay__hint section-label">ESC OR TAP OUTSIDE TO CLOSE</p>' +
       '<span class="prow-overlay__scan" aria-hidden="true"></span>' +
@@ -2088,18 +2156,30 @@ window._sectionJump = function _sectionJump(target) {
   const titleEl = overlay.querySelector('.prow-overlay__title');
   const bodyEl = overlay.querySelector('.prow-overlay__body');
   let openRow = null;
+  const closeButton = overlay.querySelector('.prow-overlay__close');
+  overlay.inert = true;
+  overlay.setAttribute('aria-hidden', 'true');
+  closeButton.addEventListener('click', closeOverlay);
 
   function openOverlay(mode, row) {
     openRow = row;
     kickerEl.textContent = (mode === 'summary' ? 'SUMMARY' : 'ALL DETAILS') + ' — ' + row.dataset.number; /* V7 item 9: renamed */
+    window.scrambleText.cancel(titleEl);
+    titleEl.dataset.scrambleText = row.dataset.title;
     titleEl.textContent = row.dataset.title;
     bodyEl.textContent = mode === 'summary' ? row.dataset.summary : row.dataset.details;
     overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    overlayState.open(overlay, closeButton);
     if (!REDUCED_MOTION) window.scrambleText(titleEl, { duration: 300 });
     playSfx('assets/sfx/transition.mp3', 0.25);
   }
   function closeOverlay() {
+    window.scrambleText.cancel(titleEl);
     overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlayState.close(overlay);
+    overlay.inert = true;
     openRow = null;
   }
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeOverlay(); });
