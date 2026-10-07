@@ -930,7 +930,7 @@ body:has(.menu-checkbox:checked) .nav-overlay {
 }
 
 /* <label> wrapper is display:block so the full row is clickable */
-.nav-overlay__item > label {
+.nav-overlay__item > .nav-overlay__row {
   display: block;
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 0v10m0 4v10M0 12h10m4 0h10' stroke='%23FFFFFF' stroke-width='1'/%3E%3Crect x='10' y='10' width='4' height='4' fill='%23968ADF'/%3E%3C/svg%3E") 12 12, pointer;
 }
@@ -1436,7 +1436,7 @@ body:has(.menu-checkbox:checked) .nav-overlay__item:nth-child(6) .nav-overlay__l
    kprverse-style: the hovered item gets a translucent highlight
    block with a chamfered bottom-right corner and a tiny mono index
    tag at its top-right. The current page sits on solid lavender. */
-.nav-overlay__item > label > a {
+.nav-overlay__item > .nav-overlay__row > a {
   position: relative;
   padding: 0.08em 0.35em 0.08em 0.15em;
   transition: color var(--dur-fast) ease, background-color var(--dur-fast) ease;
@@ -2732,3 +2732,34 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
 @media (min-width: 701px) and (max-width: 900px) {
   .navbar .navbar__cta { display: none; }
 }
+
+/* Essential navigation layout also works without the utility CDN. */
+.navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 800; }
+.navbar__inner { display: flex; align-items: center; justify-content: space-between; padding-inline: clamp(1rem,4vw,3rem); min-height: 3.5rem; max-width: 1200px; margin-inline: auto; }
+.navbar__brand { display: flex; align-items: center; gap: .75rem; }
+.navbar__links, .navbar__cta { display: none; }
+@media (min-width: 768px) {
+  .navbar__links { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .navbar__cta { display: inline-flex; }
+}
+@media (min-width: 700px) and (max-width: 900px) { .navbar .navbar__cta { display: none; } }
+.nav-overlay { visibility: hidden; transition: clip-path .65s var(--easing), visibility 0s .65s; }
+body:has(.menu-checkbox:checked) .nav-overlay { visibility: visible; transition-delay: 0s; }
+button.nav-overlay__close { background: none; border: 0; padding: 0; }
+.menu-trigger:focus-visible, .nav-overlay__close:focus-visible, .prow-overlay__close:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 4px; }
+body.overlay-open .music-toggle, body.overlay-open .guide-hold, body.overlay-open .tap-sound { visibility: hidden; pointer-events: none; }
+.prow-overlay__close { align-self: flex-end; color: #fff; background: none; border: 1px solid rgba(255,255,255,.5); font: .6875rem var(--font-mono); letter-spacing: .1em; min-height: 44px; padding: .5rem .75rem; cursor: pointer; }
+.prow-overlay:not(.is-open) { visibility: hidden; }
+.prow-overlay__hint { color: rgba(255,255,255,.75); }
+.nav-overlay__inner { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+@media (max-width: 767px) {
+  .nav-overlay__close { min-height: 44px; display: inline-flex; align-items: center; }
+  .nav-overlay__sub-link { min-height: 44px; display: inline-flex; align-items: center; }
+  .nav-overlay__sub { flex-wrap: wrap; }
+  .footer__link, .contact__link { min-height: 44px; display: inline-flex; align-items: center; }
+  .nav-overlay__footer.section-label, .footer .section-label, .art-break__caption { color: rgba(255,255,255,.8); }
+  .section--photo .section-label { color: rgba(255,255,255,.8); }
+}
+
+@media (max-width: 767px) { .art-break__caption { opacity: 1; } .hero-stage .section-label { color: rgba(255,255,255,.8); } }
+.nav-overlay__inner > noscript { display: contents; }
