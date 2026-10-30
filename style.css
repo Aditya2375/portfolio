@@ -2694,7 +2694,7 @@ html.no-view-timeline .prow.is-flat .prow__inner { transform: none; opacity: 1; 
   /* 2. Hero frames: the 16:9 sequence is composed face-right for desktop
         (headline sits over the dark left half). Cover-cropping that on a
         phone cut the face in half - shift the visible window onto it. */
-  .portrait-frame img { object-position: 62% 20%; }
+  .portrait-frame img { object-position: 52% 20%; }
 
 }
 
