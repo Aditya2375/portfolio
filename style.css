@@ -328,7 +328,7 @@ a, button, .btn {
   .portrait-frame img { object-position: 50% 28%; }
 }
 
-/* V4 face-clip hook: when script.js swaps in the AI video (stage carries
+/* V4 face-clip hook: when script.js swaps in the face-turn clip (stage carries
    data-face-clip), the frame stack hides and the clip fills the hero. */
 .hero--clip .portrait-frame { display: none; }
 .hero-clip {

@@ -107,8 +107,8 @@
          <picture> picks the set: wide screens (min-aspect-ratio 1/1) download
          only the 16:9 landscape set (face right of centre, headline over the
          dark left half); phones and portrait tablets download only the 4:5 set. -->
-    <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 38">
-      <!-- FACE-CLIP ACTIVE: script.js swaps the 12-frame stack for the
+    <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 12">
+      <!-- FACE-CLIP (dormant): script.js can swap the 12-frame stack for the
            scroll-scrubbed clip (assets/video/face-turn.mp4). The frames
            stay in the DOM as the no-JS / reduced-motion / pre-load fallback. -->
       <div class="hero-sticky">
@@ -116,119 +116,53 @@
              (facing camera) on top. Each frame carries --i; the stage carries
              --frame-count; the CSS slices the scroll range from those two. -->
         <div class="hero-bg">
-          <picture class="portrait-frame portrait-frame--first" style="--i: 1">
-            <img src="assets/frames/frame01.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" fetchpriority="high">
+                    <picture class="portrait-frame portrait-frame--first" style="--i: 1">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame01.jpg?v=29">
+            <img src="assets/frames/landscape/frame01_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" fetchpriority="high">
           </picture>
           <picture class="portrait-frame" style="--i: 2">
-            <img src="assets/frames/frame02.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame02.jpg?v=29">
+            <img src="assets/frames/landscape/frame02_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 3">
-            <img src="assets/frames/frame03.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame03.jpg?v=29">
+            <img src="assets/frames/landscape/frame03_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 4">
-            <img src="assets/frames/frame04.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame04.jpg?v=29">
+            <img src="assets/frames/landscape/frame04_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 5">
-            <img src="assets/frames/frame05.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame05.jpg?v=29">
+            <img src="assets/frames/landscape/frame05_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 6">
-            <img src="assets/frames/frame06.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame06.jpg?v=29">
+            <img src="assets/frames/landscape/frame06_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 7">
-            <img src="assets/frames/frame07.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame07.jpg?v=29">
+            <img src="assets/frames/landscape/frame07_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 8">
-            <img src="assets/frames/frame08.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame08.jpg?v=29">
+            <img src="assets/frames/landscape/frame08_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 9">
-            <img src="assets/frames/frame09.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame09.jpg?v=29">
+            <img src="assets/frames/landscape/frame09_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 10">
-            <img src="assets/frames/frame10.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame10.jpg?v=29">
+            <img src="assets/frames/landscape/frame10_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
           <picture class="portrait-frame" style="--i: 11">
-            <img src="assets/frames/frame11.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame11.jpg?v=29">
+            <img src="assets/frames/landscape/frame11_16x9.jpg?v=29" alt="" aria-hidden="true" width="2560" height="1440" decoding="async">
           </picture>
-          <picture class="portrait-frame" style="--i: 12">
-            <img src="assets/frames/frame12.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 13">
-            <img src="assets/frames/frame13.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 14">
-            <img src="assets/frames/frame14.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 15">
-            <img src="assets/frames/frame15.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 16">
-            <img src="assets/frames/frame16.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 17">
-            <img src="assets/frames/frame17.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 18">
-            <img src="assets/frames/frame18.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 19">
-            <img src="assets/frames/frame19.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 20">
-            <img src="assets/frames/frame20.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 21">
-            <img src="assets/frames/frame21.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 22">
-            <img src="assets/frames/frame22.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 23">
-            <img src="assets/frames/frame23.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 24">
-            <img src="assets/frames/frame24.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 25">
-            <img src="assets/frames/frame25.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 26">
-            <img src="assets/frames/frame26.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 27">
-            <img src="assets/frames/frame27.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 28">
-            <img src="assets/frames/frame28.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 29">
-            <img src="assets/frames/frame29.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 30">
-            <img src="assets/frames/frame30.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 31">
-            <img src="assets/frames/frame31.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 32">
-            <img src="assets/frames/frame32.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 33">
-            <img src="assets/frames/frame33.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 34">
-            <img src="assets/frames/frame34.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 35">
-            <img src="assets/frames/frame35.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 36">
-            <img src="assets/frames/frame36.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame" style="--i: 37">
-            <img src="assets/frames/frame37.jpg?v=29" alt="" aria-hidden="true" width="1920" height="1080" decoding="async">
-          </picture>
-          <picture class="portrait-frame portrait-frame--default" style="--i: 38">
-            <img src="assets/frames/frame38.jpg?v=29" alt="Portrait of Aditya Kulkarni" width="1920" height="1080" decoding="async">
+          <picture class="portrait-frame portrait-frame--default" style="--i: 12">
+            <source media="(max-aspect-ratio: 1/1)" srcset="assets/frames/orig4x5/frame12.jpg?v=29">
+            <img src="assets/frames/landscape/frame12_16x9.jpg?v=29" alt="Portrait of Aditya Kulkarni" width="2560" height="1440" decoding="async">
           </picture>
         </div>
         <!-- FLAT readability overlay above the frames, below the text.

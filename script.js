@@ -283,7 +283,9 @@ function showTapForSound() {
     'assets/music/intro.mp3', 'assets/music/hero.mp3',
     'assets/sfx/hover.mp3', 'assets/sfx/transition.mp3',
     'assets/sfx/robot-1.mp3', 'assets/sfx/robot-2.mp3',
-    'assets/frames/frame01.jpg',
+    matchMedia('(max-aspect-ratio: 1/1)').matches
+      ? 'assets/frames/orig4x5/frame01.jpg'
+      : 'assets/frames/landscape/frame01_16x9.jpg',
   ];
   let done = 0, entered = false, enterTimer = null;
   const readout = overlay.querySelector('.intro__readout');
@@ -1900,8 +1902,8 @@ window._sectionJump = function _sectionJump(target) {
   setInterval(tick, 30000);
 })();
 
-/* ─── V4/V10: FACE-CLIP HERO (the AI video is live) ───────────
-   The hero stage carries data-face-clip="assets/video/face-turn.mp4";
+/* ─── V4/V10: FACE-CLIP HERO (dormant) ───────────
+   If the hero stage carries data-face-clip="assets/video/face-turn.mp4",
    this swaps the 12-frame crossfade stack for the video, scrubbing its
    playhead with scroll progress (the smooth turn he wanted, zero
    stepped frames). The frame stack stays in the DOM underneath as the
