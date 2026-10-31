@@ -42,6 +42,7 @@
             <span class="nav-overlay__row"><a href="index.html" class="nav-overlay__link" aria-current="page">01 Home</a></span>
             <ul class="nav-overlay__sub" role="list">
               <li><span class="nav-overlay__row"><a href="#about" class="nav-overlay__sub-link">About</a></span></li>
+              <li><span class="nav-overlay__row"><a href="#beyond" class="nav-overlay__sub-link">Beyond</a></span></li>
               <li><span class="nav-overlay__row"><a href="#skills" class="nav-overlay__sub-link">Skills</a></span></li>
               <li><span class="nav-overlay__row"><a href="#projects" class="nav-overlay__sub-link">Projects</a></span></li>
               <li><span class="nav-overlay__row"><a href="#explore" class="nav-overlay__sub-link">Explore</a></span></li>
@@ -75,6 +76,7 @@
       </div>
       <ul class="navbar__links hidden md:flex md:items-center md:gap-4 md:flex-wrap md:justify-center" role="list">
         <li><a href="#about" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">About</a></li>
+        <li><a href="#beyond" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">Beyond</a></li>
         <li><a href="#skills" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">Skills</a></li>
         <li><a href="#projects" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">Projects</a></li>
         <li><a href="#explore" class="navbar__link font-mono text-[0.6875rem] font-medium tracking-[0.1em] uppercase text-muted py-[0.3em] px-[0.5em] transition-colors duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink focus-visible:text-ink focus-visible:outline-none">Explore</a></li>
@@ -107,7 +109,7 @@
          dark left half); phones and portrait tablets download only the 4:5 set. -->
     <section class="hero-stage" id="hero" aria-labelledby="hero-heading" style="--frame-count: 38">
       <!-- FACE-CLIP ACTIVE: script.js swaps the 12-frame stack for the
-           scroll-scrubbed AI clip (assets/video/face-turn.mp4). The frames
+           scroll-scrubbed clip (assets/video/face-turn.mp4). The frames
            stay in the DOM as the no-JS / reduced-motion / pre-load fallback. -->
       <div class="hero-sticky">
         <!-- Frame stack: frame01 (side profile) sits at the bottom, frame12
@@ -279,11 +281,45 @@
       </div>
     </section>
 
+    <!-- ── BEYOND ─────────────────────────────────────── -->
+    <section class="section beyond-teaser" id="beyond" aria-labelledby="beyond-heading">
+      <div class="container">
+        <div class="section__header">
+          <p class="section-label">002 BEYOND</p>
+          <h2 class="section-title" id="beyond-heading"><span class="reveal-text">Beyond the Terminal</span></h2>
+        </div>
+        <div class="stat-grid grid grid-cols-[repeat(auto-fit,minmax(130px,1fr))] gap-4 mt-2">
+          <div class="stat-card chamfer flex flex-col p-4 border border-hairline bg-white">
+            <p class="stat-card__value font-display text-[1.5rem] text-ink leading-none mb-2">5 AM</p>
+            <p class="stat-card__label section-label font-mono text-[0.65rem] tracking-[0.05em] text-muted">WHEN MY RUNS START</p>
+          </div>
+          <div class="stat-card chamfer flex flex-col p-4 border border-hairline bg-white">
+            <p class="stat-card__value font-display text-[1.5rem] text-ink leading-none mb-2">~45 KM</p>
+            <p class="stat-card__label section-label font-mono text-[0.65rem] tracking-[0.05em] text-muted">A NORMAL RUNNING WEEK</p>
+          </div>
+          <div class="stat-card chamfer flex flex-col p-4 border border-hairline bg-white">
+            <p class="stat-card__value font-display text-[1.5rem] text-ink leading-none mb-2">7 YRS</p>
+            <p class="stat-card__label section-label font-mono text-[0.65rem] tracking-[0.05em] text-muted">TREKKING WITH GGIM PUNE</p>
+          </div>
+          <div class="stat-card chamfer flex flex-col p-4 border border-hairline bg-white">
+            <p class="stat-card__value font-display text-[1.5rem] text-ink leading-none mb-2">5</p>
+            <p class="stat-card__label section-label font-mono text-[0.65rem] tracking-[0.05em] text-muted">HIMALAYAN SUMMITS</p>
+          </div>
+          <div class="stat-card chamfer flex flex-col p-4 border border-hairline bg-white">
+            <p class="stat-card__value font-display text-[1.5rem] text-ink leading-none mb-2">DAILY</p>
+            <p class="stat-card__label section-label font-mono text-[0.65rem] tracking-[0.05em] text-muted">CYCLING TO COLLEGE</p>
+          </div>
+        </div>
+        <p class="font-body text-[0.875rem] leading-[1.75] text-muted max-w-[52ch] mt-4">Football at near state level, city-level basketball, championship swimming, some chess. Guitar, piano, and singing on the other side of the week.</p>
+        <a href="beyond.html" class="btn btn--outline btn--sm mt-4">The Full Beyond Page &rarr;</a>
+      </div>
+    </section>
+
     <!-- ── SKILLS ─────────────────────────────────────── -->
     <section class="section skills bg-accent border-t-[rgba(0,0,0,0.12)]" id="skills" aria-labelledby="skills-heading">
       <div class="container">
         <div class="section__header">
-          <p class="section-label">002 SKILLS</p>
+          <p class="section-label">003 SKILLS</p>
           <h2 class="section-title" id="skills-heading"><span class="reveal-text">What I Know</span></h2>
         </div>
         <ul class="skills__list flex flex-col" role="list">
@@ -332,7 +368,7 @@
 <section class="section projects" id="projects" aria-labelledby="projects-heading">
       <div class="container">
         <div class="section__header">
-          <p class="section-label">003 FEATURED PROJECTS</p>
+          <p class="section-label">004 FEATURED PROJECTS</p>
           <h2 class="section-title" id="projects-heading"><span class="reveal-text">Things I've Built</span></h2>
         </div>
         <div class="projects__teaser flex flex-col gap-8 border-t-2 border-ink pt-8">
@@ -349,7 +385,7 @@
     <section class="section explore" id="explore" aria-labelledby="explore-heading">
       <div class="container">
         <div class="section__header">
-          <p class="section-label">004 EXPLORE</p>
+          <p class="section-label">005 EXPLORE</p>
           <h2 class="section-title" id="explore-heading"><span class="reveal-text">Explore</span></h2>
         </div>
         <div class="explore__grid">
@@ -388,7 +424,7 @@
       <div class="section-bg" aria-hidden="true"><img src="assets/bg/home-contact.jpg" alt="" loading="lazy"></div>
       <div class="container">
         <div class="section__header">
-          <p class="section-label">005 CONTACT</p>
+          <p class="section-label">006 CONTACT</p>
           <h2 class="section-title" id="contact-heading"><span class="reveal-text">Get In Touch.</span></h2>
         </div>
         <div class="contact__body flex flex-col gap-8">
