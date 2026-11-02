@@ -71,6 +71,8 @@
   doc.addEventListener('pointerdown', function (e) {
     if (e.pointerType !== 'mouse') return;
     down = true;
+    if (!seen) { seen = true; cx = px = e.clientX; cy = py = e.clientY; root.classList.add('ak-cursor-on'); }
+    px = e.clientX; py = e.clientY;
     burst(e.clientX, e.clientY);
   }, { passive: true });
   doc.addEventListener('pointerup', function () { down = false; }, { passive: true });
