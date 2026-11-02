@@ -31,6 +31,7 @@
   canvas.setAttribute('aria-hidden', 'true');
   canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000;';
   var ctx = canvas.getContext('2d');
+  doc.body.appendChild(canvas);
   var hideNative = doc.createElement('style');
   hideNative.textContent = 'html.ak-cursor-on, html.ak-cursor-on * { cursor: none !important; }';
   doc.head.appendChild(hideNative);
