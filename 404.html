@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found - Aditya Kulkarni</title>
+  <meta name="robots" content="noindex">
+  <meta name="description" content="This page moved or never existed. Head back to Aditya Kulkarni's portfolio.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink: #f2f1ec; --muted: rgba(242,241,236,0.55); --hairline: rgba(242,241,236,0.14); --accent: #8f7bff; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background: #0b0b0d; color: var(--ink);
+      font-family: 'Inter', system-ui, sans-serif;
+      display: grid; place-items: center;
+      padding: 2rem; min-height: 100svh;
+    }
+    main { text-align: left; max-width: 40rem; }
+    .label {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 1.5rem;
+    }
+    .label::before { content: ""; display: inline-block; width: 0.5rem; height: 0.5rem; background: var(--accent); margin-right: 0.6rem; }
+    h1 {
+      font-family: 'Archivo Black', 'Arial Black', sans-serif;
+      font-size: clamp(4rem, 18vw, 10rem);
+      line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 1.25rem;
+    }
+    p { color: var(--muted); font-size: clamp(1rem, 2.5vw, 1.2rem); line-height: 1.6; margin-bottom: 2.5rem; }
+    a.home {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink); text-decoration: none;
+      border: 1px solid var(--hairline); padding: 0.9rem 1.6rem;
+      display: inline-block; transition: border-color 150ms ease, color 150ms ease;
+    }
+    a.home:hover { border-color: var(--ink); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="label">Error 404</div>
+    <h1>LOST.</h1>
+    <p>This page moved or never existed. Everything that is actually here lives one click away.</p>
+    <a class="home" href="/">Back to the start</a>
+  </main>
+</body>
+</html>
