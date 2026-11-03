@@ -247,7 +247,7 @@ function showTapForSound() {
   document.body.appendChild(chip);
 }
 
-/* ─── PROMPT 10: INTRO SCREEN WITH SOUND CHOICE ─────────────
+/* ─── INTRO SCREEN WITH SOUND CHOICE ─────────────
    The overlay markup is injected from JS, so with script.js
    deleted the site loads normally and there is no overlay.
    It shows only on the FIRST page of a visit: the ENTER choice
@@ -415,7 +415,7 @@ function showTapForSound() {
   }
 })();
 
-/* ─── PROMPT 11: SCRAMBLE ENGINE ─────────────────────────────
+/* ─── SCRAMBLE ENGINE ─────────────────────────────
    kprverse-style decode, hand-written (no library): revealed
    letters lock in from left to right while the rest flicker as
    random uppercase letters, settling in ~0.3-0.5s.
@@ -591,7 +591,7 @@ window.scrambleText.cancel = function cancelScramble(el) {
   });
 })();
 
-/* ─── PROMPT 12: MUSIC TOGGLE ─────────────────────────────────
+/* ─── MUSIC TOGGLE ─────────────────────────────────
    Fixed bottom-left equalizer: 5 thin bars, pure CSS animation —
    JS only toggles a class and calls the engine. Frozen while
    muted, dancing while music plays. Injected from JS so the
@@ -621,7 +621,7 @@ window.scrambleText.cancel = function cancelScramble(el) {
   });
 })();
 
-/* ─── PROMPT 13: PER-SECTION SOUNDTRACK ───────────────────────
+/* ─── PER-SECTION SOUNDTRACK ───────────────────────
    Each section of a page has its own track; when a section crosses
    the middle of the viewport, the engine crossfades to its track.
    Only sections that exist on the CURRENT page are watched, and
@@ -660,7 +660,7 @@ const SECTION_TRACKS = {
 })();
 
 
-/* ─── PROMPT 14: CURSOR FOLLOWER ──────────────────────────────
+/* ─── CURSOR FOLLOWER ──────────────────────────────
    A dot that follows the mouse exactly + a ring that lags behind
    with lerp (each frame the ring closes ~15% of the remaining
    distance, which gives the smooth elastic feel). Both use
@@ -703,7 +703,7 @@ const SECTION_TRACKS = {
   });
 })();
 
-/* ─── PROMPT 15: NAVBAR WIRING ────────────────────────────────
+/* ─── NAVBAR WIRING ────────────────────────────────
    Smooth anchors, scrollspy, hover scramble + blip, hash landing,
    and a JS fallback for the CSS scroll progress bar.
    Section jumps route through window._sectionJump so the bracket transition can
@@ -834,7 +834,7 @@ window._sectionJump = function _sectionJump(target) {
   });
 })();
 
-/* ─── PROMPT 16: SIDE MENU UPGRADE ────────────────────────────
+/* ─── SIDE MENU UPGRADE ────────────────────────────
    The checkbox/:has() mechanism is the no-JS base. Buttons add
    keyboard access, focus management, sound and scramble. */
 (function initSideMenu() {
@@ -901,7 +901,7 @@ window._sectionJump = function _sectionJump(target) {
 
 })();
 
-/* ─── PROMPT 17: 3D MOUSE PARALLAX (REVIEW ROUND: BG, NOT TEXT) ─
+/* ─── 3D MOUSE PARALLAX (REVIEW ROUND: BG, NOT TEXT) ─
    Mouse-driven depth, lerped in one shared rAF loop:
    1. hero BACKGROUND stack drifts in three depths (portrait, grid,
       crosshair) - the text stays put
@@ -1035,7 +1035,7 @@ window._sectionJump = function _sectionJump(target) {
    touchend could also strand a card mid-cycle), so the running stats now
    simply show their real values - the HTML always carried them. */
 
-/* ─── PROMPT 18 (V24 RESTORE): HOLD-DOWN STAT CARDS ───────────
+/* ─── HOLD-DOWN STAT CARDS ───────────
    The running stats idle as glitching placeholders with a mono HOLD
    TO REVEAL hint; a 600ms press-and-hold decodes to the real stat.
    V24: pointer events ONLY (no mousedown + touchstart pair) - the
@@ -1233,7 +1233,7 @@ window._sectionJump = function _sectionJump(target) {
   });
 })();
 
-/* ─── PROMPT 19: BRACKET-FRAME SCREEN TRANSITIONS ─────────────
+/* ─── BRACKET-FRAME SCREEN TRANSITIONS ─────────────
    window.playTransition(callback): the bracket overlay covers the
    screen, runs callback() at full cover (with the transition sweep
    when sound is on), then uncovers. Same-page section jumps happen
@@ -1402,7 +1402,7 @@ window._sectionJump = function _sectionJump(target) {
   });
 })();
 
-/* ─── PROMPT 20: THE AI GUIDE ─────────────────────────────────
+/* ─── THE AI GUIDE ─────────────────────────────────
    A fully scripted host - no API, no AI. It talks to the visitor
    about Aditya and what they came to see, walks the page section by
    section, and times each line to land just after the section's own
@@ -1737,7 +1737,7 @@ window._sectionJump = function _sectionJump(target) {
   });
 })();
 
-/* ─── PROMPT 21: SCRAMBLE-ON-SCROLL EVERYWHERE ────────────────
+/* ─── SCRAMBLE-ON-SCROLL EVERYWHERE ────────────────
    Section headlines and project card titles decode once when they
    first enter the viewport (the mono labels already do).
    One pass per element: IntersectionObserver + unobserve. Body
@@ -1768,7 +1768,7 @@ window._sectionJump = function _sectionJump(target) {
   targets.forEach(el => io.observe(el));
 })();
 
-/* ─── PROMPT 22: LENIS SMOOTH SCROLL ──────────────────────────
+/* ─── LENIS SMOOTH SCROLL ──────────────────────────
    Loaded from the jsDelivr CDN in each page's <head>. If the CDN
    fails (no window.Lenis) or reduced motion is on, the site simply
    keeps native scrolling - CSS scroll-behavior stays the fallback. */
@@ -1789,7 +1789,7 @@ window._sectionJump = function _sectionJump(target) {
   window._lenis = lenis;  /* the transition jump and the guide reach it here */
 })();
 
-/* ─── PROMPT 23: GSAP + SCROLLTRIGGER ─────────────────────────
+/* ─── GSAP + SCROLLTRIGGER ─────────────────────────
    Loaded from the jsDelivr CDN in every page. Everything below is
    layered: if the CDN fails, the CSS scroll-driven versions under
    The existing fallbacks keep working untouched. Reduced motion
@@ -2051,7 +2051,7 @@ window._sectionJump = function _sectionJump(target) {
   update();
 })();
 
-/* ─── PROMPT 24: FOOTER WORDMARK FINALE ───────────────────────
+/* ─── FOOTER WORDMARK FINALE ───────────────────────
    When the footer first scrolls into view, ADITYA assembles letter
    by letter: the A drops first in lavender, each letter follows with
    a small settle bounce and a quiet tick, then one last scramble
