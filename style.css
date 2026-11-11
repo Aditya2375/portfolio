@@ -16,3 +16,7 @@
 .site-header.menu-open .talk{visibility:hidden}.site-menu{background:#070909}
 
 .java-foot{bottom:84px;max-width:210px}@media(max-width:600px){.java-foot{bottom:66px;max-width:120px}}
+
+.footer-line,.hero-name .eyebrow,.hero-name .coordinate,.stats dt,.stats small,.java-top,.java-foot{font-size:11px}.java-foot{max-width:220px}@media(max-width:600px){.java-foot{max-width:145px;bottom:62px;line-height:1.35}.java-pi{top:35%}}
+
+@media(max-width:600px){.java-visual{aspect-ratio:1.15}.java-foot{max-width:145px}}
