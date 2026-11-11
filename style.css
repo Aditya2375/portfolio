@@ -14,3 +14,5 @@
 
 .contour-landscape i:nth-child(1){--i:0}.contour-landscape i:nth-child(2){--i:1}.contour-landscape i:nth-child(3){--i:2}.contour-landscape i:nth-child(4){--i:3}.contour-landscape i:nth-child(5){--i:4}.contour-landscape i:nth-child(6){--i:5}.contour-landscape i:nth-child(7){--i:6}.contour-landscape i:nth-child(8){--i:7}.contour-landscape i:nth-child(9){--i:8}.contour-landscape i:nth-child(10){--i:9}.contour-landscape i:nth-child(11){--i:10}.contour-landscape i:nth-child(12){--i:11}.contour-landscape i:nth-child(13){--i:12}.contour-landscape i:nth-child(14){--i:13}.contour-landscape i:nth-child(15){--i:14}.contour-landscape i:nth-child(16){--i:15}.contour-landscape i:nth-child(17){--i:16}.contour-landscape i:nth-child(18){--i:17}.contour-landscape i:nth-child(19){--i:18}.contour-landscape i:nth-child(20){--i:19}
 .site-header.menu-open .talk{visibility:hidden}.site-menu{background:#070909}
+
+.java-foot{bottom:84px;max-width:210px}@media(max-width:600px){.java-foot{bottom:66px;max-width:120px}}
