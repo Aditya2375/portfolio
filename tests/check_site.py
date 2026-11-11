@@ -10,6 +10,7 @@ class Check(HTMLParser):
         a=dict(attrs)
         if tag=='h1': self.h1+=1
         if tag=='img' and 'alt' not in a:self.errors.append('missing image alt')
+        if 'style' in a:self.errors.append('inline style')
         if tag=='script' and not a.get('src'):self.errors.append('inline script')
         if any(k.startswith('on') for k in a):self.errors.append('inline event handler')
         if tag=='a' and a.get('target')=='_blank' and 'noopener' not in a.get('rel',''):self.errors.append('opener access')
