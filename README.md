@@ -21,7 +21,7 @@ Run the basic source checks with `python3 tests/check_site.py`.
 
 ## Fonts and images
 
-Doto is a self-hosted subset and IBM Plex Mono is an unmodified self-hosted font, under the SIL Open Font License. Their license files are in `assets/review/`. Project screenshots show my published projects. Other visuals are authored for this portfolio.
+Doto is a self-hosted subset. Portfolio Mono is a renamed subset derived from IBM Plex Mono, preserving the SIL Open Font License and copyright notice, under the SIL Open Font License. Their license files are in `assets/review/`. Project screenshots show my published projects. Other visuals are authored for this portfolio.
 
 ## Author
 

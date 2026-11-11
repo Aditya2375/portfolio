@@ -32,6 +32,7 @@
   });
   let scrollQueued = false;
   const syncHeader = () => {
+    header.classList.toggle('scrolled', scrollY > 24);
     const item = document.elementFromPoint(Math.max(15, innerWidth / 2), 80);
     header.classList.toggle('paper-header', !!item?.closest('.project-stage,.work-intro,.all-work,.project-index'));
     scrollQueued = false;
@@ -50,6 +51,11 @@
   const draw = time => {
     if (!points) return;
     context.clearRect(0, 0, 580, 725);
+    context.save();
+    const progress = paused ? 0 : Math.min(1, Math.max(0, scrollY / hero.offsetHeight));
+    context.translate(290, 360 - progress * 24);
+    context.scale(1 + progress * .06, 1 + progress * .06);
+    context.translate(-290, -360);
     const phase = paused ? 0 : time * .0003;
     context.lineWidth = .7;
     for (let j = 0; j < points.length; j++) {
@@ -78,6 +84,7 @@
         previous=p;
       }
     }
+    context.restore();
   };
   const tick = t => {
     if (paused || !visible || document.hidden) {active=false;return;}
