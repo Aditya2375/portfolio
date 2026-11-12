@@ -136,7 +136,7 @@
         }
       }
       wrapper.classList.add('ready');update();
-    }).catch(()=>{if(toggle)toggle.hidden=true;});
-  } else if (toggle) toggle.hidden=true;
+    }).catch(()=>{update();});
+  } else if (toggle && !screens.length) toggle.hidden=true;
   sync();
 })();
