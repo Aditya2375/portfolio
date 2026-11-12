@@ -40,7 +40,9 @@
   addEventListener('scroll', () => {if (!scrollQueued) {scrollQueued = true;requestAnimationFrame(syncHeader);}}, {passive:true});
   syncHeader();
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let paused = reduced.matches;
+  let storedPause = false;
+  try { storedPause = localStorage.getItem('portfolio-motion-paused') === 'true'; } catch {}
+  let paused = reduced.matches || storedPause;
   const canvas = document.querySelector('#portrait');
   const hero = document.querySelector('.hero');
   const sequence = document.querySelector('.hero-sequence');
@@ -52,7 +54,7 @@
   let pointerX = 0, pointerY = 0, heroVisible = true, dirty = true;
   const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
   const motion = () => {
-    const progress = sequence ? clamp(-sequence.getBoundingClientRect().top / (sequence.offsetHeight-innerHeight),0,1) : 0;
+    const progress = sequence ? clamp(-sequence.getBoundingClientRect().top / (Math.max(1,sequence.offsetHeight-innerHeight)),0,1) : 0;
     if (sequence) {
       const scale = 1-progress*.16;
       hero.style.transform = paused ? '' : `perspective(1600px) rotateX(${progress*12}deg) scale(${scale})`;
@@ -107,7 +109,7 @@
     if (toggle) {toggle.textContent=paused?'RESUME MOTION':'PAUSE MOTION';toggle.setAttribute('aria-pressed',String(paused));}
     cancelAnimationFrame(frame);active=false;pointerX=pointerY=0;update();
   };
-  toggle?.addEventListener('click',()=>{paused=!paused;sync();});
+  toggle?.addEventListener('click',()=>{paused=!paused;try { localStorage.setItem('portfolio-motion-paused',String(paused)); } catch {}sync();});
   reduced.addEventListener('change',()=>{paused=reduced.matches;sync();});
   addEventListener('scroll',update,{passive:true});
   addEventListener('resize',update,{passive:true});

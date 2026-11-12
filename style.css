@@ -59,6 +59,8 @@ body{overflow-x:clip}.no-js .hero-sequence{height:100svh}.no-js .hero-sequence .
 @media(max-width:600px){.hero-name{text-shadow:0 1px 10px #000,0 0 24px #000}.hero-name .eyebrow{max-width:270px}}
 .project-stage{overflow:clip}
 .work-nav,.hero-name .eyebrow,.header-actions .talk,.header-actions button{font-size:11px}
-.motion-paused .hero-sequence{height:185svh}.motion-paused .hero-sequence .hero{position:sticky;top:0}
-@media(max-width:600px){.motion-paused .hero-sequence{height:145svh}}
+
 @media(prefers-reduced-motion:reduce){.motion-paused .hero-sequence{height:100svh}.motion-paused .hero-sequence .hero{position:relative}}
+
+@media(max-height:600px){.hero-sequence .hero{min-height:100svh;max-height:none}.hero{min-height:100svh;padding-top:95px}.hero-name{margin-top:0;max-width:45%}.hero h1{font-size:clamp(23px,5vh,36px)}.hero-name .eyebrow{font-size:10px;line-height:1.35;margin-bottom:9px}.hero-name .coordinate{margin-top:10px;font-size:10px}.hero-statement{font-size:14px;width:30%;top:40%;bottom:auto;padding:9px 0 9px 12px}.hero-art{height:115%;width:70%;left:20%;bottom:-12%}.hero-bottom{bottom:8px}.hero-label{display:none}}
+@media(max-width:400px) and (max-height:600px){.hero{padding-top:85px}.hero-name{max-width:100%}.hero-name .eyebrow{max-width:270px}.hero-art{height:90%;width:125%;left:-12%;bottom:-5%}.hero-statement{top:auto;bottom:70px;width:65%;font-size:12px}.hero-bottom{font-size:10px;gap:6px}.hero-bottom .motion-button{font-size:10px}}
