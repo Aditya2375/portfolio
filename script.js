@@ -39,76 +39,104 @@
   };
   addEventListener('scroll', () => {if (!scrollQueued) {scrollQueued = true;requestAnimationFrame(syncHeader);}}, {passive:true});
   syncHeader();
-  const canvas = document.querySelector('#portrait');
-  if (!canvas) return;
-  const wrapper = canvas.closest('.hero-art');
-  const hero = document.querySelector('.hero');
-  const toggle = document.querySelector('.motion-button');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const context = canvas.getContext('2d');
-  if (!context) {toggle.hidden = true; return;}
-  let points = null, paused = reduced.matches, visible = true, pointerX = 0, pointerY = 0, last = 0, frame = 0, active = false;
-  const draw = time => {
-    if (!points) return;
-    context.clearRect(0, 0, 580, 725);
-    context.save();
-    const progress = paused ? 0 : Math.min(1, Math.max(0, scrollY / hero.offsetHeight));
-    context.translate(290, 360 - progress * 24);
-    context.scale(1 + progress * .06, 1 + progress * .06);
-    context.translate(-290, -360);
-    const phase = paused ? 0 : time * .0003;
-    context.lineWidth = .7;
-    for (let j = 0; j < points.length; j++) {
-      const row = points[j];
-      const v = row.reduce((a,p) => a + p[2], 0) / row.length;
-      context.strokeStyle = `rgba(182,224,207,${.28+v*.65})`;
-      context.beginPath();
-      row.forEach(([x,y,v],i) => {
-        const z = v * 17;
-        const xx = x + (paused ? 0 : Math.sin(phase + y*.009)*2) + pointerX*z;
-        const yy = y + pointerY*z;
-        i ? context.lineTo(xx,yy) : context.moveTo(xx,yy);
-      });
-      context.stroke();
+  let paused = reduced.matches;
+  const canvas = document.querySelector('#portrait');
+  const hero = document.querySelector('.hero');
+  const sequence = document.querySelector('.hero-sequence');
+  const screens = [...document.querySelectorAll('.project-screen')];
+  const toggle = document.querySelector('.motion-button');
+  const context = canvas?.getContext('2d');
+  const wrapper = canvas?.closest('.hero-art');
+  let points = null, mesh = [], active = false, frame = 0, last = 0;
+  let pointerX = 0, pointerY = 0, heroVisible = true, dirty = true;
+  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+  const motion = () => {
+    const progress = sequence ? clamp(-sequence.getBoundingClientRect().top / (sequence.offsetHeight-innerHeight),0,1) : 0;
+    if (sequence) {
+      const scale = 1-progress*.16;
+      hero.style.transform = paused ? '' : `perspective(1600px) rotateX(${progress*12}deg) scale(${scale})`;
     }
-    context.strokeStyle = 'rgba(160,205,188,.20)';
-    context.lineWidth = .55;
-    for (let col = 0; col < 96; col += 2) {
-      let previous = null;
-      for (const row of points) {
-        const p = row[col];
-        if (!p) {previous=null;continue;}
-        if (previous && Math.abs(previous[0]-p[0]) < 17 && Math.abs(previous[1]-p[1])<20) {
-          context.beginPath();context.moveTo(previous[0]+pointerX*previous[2]*17,previous[1]+pointerY*previous[2]*17);context.lineTo(p[0]+pointerX*p[2]*17,p[1]+pointerY*p[2]*17);context.stroke();
-        }
-        previous=p;
-      }
+    screens.forEach(screen => {
+      const rect = screen.getBoundingClientRect();
+      if (rect.bottom < -150 || rect.top > innerHeight+150) return;
+      const offset = clamp((rect.top + rect.height*.5 - innerHeight*.5)/innerHeight,-1,1);
+      screen.style.transform = paused ? '' : `perspective(1400px) rotateX(${offset*-10}deg) rotateY(${offset*7}deg) translateY(${offset*22}px)`;
+    });
+    return progress;
+  };
+  const draw = (time,progress) => {
+    if (!points || !context || !heroVisible) return;
+    context.clearRect(0,0,580,725);
+    const angle = paused ? -.04 : -.04 + progress*.42 + pointerX*.09 + Math.sin(time*.00013)*.035;
+    const ca=Math.cos(angle), sa=Math.sin(angle);
+    const project = p => {
+      const x=p[0]-290, y=p[1]-360;
+      const depth=(p[2]-.3)*70 + Math.sqrt(Math.max(0,1-(x/310)**2))*35;
+      return [290+x*ca-depth*sa,360+y+(paused?0:pointerY*depth*.08)-progress*26,p[2]];
+    };
+    const projected = points.map(row=>row.map(project));
+    mesh.forEach(([r,i,j,k])=>{
+      const a=projected[r][i],b=projected[r][i+1],c=projected[r+1][j],d=projected[r+1][k];
+      const value=(a[2]+b[2]+c[2]+d[2])*.25;
+      const light=clamp(value*1.4+.045,0,.95);
+      const shade=Math.round(18+light*185);
+      context.fillStyle=`rgb(${Math.round(shade*.81)},${shade},${Math.round(shade*.96)})`;
+      context.beginPath();context.moveTo(a[0],a[1]);context.lineTo(b[0],b[1]);context.lineTo(d[0],d[1]);context.lineTo(c[0],c[1]);context.closePath();context.fill();
+    });
+    context.lineWidth=.42;
+    projected.forEach((row,r)=>{
+      context.strokeStyle=`rgba(211,239,225,${r%3===0?.5:.25})`;
+      context.beginPath();row.forEach((p,i)=>i?context.lineTo(p[0],p[1]):context.moveTo(p[0],p[1]));context.stroke();
+    });
+    context.strokeStyle='rgba(5,14,10,.55)';context.lineWidth=.55;
+    mesh.forEach(([r,i,j])=>{const a=projected[r][i],b=projected[r+1][j];context.beginPath();context.moveTo(a[0],a[1]);context.lineTo(b[0],b[1]);context.stroke();});
+  };
+  const tick = time => {
+    active=false;
+    if (document.hidden) return;
+    if (dirty || (!paused && heroVisible && points)) {
+      if (time-last>40 || dirty) {const progress=motion();draw(time,paused?0:progress);last=time;dirty=false;}
     }
-    context.restore();
+    if ((!paused && heroVisible && points) || dirty) start();
   };
-  const tick = t => {
-    if (paused || !visible || document.hidden) {active=false;return;}
-    if (t-last > 40) {draw(t);last=t;}
-    frame=requestAnimationFrame(tick);
-  };
-  const start = () => {if (!active && points && !paused && visible && !document.hidden) {active=true;frame=requestAnimationFrame(tick);}};
+  const start = () => {if (!active && !document.hidden) {active=true;frame=requestAnimationFrame(tick);}};
+  const update = () => {dirty=true;start();};
   const sync = () => {
-    document.body.classList.toggle('motion-paused', paused);
-    toggle.textContent = paused ? 'RESUME MOTION' : 'PAUSE MOTION';
-    toggle.setAttribute('aria-pressed', String(paused));
-    if (paused) {cancelAnimationFrame(frame);active=false;pointerX=pointerY=0;draw(0);} else start();
+    document.body.classList.toggle('motion-paused',paused);
+    if (toggle) {toggle.textContent=paused?'RESUME MOTION':'PAUSE MOTION';toggle.setAttribute('aria-pressed',String(paused));}
+    cancelAnimationFrame(frame);active=false;pointerX=pointerY=0;update();
   };
-  toggle.addEventListener('click', () => {paused=!paused;sync();});
-  reduced.addEventListener('change', () => {paused=reduced.matches;sync();});
-  hero.addEventListener('pointermove', event => {
-    if (paused || event.pointerType !== 'mouse') return;
-    pointerX=(event.clientX/innerWidth-.5)*.7;
-    pointerY=(event.clientY/innerHeight-.5)*.35;
-  },{passive:true});
-  hero.addEventListener('pointerleave',()=>{pointerX=pointerY=0;});
-  new IntersectionObserver(entries => {visible=entries[0].isIntersecting;start();},{threshold:.01}).observe(hero);
-  document.addEventListener('visibilitychange', start);
-  fetch('assets/review/portrait-wire.json').then(response => {if (!response.ok) throw new Error('Portrait data unavailable');return response.json();}).then(data => {
-    points=data;draw(0);wrapper.classList.add('ready');sync();
-  }).catch(() => {toggle.hidden=true;});
+  toggle?.addEventListener('click',()=>{paused=!paused;sync();});
+  reduced.addEventListener('change',()=>{paused=reduced.matches;sync();});
+  addEventListener('scroll',update,{passive:true});
+  addEventListener('resize',update,{passive:true});
+  document.addEventListener('visibilitychange',update);
+  if (hero) {
+    hero.addEventListener('pointermove',event=>{if (!paused && event.pointerType==='mouse') {pointerX=event.clientX/innerWidth-.5;pointerY=event.clientY/innerHeight-.5;update();}},{passive:true});
+    hero.addEventListener('pointerleave',()=>{pointerX=pointerY=0;update();});
+    new IntersectionObserver(entries=>{heroVisible=entries[0].isIntersecting;update();},{threshold:.01}).observe(hero);
+  }
+  if (context) {
+    canvas.width=1160;canvas.height=1450;context.scale(2,2);
+    fetch('assets/review/portrait-wire.json').then(r=>{if(!r.ok)throw new Error('Portrait unavailable');return r.json();}).then(data=>{
+      // Restore a regular lattice from the authored contour relief before projection.
+      points=data.map(row=>row.map(([x,y,v])=>{
+        const baseY=Math.round(y+v*29);
+        const baseX=Math.round((x-Math.sin(baseY/725*Math.PI)*v*29*.45-4)/6)*6+4;
+        return [baseX,baseY,v];
+      }));
+      for(let r=0;r<points.length-1;r++) {
+        const next=points[r+1];
+        for(let i=0;i<points[r].length-1;i++) {
+          const a=points[r][i],b=points[r][i+1];
+          let j=0,k=0;
+          next.forEach((p,n)=>{if(Math.abs(p[0]-a[0])<Math.abs(next[j][0]-a[0]))j=n;if(Math.abs(p[0]-b[0])<Math.abs(next[k][0]-b[0]))k=n;});
+          if(Math.abs(next[j][0]-a[0])<12 && Math.abs(next[k][0]-b[0])<12 && Math.abs(next[j][1]-a[1])<35)mesh.push([r,i,j,k]);
+        }
+      }
+      wrapper.classList.add('ready');update();
+    }).catch(()=>{if(toggle)toggle.hidden=true;});
+  } else if (toggle) toggle.hidden=true;
+  sync();
 })();

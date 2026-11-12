@@ -32,3 +32,33 @@
 .site-header.scrolled.menu-open,.site-header.scrolled.paper-header.menu-open{background:#070909;color:var(--ink)}
 .image-placeholder{z-index:0}.project-screen.has-screenshot img{z-index:2}
 @media(max-width:350px){.hero-statement{font-size:16px;width:74%}}
+
+/* Second edition: a scroll-linked portrait stage with quiet editorial labels. */
+.hero-sequence{height:185svh;position:relative;background:var(--paper)}
+.hero-sequence .hero{position:sticky;top:0;height:100svh;min-height:740px;transform-origin:50% 0;will-change:transform;border-bottom:1px solid #6d8a7c}
+.hero{background:#030505}
+.hero-grid{background-image:linear-gradient(#b6d1c02a 1px,transparent 1px),linear-gradient(90deg,#b6d1c02a 1px,transparent 1px);background-size:8vw 8vw;mask-image:radial-gradient(ellipse at 52% 47%,#000 20%,transparent 85%);transform:perspective(1000px) rotateY(-12deg) scale(1.25)}
+.hero-art{width:min(70vw,1050px);height:105%;left:24%;bottom:-8%;mask-image:linear-gradient(#000 84%,transparent)}
+.hero-art canvas,.wire-fallback{filter:none}.hero-art.ready canvas{opacity:1}.hero-art:after{opacity:.3}
+.hero-name{max-width:30%;margin-top:0}.hero h1{font-size:clamp(32px,3.8vw,62px);letter-spacing:-.04em;line-height:1.02}
+.hero-name .eyebrow{font-size:11px;max-width:240px;line-height:1.7;margin-bottom:20px}.hero-name .coordinate{margin-top:21px}
+.hero-statement{background:#030505a3;top:45%;width:23%;font-size:clamp(16px,1.4vw,23px);line-height:1.3;padding:16px 0 16px 20px}
+.scan-line{opacity:.2;animation:none}.crosshair{font-size:18px;color:#d1e9de}
+.work-intro{padding-top:105px;padding-bottom:90px}.work-intro h2{font-size:clamp(48px,7.5vw,112px)}
+.project-screen{will-change:transform;transition:box-shadow .5s;transform:perspective(1300px) rotateX(4deg) rotateY(-5deg)}
+.project-screen:hover,.project-screen:focus-visible{box-shadow:6px 24px 40px #00150c30}
+.work-nav{margin-top:34px;display:grid;gap:0;font-size:11px;max-width:185px}.work-nav a{min-height:44px;display:flex;align-items:center;gap:12px;color:#546258;border-top:1px solid #14201a25}.work-nav a:before{content:'○';font-size:10px}.work-nav a[aria-current]{color:#14201a}.work-nav a[aria-current]:before{content:'●'}.work-nav a:hover{text-decoration:underline;text-underline-offset:4px}
+.project-side .side-note{margin-top:28px}.project-stage{padding-top:100px;padding-bottom:120px}.project-side{top:100px}
+@media(max-width:1000px){.hero-art{width:90vw;left:8%}.hero h1{font-size:38px}.hero-name{max-width:34%}.hero-statement{font-size:16px}.work-nav{font-size:10px}}
+@media(max-width:600px){.hero-sequence{height:145svh}.hero-sequence .hero{min-height:740px}.hero-name{max-width:100%;padding-top:0}.hero-name .eyebrow{font-size:10px;max-width:250px;margin-bottom:13px}.hero h1{font-size:39px;line-height:1}.hero-name .coordinate{margin-top:12px}.hero-art{width:155%;left:-27%;height:77%;bottom:7%}.hero-grid{background-size:23vw 23vw}.hero-statement{font-size:18px;width:71%;top:auto;bottom:110px;background:#030505ce}.work-nav{display:none}.project-stage{padding-top:45px;padding-bottom:65px}.work-intro{padding-top:65px;padding-bottom:65px}.hero-bottom{bottom:15px}.hero-sequence .hero{transform-origin:50% 0}.hero-name .coordinate{font-size:11px}}
+@media(max-width:350px){.hero-statement{font-size:16px;width:75%}.hero h1{font-size:36px}}
+.motion-paused .hero-sequence{height:100svh}.motion-paused .hero-sequence .hero{position:relative;transform:none!important}.motion-paused .project-screen{transform:none!important}
+@media(prefers-reduced-motion:reduce){.hero-sequence{height:100svh}.hero-sequence .hero{position:relative;transform:none!important}.project-screen{transform:none!important}}
+body{overflow-x:clip}.no-js .hero-sequence{height:100svh}.no-js .hero-sequence .hero{position:relative}
+.footer-nav .motion-button{min-height:44px}
+@media(max-width:600px){.hero-name{text-shadow:0 1px 10px #000,0 0 24px #000}.hero-name .eyebrow{max-width:270px}}
+.project-stage{overflow:clip}
+.work-nav,.hero-name .eyebrow,.header-actions .talk,.header-actions button{font-size:11px}
+.motion-paused .hero-sequence{height:185svh}.motion-paused .hero-sequence .hero{position:sticky;top:0}
+@media(max-width:600px){.motion-paused .hero-sequence{height:145svh}}
+@media(prefers-reduced-motion:reduce){.motion-paused .hero-sequence{height:100svh}.motion-paused .hero-sequence .hero{position:relative}}

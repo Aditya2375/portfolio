@@ -1,13 +1,13 @@
 # Aditya Kulkarni - Portfolio
 
-A new review edition of my portfolio. This branch is a preview, not a production update.
+Second motion study of my portfolio. This branch is a preview, not a production update.
 
 Five pages: Home, Projects, Academics, Beyond the Terminal and Community. Plain HTML, CSS and JavaScript. No framework, runtime dependencies, backend, analytics or external script requests.
 
 ## Design and behavior
 
-- An original contour portrait derived from my existing portfolio imagery, with a lightweight Canvas 2D animation and an SVG fallback.
-- Native scrolling, large project previews and a keyboard-accessible menu.
+- An original contour portrait derived from my existing portfolio imagery, with an original shaded relief renderer, scroll-linked perspective and an SVG fallback.
+- Native scrolling, a sticky portrait stage, scroll-linked project perspectives and a keyboard-accessible menu. No scroll hijacking or WebGL dependency.
 - Reduced-motion support, a visible pause control and no blocking loading screen.
 - Project screenshots are previews, not embedded applications. Each opens the real project or its source.
 - The Monte Carlo illustration is a fixed visual; its displayed pi estimate is a measured result documented in the mc-java repository, not a live run.
