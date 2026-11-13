@@ -26,3 +26,7 @@ Doto is a self-hosted subset. Portfolio Mono is a renamed subset derived from IB
 ## Author
 
 Aditya Kulkarni / [Aditya2375](https://github.com/Aditya2375)
+
+## Motion source
+
+The home page scene is built from `motion-src/app.js` (Three.js) into `assets/ditto/app.js`. To rebuild: `cd motion-src && npm install && npm run build`. The deployed site is static and needs no build step.

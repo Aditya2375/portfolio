@@ -5360,7 +5360,7 @@ function qi(e) {
 	throw Error(`THREE.TextureUtils: Unknown texture type ${e}.`);
 }
 typeof __THREE_DEVTOOLS__ < "u" && __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent("register", { detail: { revision: "187" } })), typeof window < "u" && (window.__THREE__ ? L("WARNING: Multiple instances of Three.js being imported.") : window.__THREE__ = "187");
-// ../../study/node_modules/three/build/three.module.js
+// ../../../study/node_modules/three/build/three.module.js
 function Ji() {
 	let e = null, t = !1, n = null, r = null;
 	function i(t, a) {
